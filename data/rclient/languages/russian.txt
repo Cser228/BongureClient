@@ -487,5 +487,5 @@ Edge info pos x
 Edge info pos y
 == Поз. y эдж инфо
 
-Search empty server
-== Поиск пустых серверов
+Only empty servers
+== Только пустые сервера

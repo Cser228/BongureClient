@@ -711,7 +711,7 @@ void CMenus::RenderServerbrowserFilters(CUIRect View)
 	View.HSplitBottom(3.0f, &View, nullptr);
 
 	View.HSplitTop(RowHeight, &Button, &View);
-	if(DoButton_CheckBox(&g_Config.m_RiBrFilterPlayers, Localize("Search empty server"), g_Config.m_RiBrFilterPlayers, &Button))
+	if(DoButton_CheckBox(&g_Config.m_RiBrFilterPlayers, Localize("Only empty servers"), g_Config.m_RiBrFilterPlayers, &Button))
 		g_Config.m_RiBrFilterPlayers ^= 1;
 
 	View.HSplitTop(RowHeight, &Button, &View);
