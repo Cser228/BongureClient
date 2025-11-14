@@ -1,3 +1,5 @@
+#include <base/log.h>
+
 #include <game/client/animstate.h>
 #include <game/client/components/chat.h>
 #include <game/client/gameclient.h>
@@ -19,7 +21,6 @@ CRClient::CRClient()
 void CRClient::OnInit()
 {
 	FetchRclientVersionCheck();
-	RiSplitRegex();
 }
 
 void CRClient::OnConsoleInit()
@@ -37,7 +38,6 @@ void CRClient::OnConsoleInit()
 	Console()->Register("ri_deepfly_toggle", "", CFGFLAG_CLIENT, ConToggleDeepfly, this, "Deep fly toggle");
 	Console()->Register("ri_nameplates_editor_update", "", CFGFLAG_CLIENT, ConUpdateNameplatesEditor, this, "Update nameplates. Use after change ri_nameplate_scheme");
 	Console()->Register("add_white_list", "s[nickname]", CFGFLAG_CLIENT, ConAddWhiteList, this, "Add player to white list of censor list");
-	Console()->Register("ri_update_regex_list_ignore", "s[nickname]", CFGFLAG_CLIENT, ConUpdateRegexIgnore, this, "Add player to white list of censor list");
 	Console()->Register("find_skin", "r[player]", CFGFLAG_CLIENT, ConFindSkin, this, "Find skin");
 	Console()->Register("copy_skin", "r[player]", CFGFLAG_CLIENT, ConCopySkin, this, "Copy skin");
 	Console()->Register("find_player", "r[player]", CFGFLAG_CLIENT, ConFindPlayer, this, "Find Player");
@@ -46,6 +46,21 @@ void CRClient::OnConsoleInit()
 	Console()->Register("tracker_reset", "", CFGFLAG_CLIENT, ConTargetPlayerPosReset, this, "Reset tracker pos");
 	Console()->Register("tracker_remove", "r[player]", CFGFLAG_CLIENT, ConTargetPlayerPosRemove, this, "Remove tracker pos of player");
 	Console()->Register("add_censor_list", "r[word]", CFGFLAG_CLIENT, ConAddCensorList, this, "Reset tracker pos");
+	Console()->Chain(
+		"ri_regex_player_whitelist", [](IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData) {
+			if(pResult->NumArguments() == 1)
+			{
+				auto Re = Regex(pResult->GetString(0));
+				if(!Re.error().empty())
+				{
+					log_error("rclient", "Invalid regex: %s", Re.error().c_str());
+					return;
+				}
+				((CRClient *)pUserData)->m_RegexSplitedPlayer = std::move(Re);
+			}
+			pfnCallback(pResult, pCallbackUserData);
+		},
+		this);
 }
 
 void CRClient::OnRender()
@@ -836,12 +851,6 @@ void CRClient::ConUpdateNameplatesEditor(IConsole::IResult *pResult, void *pUser
 	pSelf->GameClient()->m_NamePlates.RiResetNameplatesPos(*pSelf->GameClient(), g_Config.m_RiNamePlateScheme);
 }
 
-void CRClient::ConUpdateRegexIgnore(IConsole::IResult *pResult, void *pUserData)
-{
-	CRClient *pSelf = static_cast<CRClient *>(pUserData);
-	pSelf->RiSplitRegex();
-}
-
 std::vector<std::string> CRClient::SplitRegex(const char *aboba)
 {
 	std::vector<std::string> parts;
@@ -856,11 +865,6 @@ std::vector<std::string> CRClient::SplitRegex(const char *aboba)
 		start = end + 1;
 	}
 	parts.push_back(str.substr(start));
-
-	// for(size_t i = 0; i < parts.size(); i++)
-	// {
-	// 	dbg_msg("Parts", "%s", parts[i].c_str());
-	// }
 
 	return parts;
 }
@@ -880,19 +884,9 @@ std::vector<std::string> CRClient::SplitWords(const char *aboba)
 	}
 	parts.push_back(str.substr(start));
 
-	// for(size_t i = 0; i < parts.size(); i++)
-	// {
-	// 	dbg_msg("Parts", "%s", parts[i].c_str());
-	// }
-
 	return parts;
 }
 
-void CRClient::RiSplitRegex() const
-{
-	GameClient()->m_RClient.m_RegexSplited = SplitRegex(g_Config.m_TcRegexChatIgnore);
-	GameClient()->m_RClient.m_RegexSplitedPlayer = SplitRegex(g_Config.m_RiRegexPlayerWhitelist);
-}
 // void CRClient::FinishRClientUsersSend()
 // {
 // 	json_value *pJson = m_pRClientUsersTask->ResultJson();
@@ -930,14 +924,6 @@ void CRClient::ConAddWhiteList(IConsole::IResult *pResult, void *pUserData)
 	{
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Regex", "No word in this");
 	}
-}
-
-std::vector<std::string> CRClient::GetWordsListRegex(int IsPlayer = 0) const
-{
-	if(IsPlayer == 1)
-		return m_RegexSplitedPlayer;
-	else
-		return m_RegexSplited;
 }
 
 void CRClient::ConFindSkin(IConsole::IResult *pResult, void *pUserData)
@@ -1450,5 +1436,4 @@ void CRClient::ConAddCensorList(IConsole::IResult *pResult, void *pUserData)
 	{
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Regex", "No word in this");
 	}
-	pSelf->GameClient()->m_RClient.RiSplitRegex();
 }

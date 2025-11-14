@@ -566,6 +566,7 @@ void CChat::OnMessage(int MsgType, void *pRawMsg)
 			{
 				const char *pFilteredMSG = FilterText(pMsg->m_pMessage, pMsg->m_ClientId, true);
 				AddLine(pMsg->m_ClientId, pMsg->m_Team, pFilteredMSG);
+				return;
 			}
 		}
 
@@ -1772,68 +1773,79 @@ const char *CChat::FilterText(const char *pMessage, int ClientId, bool IsChat)
 	s_aFilteredMessage[0] = '\0';
 	if(g_Config.m_RiRegexPlayerWhitelist[0] && ClientId >= 0)
 	{
-		std::vector<std::string> SplitPlayers = GameClient()->m_RClient.GetWordsListRegex(1);
-		for(size_t i = 0; i < SplitPlayers.size(); i++)
-		{
-			if(!str_comp(GameClient()->m_aClients[ClientId].m_aName, SplitPlayers[i].c_str()))
-				return pMessage;
-		}
+		auto &RePlr = GameClient()->m_RClient.m_RegexSplitedPlayer;
+		if(RePlr.error().empty() && RePlr.test(GameClient()->m_aClients[ClientId].m_aName))
+			return pMessage;
 	}
-	std::vector<std::string> SplitRegex = GameClient()->m_RClient.GetWordsListRegex(0);
-	std::vector<std::string> SplitMsg = CRClient::SplitWords(pMessage);
 	std::vector<std::string> BlockedWords;
-	bool Isbadwordinclude = false;
-	for(size_t i = 0; i < SplitRegex.size(); i++)
+	std::vector<std::string> SplitMsg = CRClient::SplitWords(pMessage);
+	auto &Re = GameClient()->m_TClient.m_RegexChatIgnore;
+
+	if(g_Config.m_RiShowBlockedWordInConsole && IsChat)
 	{
-		if(str_utf8_find_nocase(pMessage, SplitRegex[i].c_str()))
-			Isbadwordinclude = true;
+		Re.match(pMessage, true, [&BlockedWords](const std::string& match, int matchIndex, int group) {
+			if(group == 0)
+			{
+				bool AlreadyBlocked = false;
+				for(size_t i = 0; i < BlockedWords.size(); i++)
+				{
+					if(BlockedWords[i] == match)
+					{
+						AlreadyBlocked = true;
+						break;
+					}
+				}
+				if(!AlreadyBlocked)
+				{
+					BlockedWords.push_back(match);
+				}
+			}
+		});
 	}
-	if(Isbadwordinclude)
+
+	std::string filteredMessage;
+	if(!g_Config.m_RiFilterChangeWholeWord)
+	{
+		filteredMessage = Re.replace(pMessage, true, [](const std::string &match, int matchIndex, int group) -> std::string {
+			if(group != 0)
+				return "";
+
+			if(g_Config.m_RiMultipleReplacementChar)
+			{
+				size_t size = 0, count = 0;
+				str_utf8_stats(match.c_str(), match.length() * 4, match.length(), &size, &count);
+				std::string replacement;
+				for(size_t i = 0; i < count; i++)
+				{
+					replacement += g_Config.m_RiBlockedContentReplacementChar;
+				}
+				return replacement;
+			}
+			else
+			{
+				return g_Config.m_RiBlockedContentReplacementChar;
+			}
+		});
+		str_copy(s_aFilteredMessage, filteredMessage.c_str(), sizeof(s_aFilteredMessage));
+	}
+	else
 	{
 		for(size_t w = 0; w < SplitMsg.size(); w++)
 		{
-			bool IsBlocked = false;
-			for(size_t i = 0; i < SplitRegex.size(); i++)
-			{
-				if(str_utf8_find_nocase(SplitMsg[w].c_str(), SplitRegex[i].c_str()))
-				{
-					IsBlocked = true;
-
-					if(g_Config.m_RiShowBlockedWordInConsole && IsChat)
-					{
-						bool AlreadyBlocked = false;
-						for(size_t o = 0; o < BlockedWords.size(); o++)
-						{
-							if(str_comp(SplitRegex[i].c_str(), BlockedWords[o].c_str()) == 0)
-							{
-								AlreadyBlocked = true;
-								break;
-							}
-						}
-
-						// Add word only if it's not already blocked
-						if(!AlreadyBlocked)
-						{
-							BlockedWords.push_back(SplitRegex[i]);
-						}
-					}
-					break;
-				}
-			}
-			if(w > 0)
-				str_append(s_aFilteredMessage, " ", sizeof(s_aFilteredMessage));
-
-			if(IsBlocked)
+			if(Re.error().empty() && Re.test(SplitMsg[w]))
 			{
 				if(g_Config.m_RiMultipleReplacementChar)
 				{
+					if(w > 0)
+						str_append(s_aFilteredMessage, " ", sizeof(s_aFilteredMessage));
 					size_t size = 0, count = 0;
-					// Use a reasonable upper bound for UTF-8: max 4 bytes per character
 					str_utf8_stats(SplitMsg[w].c_str(), SplitMsg[w].length() * 4, SplitMsg[w].length(), &size, &count);
 					for(size_t i = 0; i < count; i++)
 					{
 						str_append(s_aFilteredMessage, g_Config.m_RiBlockedContentReplacementChar, sizeof(s_aFilteredMessage));
 					}
+					if(w < SplitMsg.size())
+						str_append(s_aFilteredMessage, " ", sizeof(s_aFilteredMessage));
 				}
 				else
 				{
@@ -1845,30 +1857,28 @@ const char *CChat::FilterText(const char *pMessage, int ClientId, bool IsChat)
 				str_append(s_aFilteredMessage, SplitMsg[w].c_str(), sizeof(s_aFilteredMessage));
 			}
 		}
-
-		if(g_Config.m_RiShowBlockedWordInConsole && !BlockedWords.empty() && IsChat)
-		{
-			char aBlockedWordsStr[512];
-			aBlockedWordsStr[0] = '\0';
-			if(ClientId >= 0)
-			{
-				str_format(aBlockedWordsStr, sizeof(aBlockedWordsStr), "%s said: ", GameClient()->m_aClients[ClientId].m_aName);
-			}
-			else if(ClientId == SERVER_MSG)
-			{
-				str_copy(aBlockedWordsStr, "Server said: ", sizeof(aBlockedWordsStr));
-			}
-			for(size_t i = 0; i < BlockedWords.size(); i++)
-			{
-				if(i > 0)
-					str_append(aBlockedWordsStr, ", ", sizeof(aBlockedWordsStr));
-				str_append(aBlockedWordsStr, BlockedWords[i].c_str(), sizeof(aBlockedWordsStr));
-			}
-			Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Regex filter", aBlockedWordsStr, g_Config.m_RiBlockedWordConsoleColor);
-		}
-
-		return s_aFilteredMessage;
 	}
-	else
-		return pMessage;
+
+	if(g_Config.m_RiShowBlockedWordInConsole && IsChat && !BlockedWords.empty())
+	{
+		char aBlockedWordsStr[512];
+		aBlockedWordsStr[0] = '\0';
+		if(ClientId >= 0)
+		{
+			str_format(aBlockedWordsStr, sizeof(aBlockedWordsStr), "%s said: ", GameClient()->m_aClients[ClientId].m_aName);
+		}
+		else if(ClientId == SERVER_MSG)
+		{
+			str_copy(aBlockedWordsStr, "Server said: ", sizeof(aBlockedWordsStr));
+		}
+		for(size_t i = 0; i < BlockedWords.size(); i++)
+		{
+			if(i > 0)
+				str_append(aBlockedWordsStr, ", ", sizeof(aBlockedWordsStr));
+			str_append(aBlockedWordsStr, BlockedWords[i].c_str(), sizeof(aBlockedWordsStr));
+		}
+		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "Regex filter", aBlockedWordsStr, g_Config.m_RiBlockedWordConsoleColor);
+	}
+
+	return s_aFilteredMessage;
 }

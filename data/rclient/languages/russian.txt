@@ -489,3 +489,6 @@ Edge info pos y
 
 Only empty servers
 == Только пустые сервера
+
+Change whole word (else use regex)
+== Менять все слово (иначе regex)

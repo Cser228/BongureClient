@@ -1,10 +1,12 @@
 #ifndef GAME_CLIENT_COMPONENTS_RCLIENT_RUSHIE_H
 #define GAME_CLIENT_COMPONENTS_RCLIENT_RUSHIE_H
 
-#include <game/client/component.h>
+#include "engine/external/regex.h"
 
 #include <engine/shared/console.h>
 #include <engine/shared/http.h>
+
+#include <game/client/component.h>
 
 class CRClient : public CComponent
 {
@@ -27,8 +29,6 @@ class CRClient : public CComponent
 	static void ConUpdateNameplatesEditor(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConAddWhiteList(IConsole::IResult *pResult, void *pUserData);
-
-	static void ConUpdateRegexIgnore(IConsole::IResult *pResult, void *pUserData);
 
 	//45 degrees
 	int m_45degreestoggle = 0;
@@ -124,11 +124,7 @@ public:
 	// Regex
 	static std::vector<std::string> SplitRegex(const char *aboba);
 	static std::vector<std::string> SplitWords(const char *MSG);
-	std::vector<std::string> m_RegexSplited;
-	std::vector<std::string> m_RegexSplitedPlayer;
-	void RiSplitRegex() const;
-
-	std::vector<std::string> GetWordsListRegex(int IsPlayer) const;
+	Regex m_RegexSplitedPlayer;
 };
 
 #endif
