@@ -669,6 +669,7 @@ public:
 		SETTINGS_TCLIENT,
 		SETTINGS_PROFILES,
 		SETTINGS_RUSHIE,
+		SETTINGS_CONFIGS,
 
 		SETTINGS_LENGTH,
 	};
@@ -826,6 +827,7 @@ private:
 	void RenderSettingsTClientInfo(CUIRect MainView);
 	void RenderSettingsTClientStatusBar(CUIRect MainView);
 	void RenderSettingsTClientProfiles(CUIRect MainView);
+	void RenderSettingsTClientConfigs(CUIRect MainView);
 
 	// Rushie
 	void RenderSettingsRushie(CUIRect MainView);
