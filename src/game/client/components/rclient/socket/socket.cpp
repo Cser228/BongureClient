@@ -40,10 +40,7 @@ void CWebSocket::SocketConnect()
 
 void CWebSocket::SocketDisconnect()
 {
-	CGameClient *pClient = (CGameClient *)GameClient();
-	{
-		m_Socket.close();
-	}
+	m_Socket.close();
 }
 
 void CWebSocket::UserInit()
