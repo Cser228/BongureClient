@@ -181,8 +181,7 @@ void CGameClient::OnConsoleInit()
 					      &m_Scripting,
 					      &m_KeyBinder,
 					      &m_GameConsole,
-					      &m_MenuBackground,
-					      &m_WebSocket});
+					      &m_MenuBackground});
 
 	// build the input stack
 	m_vpInput.insert(m_vpInput.end(), {&m_KeyBinder, // this will take over all input when we want to bind a key
