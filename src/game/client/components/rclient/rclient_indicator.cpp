@@ -43,7 +43,7 @@ void CRClientIndicator::OnRender()
 			dbg_msg("RClient", "Unregistering from server");
 		}
 	}
-	if(Client()->State() == IClient::STATE_ONLINE && m_IsConnected && m_TokenReceived)
+	else if(Client()->State() == IClient::STATE_ONLINE && m_IsConnected && m_TokenReceived)
 	{
 		if(GameClient()->m_aLocalIds[0] != m_PlayerId)
 		{
@@ -182,12 +182,6 @@ void CRClientIndicator::OnTokenReceived(sio::event &Event)
 	m_TokenReceived = true;
 
 	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RClient", "Received auth token");
-
-	// If we're in game, register immediately
-	if(Client()->State() == IClient::STATE_ONLINE)
-	{
-		RegisterPlayer();
-	}
 }
 
 void CRClientIndicator::OnRegistrationSuccess(sio::event &Event)
