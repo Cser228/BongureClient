@@ -114,3 +114,4 @@ MACRO_CONFIG_INT(RiCrossChatDebug, ri_cross_chat_debug, 0, 0, 1, CFGFLAG_CLIENT 
 MACRO_CONFIG_STR(RiPulseSocketNameserver, ri_pulse_ntwr_nameserver, 256, "localhost:3000", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Pulse Nameserver for websockets")
 
 //RClient Socket
+MACRO_CONFIG_STR(RiIndicatorServerUrl, ri_indicator_server_url, 256, "localhost:3000", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Pulse Nameserver for websockets")

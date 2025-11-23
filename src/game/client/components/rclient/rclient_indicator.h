@@ -1,46 +1,74 @@
 #ifndef RCLIENT_RCLIENT_INDICATOR_H
 #define RCLIENT_RCLIENT_INDICATOR_H
 
-#include <game/client/component.h>
+#include "engine/client.h"
 
 #include <engine/shared/console.h>
-#include <engine/shared/http.h>
+
+#include <game/client/component.h>
+
+#include <sio_client.h>
+
+#include <map>
+#include <mutex>
+#include <string>
+#include <vector>
 
 class CRClientIndicator : public CComponent
 {
-	std::shared_ptr<CHttpRequest> m_pAuthTokenTask = nullptr;
-	void FetchAuthToken();
-	void FinishAuthToken();
-	void ResetAuthToken();
-	char m_aAuthToken[128] = {0};
+	static constexpr const char *RCLIENT_SERVER_URL = "http://localhost:5050";
 
-	static constexpr const char *RCLIENT_URL_USERS = "https://server.rushie-client.ru/users.json";
-	static constexpr const char *RCLIENT_TOKEN_URL = "https://server.rushie-client.ru/token";
-	// Server and Player Info Collection
-	std::shared_ptr<CHttpRequest> m_pRClientUsersTaskSend = nullptr;
-	void SendServerPlayerInfo();
-	void SendPlayerData(const char *pServerAddress, int ClientId, int DummyClientId = -1);
-	void FetchRClientUsers();
-	void FinishRClientUsers();
-	void ResetRClientUsers();
-	// void FinishRClientUsersSend();
-	void ResetRClientUsersSend();
+	// Socket.IO client
+	sio::client m_Socket;
+
+	// Authentication
+	char m_aAuthToken[128] = {0};
+	bool m_TokenReceived = false;
+
+	// Current connection state
+	bool m_IsConnected = false;
+	bool m_Registered = false;
 	char m_aCurrentServerAddress[256];
-	std::shared_ptr<CHttpRequest> m_pRClientUsersTask = nullptr;
-	std::vector<std::pair<std::string, int>> m_vRClientUsers; // server address, player id
-	void SendDummyRclientUsers();
-	int64_t s_LastFetch = 0;
-	bool s_InitialFetchDone = false;
-	bool s_InitialFetchDoneDummy = false;
-	int s_RclientIndicatorCount = 0;
+	int m_CurrentPlayerId = -1;
+	int m_CurrentDummyId = -1;
+
+	// Track previous client state
+	int m_PrevClientState = IClient::STATE_OFFLINE;
+
+	// RClient users data: server_address -> player_id -> has_player
+	std::map<std::string, std::map<int, bool>> m_RClientUsers;
+	std::mutex m_RClientUsersMutex;
+
+	// Socket.IO event handlers
+	void OnSocketConnected();
+	void OnSocketDisconnected(sio::client::close_reason const &Reason);
+	void OnSocketFailed();
+	void OnTokenReceived(sio::event &Event);
+	void OnRegistrationSuccess(sio::event &Event);
+	void OnUnregisterSuccess(sio::event &Event);
+	void OnPlayersUpdate(sio::event &Event);
+	void OnError(sio::event &Event);
+
+	// Connection management
+	void ConnectToServer();
+	void DisconnectFromServer();
+	void RegisterPlayer();
+	void UpdateServerInfo();
+	void SetupSocketListeners();
+
 public:
 	CRClientIndicator();
+	~CRClientIndicator();
+
 	int Sizeof() const override { return sizeof(*this); }
 	void OnInit() override;
-
+	void OnShutdown() override;
 	void OnRender() override;
 
 	bool IsPlayerRClient(int ClientId);
+	bool IsConnected() const { return m_IsConnected; }
+
+	sio::client* GetSocket() { return &m_Socket; }
 };
 
 #endif // RCLIENT_RCLIENT_INDICATOR_H

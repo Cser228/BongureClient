@@ -1,304 +1,412 @@
 #include "rclient_indicator.h"
 
 #include "engine/client.h"
-#include "engine/external/json-parser/json.h"
 #include "engine/serverbrowser.h"
 #include "game/client/gameclient.h"
-
 
 CRClientIndicator::CRClientIndicator()
 {
 	m_aCurrentServerAddress[0] = '\0';
+	m_PrevClientState = IClient::STATE_OFFLINE;
+}
+
+CRClientIndicator::~CRClientIndicator()
+{
+	DisconnectFromServer();
 }
 
 void CRClientIndicator::OnInit()
 {
-	FetchAuthToken();
+	// Don't auto-connect on init - wait until player connects to a game server
+}
+
+void CRClientIndicator::OnShutdown()
+{
+	// Clean disconnect when game closes
+	DisconnectFromServer();
 }
 
 void CRClientIndicator::OnRender()
 {
-	if(m_pAuthTokenTask)
+	if(!g_Config.m_RiShowRclientIndicator)
+		return;
+
+	int CurrentState = Client()->State();
+
+	// State changed from not-online to online (connected to game server)
+	if(m_PrevClientState != IClient::STATE_ONLINE && CurrentState == IClient::STATE_ONLINE)
 	{
-		if(m_pAuthTokenTask->State() == EHttpState::DONE)
+		if(!m_IsConnected)
 		{
-			FinishAuthToken();
-			ResetAuthToken();
+			ConnectToServer();
+		}
+		else if(m_TokenReceived)
+		{
+			// Already connected to socket server, just register
+			RegisterPlayer();
 		}
 	}
-
-	if(m_pRClientUsersTask)
+	// State changed from online to not-online (disconnected from game server)
+	else if(m_PrevClientState == IClient::STATE_ONLINE && CurrentState != IClient::STATE_ONLINE)
 	{
-		if(m_pRClientUsersTask->State() == EHttpState::DONE)
+		// Unregister from old server
+		if(m_Registered && m_IsConnected && m_Socket.socket())
 		{
-			FinishRClientUsers();
-			ResetRClientUsers();
+			m_Socket.socket()->emit("unregister_player");
+			GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RClient", "Unregistering from server");
 		}
+
+		m_Registered = false;
+		m_aCurrentServerAddress[0] = '\0';
+		m_CurrentPlayerId = -1;
+		m_CurrentDummyId = -1;
+	}
+	// Currently online - check for server changes
+	else if(CurrentState == IClient::STATE_ONLINE && m_IsConnected && m_TokenReceived)
+	{
+		UpdateServerInfo();
 	}
 
-	if(m_pRClientUsersTaskSend)
-	{
-		if(m_pRClientUsersTaskSend->State() == EHttpState::DONE)
-		{
-			// FinishRClientUsersSend();
-			ResetRClientUsersSend();
-		}
-	}
-
-	// Do initial fetch when first connected
-	if(Client()->State() == IClient::STATE_ONLINE && !s_InitialFetchDone && g_Config.m_RiShowRclientIndicator)
-	{
-		s_InitialFetchDone = true;
-		GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Send/Get RClient Players for indicator on init");
-		SendServerPlayerInfo();
-		FetchRClientUsers();
-		s_LastFetch = time_get();
-	}
-	else if(Client()->State() != IClient::STATE_ONLINE && g_Config.m_RiShowRclientIndicator)
-	{
-		s_InitialFetchDone = false;
-		s_InitialFetchDoneDummy = false; // Reset when disconnected
-	}
-
-	if(Client()->State() == IClient::STATE_ONLINE && (!m_pRClientUsersTask || m_pRClientUsersTask->Done()) && g_Config.m_RiShowRclientIndicator)
-	{
-		if(time_get() - s_LastFetch > time_freq() * 30)
-		{
-			if(s_RclientIndicatorCount == 10)
-			{
-				GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Send/Get RClient Players for indicator x10");
-				s_RclientIndicatorCount = 0;
-			}
-			else
-				s_RclientIndicatorCount++;
-			SendServerPlayerInfo();
-			FetchRClientUsers();
-			s_LastFetch = time_get();
-		}
-	}
+	m_PrevClientState = CurrentState;
 }
-// Server and Player Info Collection
-void CRClientIndicator::SendServerPlayerInfo()
+
+void CRClientIndicator::ConnectToServer()
 {
+	if(m_IsConnected)
+		return;
+
+	// Setup connection event handlers
+	m_Socket.set_open_listener([this]() {
+		OnSocketConnected();
+	});
+
+	m_Socket.set_close_listener([this](sio::client::close_reason const &Reason) {
+		OnSocketDisconnected(Reason);
+	});
+
+	m_Socket.set_fail_listener([this]() {
+		OnSocketFailed();
+	});
+
+	// Connect to server
+	m_Socket.connect(RCLIENT_SERVER_URL);
+
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Connecting to RClient server...");
+}
+
+void CRClientIndicator::DisconnectFromServer()
+{
+	if(m_IsConnected)
+	{
+		m_Socket.close();
+	}
+
+	m_IsConnected = false;
+	m_Registered = false;
+	m_TokenReceived = false;
+	m_aAuthToken[0] = '\0';
+	m_aCurrentServerAddress[0] = '\0';
+	m_CurrentPlayerId = -1;
+	m_CurrentDummyId = -1;
+}
+
+void CRClientIndicator::SetupSocketListeners()
+{
+	if(!m_Socket.socket())
+		return;
+
+	// Setup event listeners
+	m_Socket.socket()->on("token_response", [this](sio::event &Event) {
+		OnTokenReceived(Event);
+	});
+
+	m_Socket.socket()->on("registration_success", [this](sio::event &Event) {
+		OnRegistrationSuccess(Event);
+	});
+
+	m_Socket.socket()->on("unregister_success", [this](sio::event &Event) {
+		OnUnregisterSuccess(Event);
+	});
+
+	m_Socket.socket()->on("players_update", [this](sio::event &Event) {
+		OnPlayersUpdate(Event);
+	});
+
+	m_Socket.socket()->on("error", [this](sio::event &Event) {
+		OnError(Event);
+	});
+}
+
+void CRClientIndicator::RegisterPlayer()
+{
+	if(!m_IsConnected || !m_TokenReceived || m_Registered)
+		return;
+
 	if(Client()->State() != IClient::STATE_ONLINE)
 		return;
 
-	// Get server address
+	if(!m_Socket.socket())
+		return;
+
 	CServerInfo CurrentServerInfo;
 	Client()->GetServerInfo(&CurrentServerInfo);
 
-	// Send data for main player
 	int LocalClientId = GameClient()->m_aLocalIds[0];
+	if(LocalClientId < 0)
+		return;
+
 	int DummyClientId = -1;
 	if(Client()->DummyConnected())
 	{
 		DummyClientId = GameClient()->m_aLocalIds[1];
 	}
-	if(LocalClientId >= 0)
-	{
-		SendPlayerData(CurrentServerInfo.m_aAddress, LocalClientId, DummyClientId);
-	}
-	// Store current server info for comparison
-	str_copy(m_aCurrentServerAddress, CurrentServerInfo.m_aAddress, sizeof(m_aCurrentServerAddress));
-}
 
-void CRClientIndicator::SendPlayerData(const char *pServerAddress, int ClientId, int DummyClientId)
-{
-	if(m_aAuthToken[0] == '\0')
-	{
-		// Token not yet fetched, try again later.
-		if(!m_pAuthTokenTask)
-			FetchAuthToken();
-		return;
-	}
-	// Create JSON data for this specific player
-	char aJsonData[512];
+	// Build registration data
+	sio::message::ptr RegistrationData = sio::object_message::create();
+	auto &DataMap = RegistrationData->get_map();
+
+	DataMap["server_address"] = sio::string_message::create(CurrentServerInfo.m_aAddress);
+	DataMap["player_id"] = sio::int_message::create(LocalClientId);
+	DataMap["auth_token"] = sio::string_message::create(m_aAuthToken);
 
 	if(DummyClientId >= 0)
-		str_format(aJsonData, sizeof(aJsonData),
-			"{"
-			"\"server_address\":\"%s\","
-			"\"player_id\":%d,"
-			"\"dummy_id\":%d,"
-			"\"auth_token\":\"%s\","
-			"\"timestamp\":%lld"
-			"}",
-			pServerAddress,
-			ClientId,
-			DummyClientId,
-			m_aAuthToken,
-			(long long)time_get());
-	else
-		str_format(aJsonData, sizeof(aJsonData),
-			"{"
-			"\"server_address\":\"%s\","
-			"\"player_id\":%d,"
-			"\"auth_token\":\"%s\","
-			"\"timestamp\":%lld"
-			"}",
-			pServerAddress,
-			ClientId,
-			m_aAuthToken,
-			(long long)time_get());
+	{
+		DataMap["dummy_id"] = sio::int_message::create(DummyClientId);
+	}
 
-	// Create and send HTTP request
-	m_pRClientUsersTaskSend = std::make_shared<CHttpRequest>(CRClientIndicator::RCLIENT_URL_USERS);
-	m_pRClientUsersTaskSend->PostJson(aJsonData);
-	m_pRClientUsersTaskSend->Timeout(CTimeout{10000, 0, 500, 5});
-	m_pRClientUsersTaskSend->IpResolve(IPRESOLVE::V4);
-	Http()->Run(m_pRClientUsersTaskSend);
+	// Send registration
+	m_Socket.socket()->emit("register_player", RegistrationData);
+
+	str_copy(m_aCurrentServerAddress, CurrentServerInfo.m_aAddress, sizeof(m_aCurrentServerAddress));
+	m_CurrentPlayerId = LocalClientId;
+	m_CurrentDummyId = DummyClientId;
+
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Registering player on server...");
 }
 
-void CRClientIndicator::FetchRClientUsers()
+void CRClientIndicator::UpdateServerInfo()
 {
-	if(m_pRClientUsersTask && !m_pRClientUsersTask->Done())
+	if(!m_Registered)
 		return;
-
-	m_pRClientUsersTask = HttpGet(CRClientIndicator::RCLIENT_URL_USERS);
-	m_pRClientUsersTask->Timeout(CTimeout{10000, 0, 500, 5});
-	m_pRClientUsersTask->IpResolve(IPRESOLVE::V4);
-	Http()->Run(m_pRClientUsersTask);
-}
-
-void CRClientIndicator::FetchAuthToken()
-{
-	if(m_pAuthTokenTask && !m_pAuthTokenTask->Done())
-		return;
-
-	m_pAuthTokenTask = HttpGet(CRClientIndicator::RCLIENT_TOKEN_URL);
-	m_pAuthTokenTask->Timeout(CTimeout{10000, 0, 500, 5});
-	m_pAuthTokenTask->IpResolve(IPRESOLVE::V4);
-	Http()->Run(m_pAuthTokenTask);
-}
-
-void CRClientIndicator::FinishAuthToken()
-{
-	if(m_pAuthTokenTask->State() != EHttpState::DONE)
-		return;
-
-	json_value *pJson = m_pAuthTokenTask->ResultJson();
-	if(!pJson)
-	{
-		GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Failed to fetch auth token: no JSON");
-		return;
-	}
-
-	const json_value &Json = *pJson;
-	const json_value &Token = Json["token"];
-
-	if(Token.type == json_string)
-	{
-		str_copy(m_aAuthToken, Token.u.string.ptr, sizeof(m_aAuthToken));
-		// The token might have a newline at the end
-		str_utf8_trim_right(m_aAuthToken);
-		GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RClient", "Fetched auth token");
-	}
-	else
-	{
-		GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Failed to fetch auth token: token not found in JSON");
-	}
-	json_value_free(pJson);
-}
-
-void CRClientIndicator::ResetAuthToken()
-{
-	if(m_pAuthTokenTask)
-	{
-		m_pAuthTokenTask->Abort();
-		m_pAuthTokenTask = nullptr;
-	}
-}
-
-void CRClientIndicator::ResetRClientUsersSend()
-{
-	if(m_pRClientUsersTaskSend)
-	{
-		m_pRClientUsersTaskSend->Abort();
-		m_pRClientUsersTaskSend = nullptr;
-	}
-}
-
-void CRClientIndicator::FinishRClientUsers()
-{
-	json_value *pJson = m_pRClientUsersTask->ResultJson();
-	if(!pJson)
-		return;
-
-	const json_value &Json = *pJson;
-	m_vRClientUsers.clear();
-
-	// Parse the JSON response to get list of RClient users
-	if(Json.type == json_object)
-	{
-		// The response format is: {"server_address": {"player_id": {...}}}
-		for(unsigned int i = 0; i < Json.u.object.length; i++)
-		{
-			const char *pServerAddr = Json.u.object.values[i].name;
-			const json_value &PlayersObj = *Json.u.object.values[i].value;
-
-			if(PlayersObj.type == json_object)
-			{
-				for(unsigned int j = 0; j < PlayersObj.u.object.length; j++)
-				{
-					const char *pPlayerIdStr = PlayersObj.u.object.values[j].name;
-					int PlayerId = atoi(pPlayerIdStr);
-					const json_value &PlayerData = *PlayersObj.u.object.values[j].value;
-
-					// Add main player ID
-					m_vRClientUsers.emplace_back(std::string(pServerAddr), PlayerId);
-
-					// Check if this player has a dummy and add dummy ID too
-					if(PlayerData.type == json_object)
-					{
-						for(unsigned int k = 0; k < PlayerData.u.object.length; k++)
-						{
-							if(str_comp(PlayerData.u.object.values[k].name, "dummy_id") == 0 &&
-								PlayerData.u.object.values[k].value->type == json_integer)
-							{
-								int DummyId = PlayerData.u.object.values[k].value->u.integer;
-								m_vRClientUsers.emplace_back(std::string(pServerAddr), DummyId);
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	json_value_free(pJson);
-}
-
-void CRClientIndicator::ResetRClientUsers()
-{
-	if(m_pRClientUsersTask)
-	{
-		m_pRClientUsersTask->Abort();
-		m_pRClientUsersTask = nullptr;
-	}
-}
-
-bool CRClientIndicator::IsPlayerRClient(int ClientId)
-{
-	if(Client()->State() != IClient::STATE_ONLINE)
-		return false;
-
-	// // Always show RClient indicator for local players (main and dummy)
-	// if(GameClient()->m_Snap.m_apPlayerInfos[ClientId] && GameClient()->m_Snap.m_apPlayerInfos[ClientId]->m_Local)
-	// 	return true;
-	//
-	// // Also check if this is our dummy using m_aLocalIds
-	// if(ClientId == GameClient()->m_aLocalIds[0] || ClientId == GameClient()->m_aLocalIds[1])
-	// 	return true;
 
 	CServerInfo CurrentServerInfo;
 	Client()->GetServerInfo(&CurrentServerInfo);
 
-	// Check if this player is in our RClient users list
-	for(const auto &User : m_vRClientUsers)
+	// Check if server changed
+	if(str_comp(m_aCurrentServerAddress, CurrentServerInfo.m_aAddress) != 0)
 	{
-		if(str_comp(User.first.c_str(), CurrentServerInfo.m_aAddress) == 0 && User.second == ClientId)
+		// Server changed - unregister from old, register on new
+		if(m_Socket.socket())
+		{
+			m_Socket.socket()->emit("unregister_player");
+			GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RClient", "Server changed, unregistering from old server");
+		}
+
+		m_Registered = false;
+		RegisterPlayer();
+		return;
+	}
+
+	// Check if dummy status changed
+	int DummyClientId = -1;
+	if(Client()->DummyConnected())
+	{
+		DummyClientId = GameClient()->m_aLocalIds[1];
+	}
+
+	if(DummyClientId != m_CurrentDummyId)
+	{
+		// Dummy status changed, re-register
+		m_Registered = false;
+		RegisterPlayer();
+	}
+}
+
+void CRClientIndicator::OnSocketConnected()
+{
+	m_IsConnected = true;
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Connected to RClient server");
+
+	// Setup event listeners
+	SetupSocketListeners();
+
+	// Request auth token
+	if(m_Socket.socket())
+	{
+		m_Socket.socket()->emit("request_token");
+	}
+}
+
+void CRClientIndicator::OnSocketDisconnected(sio::client::close_reason const &Reason)
+{
+	m_IsConnected = false;
+	m_Registered = false;
+	m_TokenReceived = false;
+
+	char aBuf[256];
+	str_format(aBuf, sizeof(aBuf), "Disconnected from RClient server (reason: %d)", (int)Reason);
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", aBuf);
+
+	// Reset connection data
+	m_aCurrentServerAddress[0] = '\0';
+	m_CurrentPlayerId = -1;
+	m_CurrentDummyId = -1;
+}
+
+void CRClientIndicator::OnSocketFailed()
+{
+	m_IsConnected = false;
+	m_Registered = false;
+	m_TokenReceived = false;
+
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", "Connection to RClient server failed");
+}
+
+void CRClientIndicator::OnTokenReceived(sio::event &Event)
+{
+	auto Data = Event.get_message();
+	if(!Data || Data->get_flag() != sio::message::flag_object)
+		return;
+
+	auto &DataMap = Data->get_map();
+	if(DataMap.find("token") == DataMap.end())
+		return;
+
+	std::string Token = DataMap["token"]->get_string();
+	str_copy(m_aAuthToken, Token.c_str(), sizeof(m_aAuthToken));
+	m_TokenReceived = true;
+
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RClient", "Received auth token");
+
+	// If we're in game, register immediately
+	if(Client()->State() == IClient::STATE_ONLINE)
+	{
+		RegisterPlayer();
+	}
+}
+
+void CRClientIndicator::OnRegistrationSuccess(sio::event &Event)
+{
+	auto Data = Event.get_message();
+	if(!Data || Data->get_flag() != sio::message::flag_object)
+		return;
+
+	auto &DataMap = Data->get_map();
+
+	std::string ServerAddr = DataMap["server_address"]->get_string();
+	int PlayerId = DataMap["player_id"]->get_int();
+
+	m_Registered = true;
+
+	char aBuf[256];
+	str_format(aBuf, sizeof(aBuf), "Successfully registered on %s as player %d", ServerAddr.c_str(), PlayerId);
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", aBuf);
+}
+
+void CRClientIndicator::OnUnregisterSuccess(sio::event &Event)
+{
+	auto Data = Event.get_message();
+	if(!Data || Data->get_flag() != sio::message::flag_object)
+		return;
+
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RClient", "Successfully unregistered from server");
+}
+
+void CRClientIndicator::OnPlayersUpdate(sio::event &Event)
+{
+	auto Data = Event.get_message();
+	if(!Data || Data->get_flag() != sio::message::flag_object)
+		return;
+
+	auto &DataMap = Data->get_map();
+
+	// Get server address
+	if(DataMap.find("server_address") == DataMap.end())
+		return;
+
+	std::string ServerAddr = DataMap["server_address"]->get_string();
+
+	// Get players object
+	if(DataMap.find("players") == DataMap.end())
+		return;
+
+	auto PlayersData = DataMap["players"];
+	if(PlayersData->get_flag() != sio::message::flag_object)
+		return;
+
+	auto &PlayersMap = PlayersData->get_map();
+
+	// Update RClient users list
+	std::lock_guard<std::mutex> Lock(m_RClientUsersMutex);
+
+	// Clear old data for this server
+	m_RClientUsers[ServerAddr].clear();
+
+	// Parse each player
+	for(auto &PlayerEntry : PlayersMap)
+	{
+		int PlayerId = std::stoi(PlayerEntry.first);
+		auto PlayerData = PlayerEntry.second;
+
+		if(PlayerData->get_flag() != sio::message::flag_object)
+			continue;
+
+		auto &PlayerDataMap = PlayerData->get_map();
+
+		// Add main player
+		m_RClientUsers[ServerAddr][PlayerId] = true;
+
+		// Check for dummy
+		if(PlayerDataMap.find("dummy_id") != PlayerDataMap.end())
+		{
+			int DummyId = PlayerDataMap["dummy_id"]->get_int();
+			m_RClientUsers[ServerAddr][DummyId] = true;
+		}
+	}
+
+	char aBuf[256];
+	str_format(aBuf, sizeof(aBuf), "Players update for %s: %d players", ServerAddr.c_str(), (int)PlayersMap.size());
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "RClient", aBuf);
+}
+
+void CRClientIndicator::OnError(sio::event &Event)
+{
+	auto Data = Event.get_message();
+	if(!Data || Data->get_flag() != sio::message::flag_object)
+		return;
+
+	auto &DataMap = Data->get_map();
+	if(DataMap.find("message") == DataMap.end())
+		return;
+
+	std::string ErrorMsg = DataMap["message"]->get_string();
+
+	char aBuf[512];
+	str_format(aBuf, sizeof(aBuf), "Error: %s", ErrorMsg.c_str());
+	GameClient()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "RClient", aBuf);
+}
+
+bool CRClientIndicator::IsPlayerRClient(int ClientId)
+{
+	if(Client()->State() != IClient::STATE_ONLINE || !m_IsConnected)
+		return false;
+
+	CServerInfo CurrentServerInfo;
+	Client()->GetServerInfo(&CurrentServerInfo);
+
+	std::string ServerKey(CurrentServerInfo.m_aAddress);
+
+	std::lock_guard<std::mutex> Lock(m_RClientUsersMutex);
+
+	// Check if this server and player are in our RClient users map
+	auto ServerIt = m_RClientUsers.find(ServerKey);
+	if(ServerIt != m_RClientUsers.end())
+	{
+		auto PlayerIt = ServerIt->second.find(ClientId);
+		if(PlayerIt != ServerIt->second.end())
+		{
 			return true;
+		}
 	}
 
 	return false;
