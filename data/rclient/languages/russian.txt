@@ -504,3 +504,9 @@ Full
 [Rclientfilter]
 Both
 == Оба
+
+Move up
+== Шаг вверх
+
+Move down
+== Шаг вниз
