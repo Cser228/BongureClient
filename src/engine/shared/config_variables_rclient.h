@@ -20,8 +20,6 @@ MACRO_CONFIG_INT(RiFilterChangeWholeWord, ri_filter_change_whole_word, 1, 0, 2, 
 MACRO_CONFIG_STR(RiBlockedContentPartialReplacementChar, ri_blocked_content_partial_replacement_char, 64, "*", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Character used to replace partial blocked content")
 
 //Scoreboard
-MACRO_CONFIG_INT(RiResetPopupScoreboardOnUntab, ri_reset_popup_scoreboard_on_untab, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Reset popup scoreboard on untab")
-MACRO_CONFIG_INT(RiToggleScoreboardMouse, ri_toggle_scoreboard_mouse, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Toggle mouse scoreboard or work on hold")
 MACRO_CONFIG_INT(RiScoreboardFriendMark, ri_scoreboard_friendmark, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show friend mark (♥) in scoreboard")
 
 //Lasers
