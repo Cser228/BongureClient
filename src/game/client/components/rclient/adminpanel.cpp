@@ -129,33 +129,36 @@ void CAdminPanel::SetActive(bool Active)
 	if(m_Active == Active)
 		return;
 
+	const bool WasActive = m_Active;
 	m_Active = Active;
 	if(m_Active)
 	{
 		m_Mouse.m_Unlocked = true;
+		m_WasSpecActive = GameClient()->m_Snap.m_SpecInfo.m_Active;
 		Console()->ExecuteLine("say /spec");
 	}
 	else
 	{
-		OnReset();
-		Console()->ExecuteLine("say /spec");
+		ResetState();
+		if(WasActive)
+			Console()->ExecuteLine("say /spec");
 	}
 }
 
 void CAdminPanel::OnReset()
 {
-	m_Mouse.reset();
-	m_Popup.reset();
-	RIReset();
-	SetActive(false);
+	const bool WasActive = m_Active;
+	ResetState();
+	if(WasActive)
+		Console()->ExecuteLine("say /spec");
 }
 
 void CAdminPanel::OnRelease()
 {
-	m_Mouse.reset();
-	m_Popup.reset();
-	RIReset();
-	SetActive(false);
+	const bool WasActive = m_Active;
+	ResetState();
+	if(WasActive)
+		Console()->ExecuteLine("say /spec");
 }
 
 bool CAdminPanel::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
@@ -271,8 +274,15 @@ void CAdminPanel::OnRender()
 	if(!IsActive())
 		return;
 
-	if(!GameClient()->m_Snap.m_SpecInfo.m_Active)
+	const bool SpecActive = GameClient()->m_Snap.m_SpecInfo.m_Active;
+	if(!SpecActive)
+	{
+		// Allow initial transition into spectator mode; only auto-close if we were already in spec.
+		if(m_WasSpecActive)
+			ResetState();
 		return;
+	}
+	m_WasSpecActive = true;
 
 	if(GameClient()->m_Snap.m_SpecInfo.m_Active && GameClient()->m_Snap.m_SpecInfo.m_SpectatorId == SPEC_FREEVIEW && m_pActiveItem != &m_AdminInput && m_pActiveItem != &m_AdminTimers)
 	{
@@ -294,6 +304,12 @@ void CAdminPanel::OnRender()
 	// find closest player to mouse for highlighting
 	float ClosestDist = 15.0f;
 	m_HoveredPlayerId = -1;
+	const float ScreenWidth = 100.0f * 3.0f * Graphics()->ScreenAspect();
+	const float ScreenHeight = 100.0f * 3.0f;
+	float WorldWidth = 0.0f, WorldHeight = 0.0f;
+	Graphics()->CalcScreenParams(Graphics()->ScreenAspect(), GameClient()->m_Camera.m_Zoom, &WorldWidth, &WorldHeight);
+	const vec2 CameraCenter = GameClient()->m_Camera.m_Center;
+	const vec2 WorldToScreen = vec2(ScreenWidth / WorldWidth, ScreenHeight / WorldHeight);
 	for(int i = 0; i < MAX_CLIENTS; ++i)
 	{
 		if(!GameClient()->m_Snap.m_apPlayerInfos[i])
@@ -302,11 +318,9 @@ void CAdminPanel::OnRender()
 		vec2 PlayerPos = GameClient()->m_aClients[i].m_RenderPos;
 		if(PlayerPos.x == 0 && PlayerPos.y == 0)
 			continue;
-		float ScreenWidth = 100.0f * 3.0f * Graphics()->ScreenAspect();
-		float ScreenHeight = 100.0f * 3.0f;
 		m_PlayerScreenPos = vec2(
-			ScreenWidth / 2 + (PlayerPos.x - GameClient()->m_Camera.m_Center.x) / 2.68f / GameClient()->m_Camera.m_Zoom,
-			ScreenHeight / 2 + (PlayerPos.y - GameClient()->m_Camera.m_Center.y) / 2.68f / GameClient()->m_Camera.m_Zoom);
+			ScreenWidth / 2 + (PlayerPos.x - CameraCenter.x) * WorldToScreen.x,
+			ScreenHeight / 2 + (PlayerPos.y - CameraCenter.y) * WorldToScreen.y);
 
 		float Dist = distance(vec2(m_Mouse.m_Position.x, m_Mouse.m_Position.y), m_PlayerScreenPos);
 		if(Dist < ClosestDist)
@@ -551,7 +565,7 @@ void CAdminPanel::RenderPlayerPanelPopUpTimers(CUIRect *pBase)
 	{
 		Container.VSplitLeft(SAdminPanelProperties::ms_RconTimersWidth, &Button, &Container);
 		if(Hovered(&Button))
-			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
+			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::ActionBanAltButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		else
 			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralActiveButtonColor() : SAdminPanelProperties::GeneralButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		Ui()->DoLabel(&Button, RCLocalize(s_aElems[i].pTime), SAdminPanelProperties::ms_FontSize, TEXTALIGN_MC);
@@ -576,7 +590,7 @@ void CAdminPanel::RenderPlayerPanelPopUpTimers(CUIRect *pBase)
 	{
 		Container.VSplitLeft(SAdminPanelProperties::ms_RconTimersWidth, &Button, &Container);
 		if(Hovered(&Button))
-			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
+			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::ActionBanAltButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		else
 			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralActiveButtonColor() : SAdminPanelProperties::GeneralButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		Ui()->DoLabel(&Button, RCLocalize(s_aElems[i].pTime), SAdminPanelProperties::ms_FontSize, TEXTALIGN_MC);
@@ -601,7 +615,7 @@ void CAdminPanel::RenderPlayerPanelPopUpTimers(CUIRect *pBase)
 	{
 		Container.VSplitLeft(SAdminPanelProperties::ms_RconTimersWidth, &Button, &Container);
 		if(Hovered(&Button))
-			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
+			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::ActionBanAltButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		else
 			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralActiveButtonColor() : SAdminPanelProperties::GeneralButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		Ui()->DoLabel(&Button, RCLocalize(s_aElems[i].pTime), SAdminPanelProperties::ms_FontSize, TEXTALIGN_MC);
@@ -628,7 +642,7 @@ void CAdminPanel::RenderPlayerPanelPopUpTimers(CUIRect *pBase)
 	{
 		Container.VSplitLeft(SAdminPanelProperties::ms_RconTimersWidth, &Button, &Container);
 		if(Hovered(&Button))
-			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
+			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::ActionBanAltButtonColor() : SAdminPanelProperties::GeneralActiveButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		else
 			Button.Draw(m_InputTimers == s_aElems[i].Minutes ? SAdminPanelProperties::GeneralActiveButtonColor() : SAdminPanelProperties::GeneralButtonColor(), IGraphics::CORNER_ALL, SAdminPanelProperties::ms_Rounding);
 		Ui()->DoLabel(&Button, (s_aElems[i].pTime), SAdminPanelProperties::ms_FontSize, TEXTALIGN_MC);

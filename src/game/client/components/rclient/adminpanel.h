@@ -24,6 +24,7 @@ class CAdminPanel : public CComponent
 	bool m_ActiveItemValid = false;
 	int m_LastConfirm = 0;
 	int m_ReadyButtons = 0;
+	bool m_WasSpecActive = false;
 
 	// int64_t m_ClickTime;
 
@@ -130,6 +131,17 @@ class CAdminPanel : public CComponent
 			m_Active = false;
 		}
 	} m_PlayerList;
+
+	void ResetState()
+	{
+		m_Mouse.reset();
+		m_Mouse.m_Position = vec2(0, 0);
+		m_Mouse.m_DragStart = vec2(0, 0);
+		m_Popup.reset();
+		RIReset();
+		m_Active = false;
+		m_WasSpecActive = false;
+	}
 
 	void DoIconLabeledButton(CUIRect *pRect, const char *pTitle, const char *pIcon, float TextSize, float Height, ColorRGBA IconColor) const;
 	void DoIconLabeledButtonDown(CUIRect *pRect, const char *pTitle, const char *pIcon, float IconSize, float TextSize, float Height, float Dif, ColorRGBA IconColor) const;
