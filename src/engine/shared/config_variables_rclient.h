@@ -22,6 +22,7 @@ MACRO_CONFIG_STR(RiBlockedContentPartialReplacementChar, ri_blocked_content_part
 //Scoreboard
 MACRO_CONFIG_INT(RiResetPopupScoreboardOnUntab, ri_reset_popup_scoreboard_on_untab, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Reset popup scoreboard on untab")
 MACRO_CONFIG_INT(RiToggleScoreboardMouse, ri_toggle_scoreboard_mouse, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Toggle mouse scoreboard or work on hold")
+MACRO_CONFIG_INT(RiScoreboardFriendMark, ri_scoreboard_friendmark, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show friend mark (♥) in scoreboard")
 
 //Lasers
 MACRO_CONFIG_INT(RiLaserGlowIntensity, ri_laser_ench, 0, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "")

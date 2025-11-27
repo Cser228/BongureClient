@@ -701,6 +701,19 @@ bool CScoreboard::RenderScoreboard(CUIRect Scoreboard, int Team, int CountStart,
 					TextRender()->TextEx(&Cursor, aClientId);
 				}
 
+				if(pInfo->m_ClientId >= 0 && GameClient()->m_aClients[pInfo->m_ClientId].m_Friend && g_Config.m_RiScoreboardFriendMark)
+				{
+					const ColorRGBA PrevColor = TextRender()->GetTextColor();
+					TextRender()->TextColor(ColorRGBA(1.0f, 0.0f, 0.0f, PrevColor.a));
+
+					TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
+					TextRender()->TextEx(&Cursor, FontIcons::FONT_ICON_HEART);
+					TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
+
+					TextRender()->TextColor(PrevColor);
+					TextRender()->TextEx(&Cursor, " ");
+				}
+
 				if(pInfo->m_ClientId >= 0 && (GameClient()->m_aClients[pInfo->m_ClientId].m_Foe || GameClient()->m_aClients[pInfo->m_ClientId].m_ChatIgnore))
 				{
 					TextRender()->SetFontPreset(EFontPreset::ICON_FONT);

@@ -420,10 +420,11 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(LineSize, &Label, &Column);
 	DoLine_KeyReader(Label, s_ReaderButtonScoreboard, s_ClearButtonScoreboard, RCLocalize("Unlock mouse in scoreboard"), "+scoreboard_mouse");
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
-
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiResetPopupScoreboardOnUntab, RCLocalize("Reset mouse in scoreboard on untab"), &g_Config.m_RiResetPopupScoreboardOnUntab, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiToggleScoreboardMouse, RCLocalize("Toggle mouse unlock in scoreboard"), &g_Config.m_RiToggleScoreboardMouse, &Column, LineSize);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiScoreboardFriendMark, RCLocalize("Show friend icon in scoreboard"), &g_Config.m_RiToggleScoreboardMouse, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 
 	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
