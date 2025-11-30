@@ -431,7 +431,11 @@ void CTClient::OnConsoleInit()
 		"tc_regex_chat_ignore", [](IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData) {
 			if(pResult->NumArguments() == 1)
 			{
-				auto Re = Regex(pResult->GetString(0));
+				const char *pRegex = pResult->GetString(0);
+				char aLowerRegex[1024];
+				str_utf8_tolower(pRegex, aLowerRegex, sizeof(aLowerRegex));
+
+				auto Re = Regex(aLowerRegex, true);
 				if(!Re.error().empty())
 				{
 					log_error("tclient", "Invalid regex: %s", Re.error().c_str());

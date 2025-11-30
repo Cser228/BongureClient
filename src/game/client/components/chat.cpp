@@ -14,6 +14,8 @@
 #include <generated/protocol.h>
 #include <generated/protocol7.h>
 
+#include <cstring>
+
 #include <game/client/animstate.h>
 #include <game/client/components/censor.h>
 #include <game/client/components/scoreboard.h>
@@ -1661,9 +1663,14 @@ const char *CChat::FilterText(const char *pMessage, int ClientId, bool IsChat)
 		if(RePlr.error().empty() && RePlr.test(GameClient()->m_aClients[ClientId].m_aName))
 			return pMessage;
 	}
+	auto &Re = GameClient()->m_TClient.m_RegexChatIgnore;
+	if(!Re.error().empty())
+		return pMessage;
+	if(!Re.test(pMessage))
+		return pMessage;
+
 	std::vector<std::string> BlockedWords;
 	std::vector<std::string> SplitMsg = CRClient::SplitWords(pMessage);
-	auto &Re = GameClient()->m_TClient.m_RegexChatIgnore;
 
 	if(g_Config.m_RiShowBlockedWordInConsole && IsChat)
 	{
@@ -1753,10 +1760,15 @@ const char *CChat::FilterText(const char *pMessage, int ClientId, bool IsChat)
 			bool IsExactMatch = false;
 			if(Re.error().empty())
 			{
+				std::string LowerWord;
+				LowerWord.resize(SplitMsg[w].size() * 4 + 1);
+				str_utf8_tolower(SplitMsg[w].c_str(), LowerWord.data(), LowerWord.size());
+				LowerWord.resize(std::strlen(LowerWord.c_str()));
+
 				// Check if the word exactly matches a blocked word
 				std::string matchedWord;
-				Re.match(SplitMsg[w], false, [&matchedWord, &SplitMsg, w](const std::string &match, int matchIndex, int group) {
-					if(group == 0 && match == SplitMsg[w])
+				Re.match(LowerWord, false, [&matchedWord, &LowerWord](const std::string &match, int matchIndex, int group) {
+					if(group == 0 && match == LowerWord)
 					{
 						matchedWord = match;
 					}
