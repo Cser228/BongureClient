@@ -519,3 +519,9 @@ Move up
 
 Move down
 == Шаг вниз
+
+Enable spectator camera move
+== Включить движение камеры в спеке
+
+Speed of camera
+== Скорость камеры

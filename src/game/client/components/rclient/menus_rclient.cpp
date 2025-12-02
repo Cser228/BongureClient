@@ -808,22 +808,45 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(LineSize, &Label, &Column);
 	DoLine_KeyReader(Label, s_ReaderButtonSpecPlr, s_ClearButtonSpecPlr, RCLocalize("Tracker for spectating player"), "ri_tracker_spectator");
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	static CButtonContainer s_ReaderButtonSpectatorLeft, s_ClearButtonSpectatorLeft,
-		s_ReaderButtonSpectatorRight, s_ClearButtonSpectatorRight,
-		s_ReaderButtonSpectatorUp, s_ClearButtonSpectatorUp,
-		s_ReaderButtonSpectatorDown, s_ClearButtonSpectatorDown;
-	Column.HSplitTop(LineSize, &Label, &Column);
-	DoLine_KeyReader(Label, s_ReaderButtonSpectatorLeft, s_ClearButtonSpectatorLeft, RCLocalize("Move left"), "+ri_spec_left");
-	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	Column.HSplitTop(LineSize, &Label, &Column);
-	DoLine_KeyReader(Label, s_ReaderButtonSpectatorRight, s_ClearButtonSpectatorRight, RCLocalize("Move right"), "+ri_spec_right");
-	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	Column.HSplitTop(LineSize, &Label, &Column);
-	DoLine_KeyReader(Label, s_ReaderButtonSpectatorUp, s_ClearButtonSpectatorUp, RCLocalize("Move up"), "+ri_spec_up");
-	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	Column.HSplitTop(LineSize, &Label, &Column);
-	DoLine_KeyReader(Label, s_ReaderButtonSpectatorDown, s_ClearButtonSpectatorDown, RCLocalize("Move down"), "+ri_spec_down");
-	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiSpectatorMoveEnable, RCLocalize("Enable spectator camera move"), &g_Config.m_RiSpectatorMoveEnable, &Column, LineSize);
+	if(g_Config.m_RiSpectatorMoveEnable)
+	{
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Ui()->DoScrollbarOption(&g_Config.m_RiSpectatorMoveSpeed, &g_Config.m_RiSpectatorMoveSpeed, &Button, RCLocalize("Speed of camera"), 10, 200);
+		Column.HSplitTop(MarginSmall, &Button, &Column);
+		static CButtonContainer s_ReaderButtonSpectatorLeft, s_ClearButtonSpectatorLeft,
+			s_ReaderButtonSpectatorRight, s_ClearButtonSpectatorRight,
+			s_ReaderButtonSpectatorUp, s_ClearButtonSpectatorUp,
+			s_ReaderButtonSpectatorDown, s_ClearButtonSpectatorDown;
+		Column.HSplitTop(LineSize, &Label, &Column);
+		DoLine_KeyReader(Label, s_ReaderButtonSpectatorLeft, s_ClearButtonSpectatorLeft, RCLocalize("Move left"), "+ri_spec_left");
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Label, &Column);
+		DoLine_KeyReader(Label, s_ReaderButtonSpectatorRight, s_ClearButtonSpectatorRight, RCLocalize("Move right"), "+ri_spec_right");
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Label, &Column);
+		DoLine_KeyReader(Label, s_ReaderButtonSpectatorUp, s_ClearButtonSpectatorUp, RCLocalize("Move up"), "+ri_spec_up");
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Label, &Column);
+		DoLine_KeyReader(Label, s_ReaderButtonSpectatorDown, s_ClearButtonSpectatorDown, RCLocalize("Move down"), "+ri_spec_down");
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	else
+	{
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Column.HSplitTop(MarginSmall, &Button, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Column.HSplitTop(MarginSmall, &Button, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Column.HSplitTop(MarginSmall, &Button, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Column.HSplitTop(MarginSmall, &Button, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Column.HSplitTop(MarginSmall, &Button, &Column);
+
+	}
 	EndSection(Column);
 
 	// ***** Chat Bubbles ***** //

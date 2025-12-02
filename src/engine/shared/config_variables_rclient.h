@@ -44,10 +44,6 @@ MACRO_CONFIG_INT(RiToggleSmallSens, ri_toggle_small_sens, 0, 0, 1, CFGFLAG_CLIEN
 //Hud
 MACRO_CONFIG_INT(RiShowMilliSecondsTimer, ri_show_milliseconds_timer, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show milliseconds in game timer")
 MACRO_CONFIG_INT(RiHeartSize, ri_heart_size, 75, 0, 500, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Edit size of friend heart")
-MACRO_CONFIG_INT(RiShowAfkEmoteInMenu, ri_show_afk_emote_menu, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows afk emote when player in menu (only client)")
-MACRO_CONFIG_INT(RiShowAfkTextureInMenu, ri_show_afk_texture_in_menu, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows afk texture when player in menu (only client)")
-MACRO_CONFIG_INT(RiShowAfkEmoteInSpec, ri_show_afk_emote_spec, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows afk emote when player in spec (only client)")
-MACRO_CONFIG_INT(RiShowAfkTextureInSpec, ri_show_afk_texture_in_spec, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows spec texture when player in spec (only client)")
 
 //Dummy
 MACRO_CONFIG_INT(RiShowhudDummyPosition, ri_showhud_dummy_position, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show ingame HUD (Dummy Position)")
@@ -121,9 +117,13 @@ MACRO_CONFIG_STR(RiIndicatorServerUrl, ri_indicator_server_url, 256, "localhost:
 //Config tab
 MACRO_CONFIG_INT(RiUiShowRClient, ri_ui_show_rclient, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show RClient domain in Configs tab")
 
-//Spectator move
+//Spectator
 MACRO_CONFIG_INT(RiSpectatorMoveSpeed, ri_spectator_move_speed, 100, 10, 200, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Speed of spectator freeview movement")
-MACRO_CONFIG_INT(RiSpectatorMoveEnable, ri_spectator_move_enable, 100, 10, 200, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Enable spectator movement binds")
+MACRO_CONFIG_INT(RiSpectatorMoveEnable, ri_spectator_move_enable, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Enable spectator movement binds")
 
 //Effects
 MACRO_CONFIG_INT(RiShowSparkleTrail, ri_show_sparkle_trail, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show sparkle trail from invicible in rcon")
+MACRO_CONFIG_INT(RiShowAfkEmoteInMenu, ri_show_afk_emote_menu, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows afk emote when player in menu (only client)")
+MACRO_CONFIG_INT(RiShowAfkTextureInMenu, ri_show_afk_texture_in_menu, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows afk texture when player in menu (only client)")
+MACRO_CONFIG_INT(RiShowAfkEmoteInSpec, ri_show_afk_emote_spec, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows afk emote when player in spec (only client)")
+MACRO_CONFIG_INT(RiShowAfkTextureInSpec, ri_show_afk_texture_in_spec, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows spec texture when player in spec (only client)")
