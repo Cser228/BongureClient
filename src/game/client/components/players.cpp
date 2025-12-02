@@ -951,11 +951,12 @@ void CPlayers::RenderPlayer(
 		Graphics()->QuadsSetRotation(0);
 	}
 
+	//RClient
 	if((Player.m_PlayerFlags & PLAYERFLAG_IN_MENU) && !GameClient()->m_aClients[ClientId].m_Afk && g_Config.m_RiShowAfkEmoteInMenu)
 	{
 		Graphics()->SetColor(1.0f, 1.0f, 1.0f, Alpha);
 
-		if(m_RiMenuAfkTexture.IsValid() && !m_RiMenuAfkTexture.IsNullTexture() && g_Config.m_RiShowAfkTextureInMenu)
+		if(g_Config.m_RiShowAfkTextureInMenu)
 		{
 			Graphics()->TextureSet(m_RiMenuAfkTexture);
 			Graphics()->RenderQuadContainerAsSprite(m_WeaponEmoteQuadContainerIndex, QuadOffsetToEmoticon, BodyPos.x, BodyPos.y);
@@ -1623,10 +1624,7 @@ void CPlayers::CreateSpectatorTeeRenderInfo()
 void CPlayers::OnInit()
 {
 	m_WeaponEmoteQuadContainerIndex = Graphics()->CreateQuadContainer(false);
-	if(Storage()->FileExists("rclient/menu_afk.png", IStorage::TYPE_ALL))
-	{
-		m_RiMenuAfkTexture = Graphics()->LoadTexture("rclient/menu_afk.png", IStorage::TYPE_ALL);
-	}
+	m_RiMenuAfkTexture = Graphics()->LoadTexture("rclient/menu_afk.png", IStorage::TYPE_ALL);
 
 	Graphics()->SetColor(1.f, 1.f, 1.f, 1.f);
 
