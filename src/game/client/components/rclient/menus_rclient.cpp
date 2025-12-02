@@ -42,6 +42,7 @@ const float ColorPickerLineSize = 25.0f;
 const float HeadlineFontSize = 20.0f;
 
 const float HeadlineHeight = HeadlineFontSize + 0.0f;
+const float Margin = 10.0f;
 const float MarginSmall = 5.0f;
 const float MarginExtraSmall = 2.5f;
 const float MarginBetweenSections = 30.0f;
@@ -226,7 +227,6 @@ void CMenus::RenderSettingsRushieInfo(CUIRect MainView)
 
 void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 {
-	// Add scroll region using the same pattern as other menus
 	static CScrollRegion s_ScrollRegion;
 	vec2 ScrollOffset(0.0f, 0.0f);
 	CScrollRegionParams ScrollParams;
@@ -235,6 +235,9 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	ScrollParams.m_ScrollbarMargin = 5.0f;
 	s_ScrollRegion.Begin(&MainView, &ScrollOffset, &ScrollParams);
 
+	static std::vector<CUIRect> s_SectionBoxes;
+	static vec2 s_PrevScrollOffset(0.0f, 0.0f);
+
 	MainView.y += ScrollOffset.y;
 
 	// Add padding for scrollbar
@@ -242,6 +245,32 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	MainView.VSplitLeft(5.0f, nullptr, &MainView);
 
 	CUIRect LeftView, RightView, Button, Label;
+
+	MainView.VSplitMid(&LeftView, &RightView, MarginBetweenViews);
+	LeftView.VSplitLeft(MarginSmall, nullptr, &LeftView);
+	RightView.VSplitRight(MarginSmall, &RightView, nullptr);
+
+	for(CUIRect &Section : s_SectionBoxes)
+	{
+		float Padding = MarginBetweenViews * 0.6666f;
+		Section.w += Padding;
+		Section.h += Padding;
+		Section.x -= Padding * 0.5f;
+		Section.y -= Padding * 0.5f;
+		Section.y -= s_PrevScrollOffset.y - ScrollOffset.y;
+		Section.Draw(ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f), IGraphics::CORNER_ALL, 10.0f);
+	}
+	s_PrevScrollOffset = ScrollOffset;
+	s_SectionBoxes.clear();
+
+	auto BeginSection = [&](CUIRect &Column, float TopMargin) {
+		Column.HSplitTop(TopMargin, nullptr, &Column);
+		s_SectionBoxes.push_back(Column);
+	};
+
+	auto EndSection = [&](CUIRect &Column) {
+		s_SectionBoxes.back().h = Column.y - s_SectionBoxes.back().y;
+	};
 
 	auto DoBindchatDefault = [&](CUIRect &Column, CBindChat::CBindRclient &BindDefault) {
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -270,22 +299,11 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		}
 	};
 
-	// auto DoBindchatDefaults = [&](CUIRect &Column, const char *pTitle, std::vector<CBindChat::CBindRclient> &vBindchatDefaults) {
-	// 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
-	// 	Ui()->DoLabel(&Label, pTitle, HeadlineFontSize, TEXTALIGN_ML);
-	// 	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	// 	for(CBindChat::CBindRclient &BindchatDefault : vBindchatDefaults)
-	// 		DoBindchatDefault(Column, BindchatDefault);
-	// 	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
-	// };
-
 	// Split view into two columns
-	CUIRect Column;
-	MainView.VSplitMid(&LeftView, &RightView, 10.0f);
+	CUIRect Column = LeftView;
 
-	// Left column - Find/Copy Skin/Player
-	Column = LeftView;
-
+	// ***** Auto Change Player Info ***** //
+	BeginSection(Column, Margin);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Auto Change Player Info"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -324,9 +342,18 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		DoEditBoxWithLabel(&s_WithoutDummy, &Label, RCLocalize("Clan without dummy:"), "", g_Config.m_PlayerClanNoDummy, sizeof(g_Config.m_PlayerClanNoDummy));
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	else
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Chat Functions ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Chat Functions"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -344,8 +371,14 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		}
 	}
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	// Block list
+	// ***** Block List ***** //
+	BeginSection(Column, MarginBetweenSections);
+	Column.HSplitTop(HeadlineHeight, &Label, &Column);
+	Ui()->DoLabel(&Label, RCLocalize("Block list"), HeadlineFontSize, TEXTALIGN_MC);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiShowBlockedWordInConsole, RCLocalize("Show blocked word in console"), &g_Config.m_RiShowBlockedWordInConsole, &Column, LineSize);
 	GameClient()->m_Tooltips.DoToolTip(&g_Config.m_RiShowBlockedWordInConsole, &Column, RCLocalize("In console will be like 'tee said badbad'"));
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -373,6 +406,11 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		}
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	else
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiEnableCensorList, RCLocalize("Enable word block list"), &g_Config.m_RiEnableCensorList, &Column, LineSize);
 	GameClient()->m_Tooltips.DoToolTip(&g_Config.m_RiEnableCensorList, &Column, RCLocalize("Replacing blocked word with replacement char(badbad->******)"));
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -398,23 +436,43 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		Column.HSplitTop(LineSize, &Label, &Column);
 		DoEditBoxWithLabel(&s_PartialReplacementChar, &Label, RCLocalize("Partial Replacement char"), "*", g_Config.m_RiBlockedContentPartialReplacementChar, sizeof(g_Config.m_RiBlockedContentPartialReplacementChar));
 	}
+	else
+	{
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+	}
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
+	// ***** Chat ***** //
+	BeginSection(Column, MarginBetweenSections);
+	Column.HSplitTop(HeadlineHeight, &Label, &Column);
+	Ui()->DoLabel(&Label, RCLocalize("Chat"), HeadlineFontSize, TEXTALIGN_MC);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiChatAnim, RCLocalize("Animate chat"), &g_Config.m_RiChatAnim, &Column, LineSize);
 	if(g_Config.m_RiChatAnim)
 	{
 		Column.HSplitTop(20.0f, &Label, &Column);
 		Ui()->DoScrollbarOption(&g_Config.m_RiChatAnimMs, &g_Config.m_RiChatAnimMs, &Label, RCLocalize("Anim chat ms"), 100, 2000, &CUi::ms_LogarithmicScrollbarScale, CUi::SCROLLBAR_OPTION_NOCLAMPVALUE);
 	}
+	else
+	{
+		Column.HSplitTop(20.0f, nullptr, &Column);
+	}
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Scoreboard ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Scoreboard"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiScoreboardFriendMark, RCLocalize("Show friend icon in scoreboard"), &g_Config.m_RiScoreboardFriendMark, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Changed Tater ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Changed Tater"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -435,8 +493,20 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		Column.HSplitTop(LineSize, &Button, &Column);
 		Ui()->DoScrollbarOption(&g_Config.m_RiIndicatorTransparentMin, &g_Config.m_RiIndicatorTransparentMin, &Button, RCLocalize("Indicator transparent minimum"), 0, 100);
 	}
+	else
+	{
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+	}
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Nameplates ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Nameplates", "RClient"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -467,6 +537,13 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiShowFireDynamic, RCLocalize("Fire will change pos when some nearby"), &g_Config.m_RiShowFireDynamic, &Column, LineSize);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	else
+	{
+		Column.HSplitTop(20.0f, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
 	DoLine_RadioMenu(Column, RCLocalize("Show players' hook presses"),
 		m_vButtonContainersNamePlateHookPresses,
 		{Localize("None", "Show players' key presses"), Localize("Own", "Show players' key presses RC"), Localize("Others", "Show players' key presses"), Localize("All", "Show players' key presses")},
@@ -481,8 +558,18 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiShowHookDynamic, RCLocalize("Hook will change pos when some nearby"), &g_Config.m_RiShowHookDynamic, &Column, LineSize);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	else
+	{
+		Column.HSplitTop(20.0f, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Dummy ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Dummy", "RClient"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -505,8 +592,25 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 			Column.HSplitTop(MarginSmall, nullptr, &Column);
 		}
 	}
+	else
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	if(g_Config.m_RiShowhudDummyPosition && !g_Config.m_RiChangeDummyColorWhenXDummyEqualXPlayer)
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Effects ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Effects"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -522,6 +626,11 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiShowAfkTextureInMenu, RCLocalize("Show afk texture instead emote"), &g_Config.m_RiShowAfkTextureInMenu, &Rightoffset, LineSize);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	else
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiShowAfkEmoteInSpec, RCLocalize("Show sleep emote in spec (ONLY CLIENT OTHER DON'T SEE THAT)"), &g_Config.m_RiShowAfkEmoteInSpec, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	if(g_Config.m_RiShowAfkEmoteInSpec)
@@ -532,11 +641,20 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiShowAfkTextureInSpec, RCLocalize("Show spec texture instead emote"), &g_Config.m_RiShowAfkTextureInSpec, &Rightoffset, LineSize);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	else
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
 	// Right column - Tracker pos
 	LeftView = Column;
 	Column = RightView;
 
+	// ***** Tracker Player ***** //
+	BeginSection(Column, Margin);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Tracker Player"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -570,9 +688,16 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiChangePlayerColorWhenXTargetEqualXPlayer, RCLocalize("Change player pos x color when x target = x player"), &g_Config.m_RiChangePlayerColorWhenXTargetEqualXPlayer, &Rightoffset, LineSize);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	else
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Hud ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Hud"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -580,8 +705,11 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Ui()->DoScrollbarOption(&g_Config.m_RiHeartSize, &g_Config.m_RiHeartSize, &Label, RCLocalize("Friend heart size"), 0, 500, &CUi::ms_LogarithmicScrollbarScale, CUi::SCROLLBAR_OPTION_NOCLAMPVALUE);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiShowMilliSecondsTimer, RCLocalize("Show milliseconds in timer"), &g_Config.m_RiShowMilliSecondsTimer, &Column, LineSize);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Controls ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Controls"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -626,25 +754,24 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	Column.HSplitTop(LineSize, &Label, &Column);
 	DoLine_KeyReader(Label, s_ReaderButtonRightJump, s_ClearButtonRightJump, RCLocalize("Right jump"), "+jump; +right");
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	// Laser Settings
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Laser Settings ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Laser Settings(Pulse)"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(10.0f, nullptr, &Column);
 
-	// RTX Laser
 	Column.HSplitTop(20.0f, &Button, &Column);
 	if(DoButton_CheckBox(&g_Config.m_RiBetterLasers, RCLocalize("Enhanced Laser Effects"), g_Config.m_RiBetterLasers, &Button))
 		g_Config.m_RiBetterLasers ^= 1;
 
 	if(g_Config.m_RiBetterLasers)
 	{
-		// Laser Glow Intensity
 		Column.HSplitTop(20.0f, &Button, &Column);
 		Ui()->DoScrollbarOption(&g_Config.m_RiLaserGlowIntensity, &g_Config.m_RiLaserGlowIntensity, &Button, RCLocalize("Laser Glow Intensity"), 30, 100);
 
-		// Laser Preview
 		Column.HSplitTop(20.0f, &Label, &Column);
 		Ui()->DoLabel(&Label, RCLocalize("Laser Preview"), 16.0f, TEXTALIGN_ML);
 		Column.HSplitTop(10.0f, nullptr, &Column);
@@ -659,8 +786,21 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		Column.HSplitTop(2 * MarginSmall, nullptr, &Column);
 		DoLaserPreview(&LaserPreview, g_Config.m_ClLaserShotgunInnerColor, g_Config.m_ClLaserShotgunOutlineColor, LASERTYPE_SHOTGUN);
 	}
+	else
+	{
+		Column.HSplitTop(20.0f, nullptr, &Column);
+		Column.HSplitTop(20.0f, nullptr, &Column);
+		Column.HSplitTop(10.0f, nullptr, &Column);
+		Column.HSplitTop(50.0f, nullptr, &Column);
+		Column.HSplitTop(2 * MarginSmall, nullptr, &Column);
+		Column.HSplitTop(50.0f, nullptr, &Column);
+		Column.HSplitTop(2 * MarginSmall, nullptr, &Column);
+	}
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Spectator ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Spectator"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -684,8 +824,10 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(LineSize, &Label, &Column);
 	DoLine_KeyReader(Label, s_ReaderButtonSpectatorDown, s_ClearButtonSpectatorDown, RCLocalize("Move down"), "+ri_spec_down");
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Chat Bubbles ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Chat Bubbles(E-Client)"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -704,8 +846,11 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	DoFloatScrollBar(&g_Config.m_RiChatBubbleFadeIn, &g_Config.m_RiChatBubbleFadeIn, &Button, RCLocalize("fade in for"), 15, 100, 100, &CUi::ms_LinearScrollbarScale, 0, "s");
 	Column.HSplitTop(LineSize, &Button, &Column);
 	DoFloatScrollBar(&g_Config.m_RiChatBubbleFadeOut, &g_Config.m_RiChatBubbleFadeOut, &Button, RCLocalize("fade out for"), 15, 100, 100, &CUi::ms_LinearScrollbarScale, 0, "s");
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Discord RPC ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Discord RPC(E-Client)"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -767,8 +912,11 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		DoEditBoxWithLabel(&s_DiscordRPCoffline, &Label, RCLocalize("Offline Message:"), "", g_Config.m_RiDiscordOfflineStatus, sizeof(g_Config.m_RiDiscordOfflineStatus));
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** RClient User Indicator ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("RClient User Indicator"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -781,8 +929,10 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiRclientIndicatorAboveSelf, RCLocalize("Show indicator above you"), &g_Config.m_RiRclientIndicatorAboveSelf, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	EndSection(Column);
 
-	Column.HSplitTop(MarginBetweenSections, nullptr, &Column);
+	// ***** Edge Info ***** //
+	BeginSection(Column, MarginBetweenSections);
 	Column.HSplitTop(HeadlineHeight, &Label, &Column);
 	Ui()->DoLabel(&Label, RCLocalize("Edge Info"), HeadlineFontSize, TEXTALIGN_MC);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
@@ -810,7 +960,7 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(LineSize, &Button, &Column);
 	Ui()->DoScrollbarOption(&g_Config.m_RiEdgeInfoPosY, &g_Config.m_RiEdgeInfoPosY, &Button, RCLocalize("Edge info pos y"), 0, 100);
 	Column.HSplitTop(MarginSmall, &Button, &Column);
-
+	EndSection(Column);
 
 	RightView = Column;
 
