@@ -60,7 +60,6 @@ MACRO_CONFIG_INT(RiHookDetectionSize, ri_hook_detection_size, 30, -50, 100, CFGF
 MACRO_CONFIG_STR(RiNamePlateScheme, ri_nameplate_scheme, 32, "", CFGFLAG_CLIENT | CFGFLAG_SAVE, "The order in which to show nameplate items (p=ping i=ignore m=ID n=name c=clan d=direction f=friend h=hook r=reason s=skin H=HookName F=FireName l=newline)")
 MACRO_CONFIG_INT(RiShowFireDynamic, ri_show_fire_dynamic, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Fire in nameplates will dynamically change pos")
 MACRO_CONFIG_INT(RiShowHookDynamic, ri_show_fire_dynamic, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Hook in nameplates will dynamically change pos")
-MACRO_CONFIG_INT(RiShowRclientIndicator, ri_show_rclient_indicator, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Rclient player indicator in nameplates")
 MACRO_CONFIG_INT(RiRclientIndicatorSize, ri_rclient_indicator_size, 30, -50, 100, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Size of rclient indicator icons")
 MACRO_CONFIG_INT(RiShowIndicatorDynamic, ri_show_indicator_dynamic, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Rclient indicator in nameplates will dynamically change pos")
 MACRO_CONFIG_INT(RiRclientIndicatorAboveSelf, ri_rclient_indicator_above_self, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Rclient indicator above you")
@@ -112,7 +111,8 @@ MACRO_CONFIG_INT(RiCrossChatDebug, ri_cross_chat_debug, 0, 0, 1, CFGFLAG_CLIENT 
 MACRO_CONFIG_STR(RiPulseSocketNameserver, ri_pulse_ntwr_nameserver, 256, "localhost:3000", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Pulse Nameserver for websockets")
 
 //RClient Socket
-MACRO_CONFIG_STR(RiIndicatorServerUrl, ri_indicator_server_url, 256, "https://server.rushie-client.ru", CFGFLAG_CLIENT | CFGFLAG_SAVE, "RClient indicator Socket.IO server URL")
+MACRO_CONFIG_STR(RiIndicatorServerUrl, ri_indicator_server_url, 256, "http://ws.server.rushie-client.ru", CFGFLAG_CLIENT | CFGFLAG_SAVE, "RClient indicator Socket.IO server URL")
+MACRO_CONFIG_INT(RiShowRclientIndicator, ri_show_rclient_indicator, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Rclient player indicator in nameplates")
 
 //Config tab
 MACRO_CONFIG_INT(RiUiShowRClient, ri_ui_show_rclient, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show RClient domain in Configs tab")

@@ -17,8 +17,6 @@
 
 class CRClientIndicator : public CComponent
 {
-	static constexpr const char *DEFAULT_RCLIENT_SERVER_URL = "https://server.rushie-client.ru";
-
 	// Socket.IO client
 	sio::client m_Socket;
 	bool m_IsConnecting = false;

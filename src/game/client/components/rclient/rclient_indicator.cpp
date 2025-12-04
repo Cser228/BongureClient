@@ -5,17 +5,6 @@
 #include "engine/client.h"
 #include "game/client/gameclient.h"
 
-std::string NormalizeServerUrl(const char *pConfigUrl, const char *pDefaultUrl)
-{
-	std::string Url = (pConfigUrl && pConfigUrl[0]) ? pConfigUrl : pDefaultUrl;
-	if(Url.rfind("http://", 0) != 0 && Url.rfind("https://", 0) != 0 && Url.rfind("ws://", 0) != 0 && Url.rfind("wss://", 0) != 0)
-	{
-		const bool LooksLocal = Url.rfind("localhost", 0) == 0 || Url.rfind("127.", 0) == 0 || Url.rfind("192.168.", 0) == 0 || Url.rfind("10.", 0) == 0;
-		Url = (LooksLocal ? "http://" : "https://") + Url;
-	}
-	return Url;
-}
-
 void CRClientIndicator::OnInit()
 {
 }
@@ -90,10 +79,13 @@ void CRClientIndicator::ConnectToServer()
 	if(m_IsConnected || m_IsConnecting)
 		return;
 
+	if(!g_Config.m_RiShowRclientIndicator)
+		return;
+
 	m_IsConnecting = true;
 	m_LastConnectAttempt = time_get();
 	m_TokenReceived = false;
-	m_ServerUrl = NormalizeServerUrl(g_Config.m_RiIndicatorServerUrl, DEFAULT_RCLIENT_SERVER_URL);
+	m_ServerUrl = g_Config.m_RiIndicatorServerUrl;
 
 	m_Socket.set_open_listener([this]() {
 		m_IsConnected = true;
