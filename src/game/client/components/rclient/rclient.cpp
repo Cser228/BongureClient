@@ -1529,29 +1529,16 @@ void CRClient::RclientOnPlayerChange(bool Connected)
 
 std::string CRClient::encodeUTF8(const std::string &Input)
 {
-	std::ostringstream Encoded;
-	const char *ptr = Input.c_str();
-
-	while(*ptr != '\0')
+	if(Input.empty())
 	{
-		int CodePoint = str_utf8_decode(&ptr);
-		if(CodePoint < 0)
-		{
-			Encoded << "-ERROR-";
-			break;
-		}
-
-		if(CodePoint <= 127 && std::isalnum(static_cast<unsigned char>(CodePoint)))
-		{
-			Encoded << static_cast<char>(CodePoint);
-		}
-		else
-		{
-			Encoded << '-' << CodePoint << '-';
-		}
+		return {};
 	}
 
-	return Encoded.str();
+	// EscapeUrl percent-encodes the UTF-8 bytes so ddnet.org can handle special characters.
+	std::string Encoded(Input.size() * 3 + 1, '\0');
+	EscapeUrl(Encoded.data(), Encoded.size(), Input.c_str());
+	Encoded.resize(str_length(Encoded.c_str()));
+	return Encoded;
 }
 
 float CRClient::GetScoreboardHeight(bool IsDefaultRender ,bool IsBigger, int ClientId)
