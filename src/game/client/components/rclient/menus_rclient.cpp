@@ -470,6 +470,12 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiScoreboardFriendMark, RCLocalize("Show friend icon in scoreboard"), &g_Config.m_RiScoreboardFriendMark, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiScoreboardAlwaysShowQuickActions, RCLocalize("Always show quick actions"), &g_Config.m_RiScoreboardAlwaysShowQuickActions, &Column, LineSize);
+	static std::vector<CButtonContainer> s_vScoreboardSortButtonContainers = {{}, {}, {}};
+	DoLine_RadioMenu(Column, RCLocalize("Sort by id:", "ScoreboardSorting"),
+		s_vScoreboardSortButtonContainers,
+		{RCLocalize("Default", "ScoreboardSorting"), RCLocalize("Teams", "ScoreboardSorting"), RCLocalize("All", "ScoreboardSorting")},
+		{0, 1, 2},
+		g_Config.m_RiScoreboardSortById);
 	EndSection(Column);
 
 	// ***** Changed Tater ***** //

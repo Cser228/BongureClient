@@ -2145,12 +2145,32 @@ void CGameClient::OnNewSnapshot()
 
 	// sort player infos by DDRace Team (and score between)
 	int Index = 0;
-	for(int Team = TEAM_FLOCK; Team <= TEAM_SUPER; ++Team)
+	// RClient sorting
+	if(g_Config.m_RiScoreboardSortById == 2)
 	{
 		for(int i = 0; i < MAX_CLIENTS && Index < MAX_CLIENTS; ++i)
 		{
-			if(m_Snap.m_apInfoByScore[i] && m_Teams.Team(m_Snap.m_apInfoByScore[i]->m_ClientId) == Team)
-				m_Snap.m_apInfoByDDTeamScore[Index++] = m_Snap.m_apInfoByScore[i];
+			if(m_Snap.m_apPlayerInfos[i])
+				m_Snap.m_apInfoByDDTeamScore[Index++] = m_Snap.m_apPlayerInfos[i];
+		}
+	}
+	else
+	{
+		for(int Team = TEAM_FLOCK; Team <= TEAM_SUPER; ++Team)
+		{
+			for(int i = 0; i < MAX_CLIENTS && Index < MAX_CLIENTS; ++i)
+			{
+				if(g_Config.m_RiScoreboardSortById == 1)
+				{
+					if(m_Snap.m_apPlayerInfos[i] && m_Teams.Team(m_Snap.m_apPlayerInfos[i]->m_ClientId) == Team)
+						m_Snap.m_apInfoByDDTeamScore[Index++] = m_Snap.m_apPlayerInfos[i];
+				}
+				else
+				{
+					if(m_Snap.m_apInfoByScore[i] && m_Teams.Team(m_Snap.m_apInfoByScore[i]->m_ClientId) == Team)
+						m_Snap.m_apInfoByDDTeamScore[Index++] = m_Snap.m_apInfoByScore[i];
+				}
+			}
 		}
 	}
 

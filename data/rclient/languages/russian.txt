@@ -525,3 +525,19 @@ Enable spectator camera move
 
 Speed of camera
 == Скорость камеры
+
+[ScoreboardSorting]
+Sort by id:
+== Сортировать по айди:
+
+[ScoreboardSorting]
+Default
+== Обычно
+
+[ScoreboardSorting]
+Teams
+== Команды
+
+[ScoreboardSorting]
+All
+== Всё
