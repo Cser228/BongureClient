@@ -753,7 +753,7 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
 	Column.HSplitTop(LineSize, &Label, &Column);
-	DoLine_KeyReader(Label, s_ReaderButtonSmallSens, s_ClearButtonSmallSens, RCLocalize("Small sens bind"), "ri_small_sens");
+	DoLine_KeyReader(Label, s_ReaderButtonSmallSens, s_ClearButtonSmallSens, RCLocalize("Small sens bind"), "+ri_small_sens");
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	{
 		CUIRect Rightoffset;
