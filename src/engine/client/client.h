@@ -299,6 +299,7 @@ public:
 	int SendMsgActive(CMsgPacker *pMsg, int Flags) override;
 
 	void SendRClientInfo(int Conn);
+	void SendTClientInfo(int Conn);
 	void SendInfo(int Conn);
 	void SendEnterGame(int Conn);
 	void SendReady(int Conn);

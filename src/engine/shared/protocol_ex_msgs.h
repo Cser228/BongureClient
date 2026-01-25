@@ -24,6 +24,8 @@
 #define UUID(Id, Name)
 #endif
 
+UUID(NETMSG_IAMRUSHIE, "i-am-rushie@RushieClient.github.io")
+
 UUID(NETMSG_WHATIS, "what-is@ddnet.tw")
 UUID(NETMSG_ITIS, "it-is@ddnet.tw")
 UUID(NETMSG_IDONTKNOW, "i-dont-know@ddnet.tw")
