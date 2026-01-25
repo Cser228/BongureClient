@@ -2591,10 +2591,10 @@ if(CLIENT)
     components/rclient/menus_rclient.cpp
     components/rclient/rclient.cpp
     components/rclient/rclient.h
-    components/rclient/voice.cpp
-    components/rclient/voice.h
     components/rclient/rclient_indicator.cpp
     components/rclient/rclient_indicator.h
+    components/rclient/voice.cpp
+    components/rclient/voice.h
     components/scoreboard.cpp
     components/scoreboard.h
     components/skins.cpp
