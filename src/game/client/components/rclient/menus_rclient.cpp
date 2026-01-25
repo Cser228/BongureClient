@@ -818,6 +818,26 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(LineSize, &Label, &Column);
 	DoLine_KeyReader(Label, s_ReaderButtonVoicePtt, s_ClearButtonVoicePtt, RCLocalize("Voice PTT"), "+ri_voice_ptt");
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	static std::vector<CButtonContainer> s_vVoiceWhiteListButtonContainers = {{}, {}, {}};
+	DoLine_RadioMenu(Column, RCLocalize("Block people with:", "VoiceChat"),
+		s_vVoiceWhiteListButtonContainers,
+		{RCLocalize("None", "VoiceChat"), RCLocalize("Whitelist", "VoiceChat"), RCLocalize("Blacklist", "VoiceChat")},
+		{0, 1, 2},
+		g_Config.m_RiVoiceListMode);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	for(CBindChat::CBindRclient &BindchatDefault : s_aDefaultBindChatRclientVoice)
+		DoBindchatDefault(Column, BindchatDefault);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	Column.HSplitTop(LineSize, &Button, &Column);
+	static CButtonContainer s_VoiceChatButton;
+	if(DoButtonLineSize_Menu(&s_VoiceChatButton, RCLocalize("Reset Voice Chatbinds"), 0, &Button, LineSize, false, 0, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.5f, 0.0f, 0.0f, 0.25f)))
+	{
+		for(const CBindChat::CBindRclient &BindDefault : s_aDefaultBindChatRclientVoice)
+		{
+			GameClient()->m_BindChat.RemoveBindCommand(BindDefault.m_Bind.m_aCommand);
+			GameClient()->m_BindChat.AddBind(BindDefault.m_Bind);
+		}
+	}
 	EndSection(Column);
 
 	// ***** Laser Settings ***** //
