@@ -288,6 +288,7 @@ bool CRClientVoice::EnsureAudio()
 			m_CaptureDevice = 0;
 		}
 		str_copy(m_aInputDeviceName, g_Config.m_RiVoiceInputDevice, sizeof(m_aInputDeviceName));
+		m_LogDeviceChange = true;
 	}
 
 	if(str_comp(m_aOutputDeviceName, g_Config.m_RiVoiceOutputDevice) != 0)
@@ -298,6 +299,7 @@ bool CRClientVoice::EnsureAudio()
 			m_OutputDevice = 0;
 		}
 		str_copy(m_aOutputDeviceName, g_Config.m_RiVoiceOutputDevice, sizeof(m_aOutputDeviceName));
+		m_LogDeviceChange = true;
 	}
 
 	if(m_OutputStereo != WantStereo)
@@ -308,6 +310,7 @@ bool CRClientVoice::EnsureAudio()
 			m_OutputDevice = 0;
 		}
 		m_OutputStereo = WantStereo;
+		m_LogDeviceChange = true;
 	}
 
 	const char *pInputName = FindDeviceName(true, m_aInputDeviceName);
@@ -358,6 +361,19 @@ bool CRClientVoice::EnsureAudio()
 			return false;
 		}
 		opus_encoder_ctl(m_pEncoder, OPUS_SET_BITRATE(24000));
+	}
+
+	if(m_LogDeviceChange)
+	{
+		const char *pInputReq = m_aInputDeviceName[0] ? m_aInputDeviceName : "<default>";
+		const char *pOutputReq = m_aOutputDeviceName[0] ? m_aOutputDeviceName : "<default>";
+		const char *pInputResolved = pInputName ? pInputName : "<default>";
+		const char *pOutputResolved = pOutputName ? pOutputName : "<default>";
+		log_info("voice", "audio devices set input='%s' resolved='%s' output='%s' resolved='%s' capture=%dch@%d output=%dch@%d",
+			pInputReq, pInputResolved, pOutputReq, pOutputResolved,
+			m_CaptureSpec.channels, m_CaptureSpec.freq,
+			m_OutputSpec.channels, m_OutputSpec.freq);
+		m_LogDeviceChange = false;
 	}
 
 	return true;
