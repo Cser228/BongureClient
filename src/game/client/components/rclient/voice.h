@@ -65,6 +65,7 @@ class CRClientVoice
 	void UpdateContext();
 	void ProcessCapture();
 	void ProcessIncoming();
+	void QueueOutput(const int16_t *pPcm, int Samples, int OutputChannels, float LeftGain, float RightGain, float Volume);
 	const char *FindDeviceName(bool Capture, const char *pDesired) const;
 
 public:

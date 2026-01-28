@@ -363,6 +363,57 @@ bool CRClientVoice::EnsureAudio()
 	return true;
 }
 
+void CRClientVoice::QueueOutput(const int16_t *pPcm, int Samples, int OutputChannels, float LeftGain, float RightGain, float Volume)
+{
+	if(Samples <= 0 || OutputChannels <= 0)
+		return;
+
+	const int MaxQueued = VOICE_SAMPLE_RATE * sizeof(int16_t) * OutputChannels * 2;
+	if((int)SDL_GetQueuedAudioSize(m_OutputDevice) > MaxQueued)
+		SDL_ClearQueuedAudio(m_OutputDevice);
+
+	if(OutputChannels >= 2)
+	{
+		if(OutputChannels <= VOICE_MIX_BUFFER_CHANNELS)
+		{
+			for(int i = 0; i < Samples; i++)
+			{
+				const int LeftSample = (int)(pPcm[i] * LeftGain);
+				const int RightSample = (int)(pPcm[i] * RightGain);
+				m_aMixingBuffer[i * OutputChannels] = (int16_t)std::clamp(LeftSample, -32768, 32767);
+				m_aMixingBuffer[i * OutputChannels + 1] = (int16_t)std::clamp(RightSample, -32768, 32767);
+				for(int ch = 2; ch < OutputChannels; ch++)
+					m_aMixingBuffer[i * OutputChannels + ch] = m_aMixingBuffer[i * OutputChannels];
+			}
+			SDL_QueueAudio(m_OutputDevice, m_aMixingBuffer, Samples * OutputChannels * sizeof(int16_t));
+		}
+		else
+		{
+			static thread_local std::vector<int16_t> s_Out;
+			s_Out.resize(Samples * OutputChannels);
+			for(int i = 0; i < Samples; i++)
+			{
+				const int LeftSample = (int)(pPcm[i] * LeftGain);
+				const int RightSample = (int)(pPcm[i] * RightGain);
+				s_Out[i * OutputChannels] = (int16_t)std::clamp(LeftSample, -32768, 32767);
+				s_Out[i * OutputChannels + 1] = (int16_t)std::clamp(RightSample, -32768, 32767);
+				for(int ch = 2; ch < OutputChannels; ch++)
+					s_Out[i * OutputChannels + ch] = s_Out[i * OutputChannels];
+			}
+			SDL_QueueAudio(m_OutputDevice, s_Out.data(), (int)s_Out.size() * sizeof(int16_t));
+		}
+	}
+	else
+	{
+		for(int i = 0; i < Samples; i++)
+		{
+			const int Sample = (int)(pPcm[i] * Volume);
+			m_aMixingBuffer[i] = (int16_t)std::clamp(Sample, -32768, 32767);
+		}
+		SDL_QueueAudio(m_OutputDevice, m_aMixingBuffer, Samples * sizeof(int16_t));
+	}
+}
+
 const char *CRClientVoice::FindDeviceName(bool Capture, const char *pDesired) const
 {
 	if(!pDesired || pDesired[0] == '\0')
@@ -618,7 +669,8 @@ void CRClientVoice::ProcessIncoming()
 		Offset += sizeof(uint32_t);
 		const uint16_t SenderId = ReadU16(pData + Offset);
 		Offset += sizeof(uint16_t);
-		Offset += sizeof(uint16_t); // sequence
+		const uint16_t Sequence = ReadU16(pData + Offset);
+		Offset += sizeof(uint16_t);
 		const float PosX = ReadFloat(pData + Offset);
 		Offset += sizeof(float);
 		const float PosY = ReadFloat(pData + Offset);
@@ -700,37 +752,7 @@ void CRClientVoice::ProcessIncoming()
 			{
 				int PlcSamples = opus_decode(pDecoder, nullptr, 0, aPcm, VOICE_FRAME_SAMPLES, 1);
 				if(PlcSamples > 0)
-				{
-					if(OutputChannels >= 2)
-					{
-						std::vector<int16_t> aOut(PlcSamples * OutputChannels);
-						for(int i = 0; i < PlcSamples; i++)
-						{
-							const int LeftSample = (int)(aPcm[i] * LeftGain);
-							const int RightSample = (int)(aPcm[i] * RightGain);
-							aOut[i * OutputChannels] = (int16_t)std::clamp(LeftSample, -32768, 32767);
-							aOut[i * OutputChannels + 1] = (int16_t)std::clamp(RightSample, -32768, 32767);
-							for(int ch = 2; ch < OutputChannels; ch++)
-								aOut[i * OutputChannels + ch] = aOut[i * OutputChannels];
-						}
-						const int MaxQueued = VOICE_SAMPLE_RATE * sizeof(int16_t) * OutputChannels * 2;
-						if((int)SDL_GetQueuedAudioSize(m_OutputDevice) > MaxQueued)
-							SDL_ClearQueuedAudio(m_OutputDevice);
-						SDL_QueueAudio(m_OutputDevice, aOut.data(), (int)aOut.size() * sizeof(int16_t));
-					}
-					else
-					{
-						for(int i = 0; i < PlcSamples; i++)
-						{
-							const int Sample = (int)(aPcm[i] * Volume);
-							aPcm[i] = (int16_t)std::clamp(Sample, -32768, 32767);
-						}
-						const int MaxQueued = VOICE_SAMPLE_RATE * sizeof(int16_t) * 2;
-						if((int)SDL_GetQueuedAudioSize(m_OutputDevice) > MaxQueued)
-							SDL_ClearQueuedAudio(m_OutputDevice);
-						SDL_QueueAudio(m_OutputDevice, aPcm, PlcSamples * sizeof(int16_t));
-					}
-				}
+					QueueOutput(aPcm, PlcSamples, OutputChannels, LeftGain, RightGain, Volume);
 				Expected = (uint16_t)(Expected + 1);
 				PlcCount++;
 			}
@@ -742,42 +764,7 @@ void CRClientVoice::ProcessIncoming()
 		Peer.m_LastSeq = Sequence;
 		Peer.m_HasSeq = true;
 
-		if(OutputChannels >= 2)
-		{
-			const int FrameCount = Samples;
-			std::vector<int16_t> aOut(FrameCount * OutputChannels);
-			for(int i = 0; i < FrameCount; i++)
-			{
-				const int LeftSample = (int)(aPcm[i] * LeftGain);
-				const int RightSample = (int)(aPcm[i] * RightGain);
-				aOut[i * OutputChannels] = (int16_t)std::clamp(LeftSample, -32768, 32767);
-				aOut[i * OutputChannels + 1] = (int16_t)std::clamp(RightSample, -32768, 32767);
-				for(int ch = 2; ch < OutputChannels; ch++)
-				{
-					aOut[i * OutputChannels + ch] = aOut[i * OutputChannels];
-				}
-			}
-
-			const int MaxQueued = VOICE_SAMPLE_RATE * sizeof(int16_t) * OutputChannels * 2;
-			if((int)SDL_GetQueuedAudioSize(m_OutputDevice) > MaxQueued)
-				SDL_ClearQueuedAudio(m_OutputDevice);
-
-			SDL_QueueAudio(m_OutputDevice, aOut.data(), (int)aOut.size() * sizeof(int16_t));
-		}
-		else
-		{
-			for(int i = 0; i < Samples; i++)
-			{
-				const int Sample = (int)(aPcm[i] * Volume);
-				aPcm[i] = (int16_t)std::clamp(Sample, -32768, 32767);
-			}
-
-			const int MaxQueued = VOICE_SAMPLE_RATE * sizeof(int16_t) * 2;
-			if((int)SDL_GetQueuedAudioSize(m_OutputDevice) > MaxQueued)
-				SDL_ClearQueuedAudio(m_OutputDevice);
-
-			SDL_QueueAudio(m_OutputDevice, aPcm, Samples * sizeof(int16_t));
-		}
+		QueueOutput(aPcm, Samples, OutputChannels, LeftGain, RightGain, Volume);
 
 		if(g_Config.m_RiVoiceDebug)
 		{
