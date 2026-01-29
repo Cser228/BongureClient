@@ -556,3 +556,160 @@ Show frozen flakes in freeze
 
 Partial Replacement char
 == Частичная замена
+
+Voice mix
+== Микшер войса
+
+Volume
+== Громкость
+
+No active players
+== Нет активных игроков
+
+Block list
+== Список блокировки
+
+Chat
+== Чат
+
+Scoreboard
+== Табло
+
+No colored frozen tee skins for yourself
+== Нет цветных замороженных скинов для себя
+
+Effects
+== Эффекты
+
+Hud
+== Худ
+
+Move left
+== Шаг влево
+
+Move right
+== Шаг вправо
+
+Find teleport
+== Найти телепорт
+
+Voice
+== Голос
+
+Enable voice chat
+== Включить голосовой чат
+
+Ignore distance
+== Игнорировать дистанцию
+
+Stereo output (pan left/right)
+== Стерео вывод (панорама влево/вправо)
+
+Voice filter (HPF+compressor+limiter)
+== Фильтр голоса (HPF+компрессор+лимитер)
+
+Filter presets
+== Пресеты фильтра
+
+Soft
+== Мягкий
+
+Balanced
+== Сбалансированный
+
+Strong
+== Сильный
+
+Show advanced filter settings
+== Показать расширенные настройки фильтра
+
+Comp threshold (%)
+== Порог компрессора (%)
+
+Comp ratio (x0.1)
+== Коэффициент компрессии (x0.1)
+
+Comp attack (ms)
+== Атака компрессора (мс)
+
+Comp release (ms)
+== Релиз компрессора (мс)
+
+Comp makeup (%)
+== Усиление после компрессии (%)
+
+Limiter (%)
+== Лимитер (%)
+
+Show voice indicator
+== Показывать индикатор голоса
+
+Voice radius (tiles)
+== Радиус голоса (тайлы)
+
+Voice volume
+== Громкость голоса
+
+Name volume
+== Громкость по имени
+
+Nickname
+== Никнейм
+
+Name volume (%)
+== Громкость по имени (%)
+
+Set volume
+== Установить громкость
+
+Remove volume
+== Убрать громкость
+
+Example: Name=80,Other=120
+== Пример: Name=80,Other=120
+
+Name volume list empty
+== Список громкости по именам пуст
+
+Input device
+== Устройство ввода
+
+Output device
+== Устройство вывода
+
+Use ri_voice_list_devices in console
+== Используйте ri_voice_list_devices в консоли
+
+Voice PTT
+== PTT голоса
+
+[VoiceChat]
+Block people with:
+== Блокировать людей с:
+
+[VoiceChat]
+None
+== Нет
+
+[VoiceChat]
+Whitelist
+== Белый список
+
+[VoiceChat]
+Blacklist
+== Черный список
+
+Reset Voice Chatbinds
+== Сбросить чатбинды голоса
+
+Admin Panel
+== Админ-панель
+
+Adminpanel
+== Админ панель
+
+Plays sound at exec command
+== Звук при выполнении команды
+
+The command is ran in console not chat
+== Команда выполняется в консоли, а не в чате
