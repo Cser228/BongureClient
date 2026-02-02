@@ -205,6 +205,45 @@ const float MarginBetweenViews = 30.0f;
 const float ColorPickerLabelSize = 13.0f;
 const float ColorPickerLineSpacing = 5.0f;
 
+struct SDropDownSimple
+{
+	CUi::SDropDownState m_State;
+	CScrollRegion m_ScrollRegion;
+	std::vector<const char *> m_vNames;
+};
+
+// Example
+// static SDropDownSimple s_MyDrop;
+// g_Config.m_RiShowHammerHit = DoSimpleDropDown(
+// 	Ui(),
+// 	Column,
+// 	RCLocalize("My setting:"),
+// 	g_Config.m_RiShowHammerHit,
+// 	{"Off", "On", "Auto"},
+// 	"My setting",
+// 	s_MyDrop);
+
+static int DoSimpleDropDown(CUi *pUi, CUIRect &Column, const char *pLabel, int CurrentValue, const std::vector<const char *> &vKeys, const char *pLocalizeContext, SDropDownSimple &Helper)
+{
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+
+	Helper.m_vNames.clear();
+	Helper.m_vNames.reserve(vKeys.size());
+	for(const char *pKey : vKeys)
+		Helper.m_vNames.push_back(RCLocalize(pKey, pLocalizeContext));
+
+	Helper.m_State.m_SelectionPopupContext.m_pScrollRegion = &Helper.m_ScrollRegion;
+
+	CUIRect DropDownRect, Label;
+	Column.HSplitTop(LineSize, &DropDownRect, &Column);
+	DropDownRect.VSplitLeft(120.0f, &Label, &DropDownRect);
+	pUi->DoLabel(&Label, pLabel, FontSize, TEXTALIGN_ML);
+	CurrentValue = pUi->DoDropDown(&DropDownRect, CurrentValue, Helper.m_vNames.data(), Helper.m_vNames.size(), Helper.m_State);
+
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	return CurrentValue;
+}
+
 static void SetFlag(int32_t &Flags, int n, bool Value)
 {
 	if(Value)
