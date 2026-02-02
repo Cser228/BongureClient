@@ -14,6 +14,8 @@
 #include <game/localization.h>
 #include <generated/protocol.h>
 
+#include <SDL_audio.h>
+
 #include <game/client/components/menu_background.h>
 #include <game/client/components/menus.h>
 #include <game/client/animstate.h>
@@ -1307,18 +1309,87 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Ui()->DoLabel(&Label, g_Config.m_RiVoiceNameVolumes[0] ? g_Config.m_RiVoiceNameVolumes : RCLocalize("Name volume list empty"), FontSize * 0.9f, TEXTALIGN_ML);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 
-	static CLineInput s_VoiceInput;
-	static CLineInput s_VoiceOutput;
-	s_VoiceInput.SetBuffer(g_Config.m_RiVoiceInputDevice, sizeof(g_Config.m_RiVoiceInputDevice));
-	s_VoiceOutput.SetBuffer(g_Config.m_RiVoiceOutputDevice, sizeof(g_Config.m_RiVoiceOutputDevice));
-	Column.HSplitTop(LineSize, &Label, &Column);
-	DoEditBoxWithLabel(&s_VoiceInput, &Label, RCLocalize("Input device"), "", g_Config.m_RiVoiceInputDevice, sizeof(g_Config.m_RiVoiceInputDevice));
+	static CUi::SDropDownState s_VoiceInputDropDownState;
+	static CUi::SDropDownState s_VoiceOutputDropDownState;
+	static CScrollRegion s_VoiceInputDropDownScrollRegion;
+	static CScrollRegion s_VoiceOutputDropDownScrollRegion;
+	s_VoiceInputDropDownState.m_SelectionPopupContext.m_pScrollRegion = &s_VoiceInputDropDownScrollRegion;
+	s_VoiceOutputDropDownState.m_SelectionPopupContext.m_pScrollRegion = &s_VoiceOutputDropDownScrollRegion;
+
+	auto DoVoiceDeviceDropDown = [&](CUIRect &ColumnRect, const char *pLabel, char *pConfigValue, int ConfigSize, bool Capture, CUi::SDropDownState &DropDownState) {
+		std::vector<std::string> vDeviceNames;
+		std::vector<std::string> vDeviceValues;
+		std::vector<const char *> vpDeviceNames;
+
+		const int NumDevices = SDL_GetNumAudioDevices(Capture ? 1 : 0);
+		vDeviceNames.reserve(NumDevices + 2);
+		vDeviceValues.reserve(NumDevices + 2);
+
+		vDeviceNames.emplace_back(RCLocalize("Default", "Voice device"));
+		vDeviceValues.emplace_back("");
+
+		for(int i = 0; i < NumDevices; i++)
+		{
+			const char *pName = SDL_GetAudioDeviceName(i, Capture ? 1 : 0);
+			if(pName && pName[0] != '\0')
+			{
+				vDeviceNames.emplace_back(pName);
+				vDeviceValues.emplace_back(pName);
+			}
+		}
+
+		if(pConfigValue[0] != '\0')
+		{
+			bool Found = false;
+			for(const std::string &Name : vDeviceValues)
+			{
+				if(str_comp_nocase(Name.c_str(), pConfigValue) == 0)
+				{
+					Found = true;
+					break;
+				}
+			}
+			if(!Found)
+			{
+				vDeviceNames.emplace_back(pConfigValue);
+				vDeviceValues.emplace_back(pConfigValue);
+			}
+		}
+
+		vpDeviceNames.reserve(vDeviceNames.size());
+		for(const std::string &Name : vDeviceNames)
+			vpDeviceNames.push_back(Name.c_str());
+
+		int Selected = 0;
+		if(pConfigValue[0] != '\0')
+		{
+			for(size_t i = 1; i < vDeviceValues.size(); i++)
+			{
+				if(str_comp_nocase(vDeviceValues[i].c_str(), pConfigValue) == 0)
+				{
+					Selected = (int)i;
+					break;
+				}
+			}
+		}
+
+		CUIRect DropDownRect;
+		ColumnRect.HSplitTop(LineSize, &DropDownRect, &ColumnRect);
+		DropDownRect.VSplitLeft(120.0f, &Label, &DropDownRect);
+		Ui()->DoLabel(&Label, pLabel, FontSize, TEXTALIGN_ML);
+		const int NewSelected = Ui()->DoDropDown(&DropDownRect, Selected, vpDeviceNames.data(), vpDeviceNames.size(), DropDownState);
+		if(NewSelected != Selected)
+		{
+			if(NewSelected <= 0)
+				pConfigValue[0] = '\0';
+			else
+				str_copy(pConfigValue, vDeviceValues[NewSelected].c_str(), ConfigSize);
+		}
+	};
+
+	DoVoiceDeviceDropDown(Column, RCLocalize("Input device"), g_Config.m_RiVoiceInputDevice, sizeof(g_Config.m_RiVoiceInputDevice), true, s_VoiceInputDropDownState);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	Column.HSplitTop(LineSize, &Label, &Column);
-	DoEditBoxWithLabel(&s_VoiceOutput, &Label, RCLocalize("Output device"), "", g_Config.m_RiVoiceOutputDevice, sizeof(g_Config.m_RiVoiceOutputDevice));
-	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	Column.HSplitTop(LineSize, &Label, &Column);
-	Ui()->DoLabel(&Label, RCLocalize("Use ri_voice_list_devices in console"), FontSize, TEXTALIGN_ML);
+	DoVoiceDeviceDropDown(Column, RCLocalize("Output device"), g_Config.m_RiVoiceOutputDevice, sizeof(g_Config.m_RiVoiceOutputDevice), false, s_VoiceOutputDropDownState);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	static CButtonContainer s_ReaderButtonVoicePtt, s_ClearButtonVoicePtt;
 	Column.HSplitTop(LineSize, &Label, &Column);

@@ -260,9 +260,6 @@ bool CRClientVoice::EnsureSocket()
 
 bool CRClientVoice::EnsureAudio()
 {
-	if(m_CaptureDevice && m_OutputDevice && m_pEncoder)
-		return true;
-
 	SDL_AudioSpec WantCapture = {};
 	WantCapture.freq = VOICE_SAMPLE_RATE;
 	WantCapture.format = AUDIO_S16;
@@ -279,6 +276,10 @@ bool CRClientVoice::EnsureAudio()
 	WantOutput.channels = DesiredOutputChannels;
 	WantOutput.samples = VOICE_FRAME_SAMPLES;
 	WantOutput.callback = nullptr;
+
+	const bool HadCapture = m_CaptureDevice != 0;
+	const bool HadOutput = m_OutputDevice != 0;
+	const bool HadEncoder = m_pEncoder != nullptr;
 
 	if(str_comp(m_aInputDeviceName, g_Config.m_RiVoiceInputDevice) != 0)
 	{
@@ -311,6 +312,11 @@ bool CRClientVoice::EnsureAudio()
 		}
 		m_OutputStereo = WantStereo;
 		m_LogDeviceChange = true;
+	}
+
+	if(HadCapture && HadOutput && HadEncoder && m_CaptureDevice && m_OutputDevice && m_pEncoder)
+	{
+		return true;
 	}
 
 	const char *pInputName = FindDeviceName(true, m_aInputDeviceName);
