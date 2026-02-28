@@ -2007,7 +2007,7 @@ void CHud::RenderVoiceIndicator()
 	if(!g_Config.m_RiVoiceShowWhenActive)
 		return;
 
-	if(!g_Config.m_RiVoiceEnable || !g_Config.m_RiVoiceShowIndicator)
+	if(!g_Config.m_RiVoiceEnable)
 		return;
 
 	const int LocalId = GameClient()->m_Snap.m_LocalClientId;
@@ -2022,11 +2022,30 @@ void CHud::RenderVoiceIndicator()
 	const float BoxHeight = 12.0f;
 	const float X = 5.0f;
 	const float Y = m_Height - BoxHeight - 10.0f;
+	const float TextY = Y + (BoxHeight - FontSize) / 2.0f;
 
 	Graphics()->DrawRect(X, Y, BoxWidth, BoxHeight, ColorRGBA(0.0f, 0.0f, 0.0f, 0.4f), IGraphics::CORNER_ALL, 3.0f);
 	TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
-	TextRender()->Text(X + Padding, Y + (BoxHeight - FontSize) / 2.0f, FontSize, FontIcon::RC_MICROPHONE, -1.0f);
+	TextRender()->Text(X + Padding, TextY, FontSize, FontIcon::RC_MICROPHONE, -1.0f);
 	TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
+
+	if(g_Config.m_RiVoiceShowPing)
+	{
+		char aPingText[16];
+		const int VoicePing = GameClient()->m_RClient.VoicePingMs();
+		if(VoicePing >= 0)
+			str_format(aPingText, sizeof(aPingText), "%d ms", std::clamp(VoicePing, 0, 9999));
+		else
+			str_copy(aPingText, "?? ms", sizeof(aPingText));
+
+		const float PingTextWidth = TextRender()->TextWidth(FontSize, aPingText);
+		const float PingBoxWidth = PingTextWidth + Padding * 2.0f;
+		const float Gap = 4.0f;
+		const float PingX = X + BoxWidth + Gap;
+
+		Graphics()->DrawRect(PingX, Y, PingBoxWidth, BoxHeight, ColorRGBA(0.0f, 0.0f, 0.0f, 0.4f), IGraphics::CORNER_ALL, 3.0f);
+		TextRender()->Text(PingX + Padding, TextY, FontSize, aPingText, -1.0f);
+	}
 }
 
 void CHud::OnNewSnapshot()

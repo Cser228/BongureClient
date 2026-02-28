@@ -133,6 +133,9 @@ class CRClientVoice
 	int m_EncLossPerc = 0;
 	bool m_EncFec = false;
 	int64_t m_LastEncUpdate = 0;
+	std::atomic<int> m_PingMs = -1;
+	int64_t m_LastPingSentTime = 0;
+	uint16_t m_LastPingSeq = 0;
 	std::array<SVoicePeer, MAX_CLIENTS> m_aPeers = {};
 	std::array<std::atomic<int64_t>, MAX_CLIENTS> m_aLastHeard = {};
 
@@ -192,6 +195,7 @@ public:
 	void SetPttActive(bool Active);
 	void ListDevices();
 	bool IsVoiceActive(int ClientId) const;
+	int PingMs() const { return m_PingMs.load(); }
 };
 
 #endif // GAME_CLIENT_COMPONENTS_RCLIENT_VOICE_H

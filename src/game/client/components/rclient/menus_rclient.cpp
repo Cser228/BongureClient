@@ -1311,6 +1311,7 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	BeginSectionHeader(Column, MarginBetweenSections, RCLIENT_SETTINGS_SECTION_VOICE, RCLocalize("Voice"));
 	if(s_aSectionExpanded[RCLIENT_SETTINGS_SECTION_VOICE])
 	{
+	CUIRect Rightoffset;
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceEnable, RCLocalize("Enable voice chat"), &g_Config.m_RiVoiceEnable, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceOffNonActive, RCLocalize("Off voice when window nonactive"), &g_Config.m_RiVoiceOffNonActive, &Column, LineSize);
@@ -1350,6 +1351,18 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceShowWhenActive, RCLocalize("Show when microphone active"), &g_Config.m_RiVoiceShowWhenActive, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	if(g_Config.m_RiVoiceShowWhenActive)
+	{
+		Column.VSplitLeft(25.0f, &Label, &Rightoffset);
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceShowPing, RCLocalize("Show voice ping"), &g_Config.m_RiVoiceShowPing, &Rightoffset, LineSize);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	else
+	{
+		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceStereo, RCLocalize("Stereo output (pan left/right)"), &g_Config.m_RiVoiceStereo, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	Column.HSplitTop(LineSize, &Button, &Column);
@@ -1424,7 +1437,6 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	if(g_Config.m_RiVoiceShowIndicator)
 	{
-		CUIRect Rightoffset;
 		Column.VSplitLeft(25.0f, &Label, &Rightoffset);
 		Column.HSplitTop(LineSize, nullptr, &Column);
 		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceIndicatorAboveSelf, RCLocalize("Show indicator above you"), &g_Config.m_RiVoiceIndicatorAboveSelf, &Rightoffset, LineSize);

@@ -2162,6 +2162,11 @@ bool CRClient::IsVoiceActive(int ClientId) const
 	return m_Voice.IsVoiceActive(ClientId);
 }
 
+int CRClient::VoicePingMs() const
+{
+	return m_Voice.PingMs();
+}
+
 int CRClient::VoiceNameVolume(const char *pName, int DefaultPercent) const
 {
 	char aNeedle[MAX_NAME_LENGTH];

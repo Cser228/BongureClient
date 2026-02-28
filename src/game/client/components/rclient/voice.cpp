@@ -123,9 +123,10 @@ static bool VoiceNameVolume(const char *pList, const char *pName, int &OutPercen
 }
 
 static constexpr char VOICE_MAGIC[4] = {'R', 'V', '0', '1'};
-static constexpr uint8_t VOICE_VERSION = 2;
+static constexpr uint8_t VOICE_VERSION = 3;
 static constexpr uint8_t VOICE_TYPE_AUDIO = 1;
 static constexpr uint8_t VOICE_TYPE_PING = 2;
+static constexpr uint8_t VOICE_TYPE_PONG = 3;
 static constexpr int VOICE_SAMPLE_RATE = 48000;
 static constexpr int VOICE_CHANNELS = 1;
 static constexpr int VOICE_FRAME_SAMPLES = 960;
@@ -852,6 +853,9 @@ void CRClientVoice::Shutdown()
 	m_aAudioBackendMismatchCur[0] = '\0';
 	m_aAudioInitLoggedBackend[0] = '\0';
 	m_AudioSubsystemInitializedByVoice = false;
+	m_PingMs.store(-1);
+	m_LastPingSentTime = 0;
+	m_LastPingSeq = 0;
 }
 
 void CRClientVoice::UpdateServerAddr()
@@ -1022,6 +1026,8 @@ void CRClientVoice::ProcessCapture()
 		WriteFloat(aPacket + Offset, 0.0f);
 		Offset += sizeof(float);
 		net_udp_send(m_Socket, &ServerAddrLocal, aPacket, (int)Offset);
+		m_LastPingSentTime = Now;
+		m_LastPingSeq = m_Sequence;
 		m_LastKeepalive = Now;
 		m_LastTokenHashSent = Config.m_RiVoiceTokenHash;
 	}
@@ -1137,7 +1143,9 @@ void CRClientVoice::ProcessIncoming()
 
 		const uint8_t Version = pData[Offset++];
 		const uint8_t Type = pData[Offset++];
-		if(Version != VOICE_VERSION || Type != VOICE_TYPE_AUDIO)
+		if(Version != VOICE_VERSION)
+			continue;
+		if(Type != VOICE_TYPE_AUDIO && Type != VOICE_TYPE_PING && Type != VOICE_TYPE_PONG)
 			continue;
 
 		const uint16_t PayloadSize = ReadU16(pData + Offset);
@@ -1161,6 +1169,20 @@ void CRClientVoice::ProcessIncoming()
 			s_RxDropContext++;
 			continue;
 		}
+		if(Type == VOICE_TYPE_PING || Type == VOICE_TYPE_PONG)
+		{
+			if(TokenHash != 0 && TokenHash != Config.m_RiVoiceTokenHash)
+				continue;
+			if(m_LastPingSentTime != 0 && Sequence == m_LastPingSeq)
+			{
+				const int64_t Now = time_get();
+				const int RttMs = (int)std::clamp((Now - m_LastPingSentTime) * 1000 / time_freq(), (int64_t)0, (int64_t)9999);
+				m_PingMs.store(RttMs);
+			}
+			continue;
+		}
+		if(Type != VOICE_TYPE_AUDIO)
+			continue;
 		const uint32_t LocalToken = Config.m_RiVoiceTokenHash;
 		const uint32_t LocalGroup = VoiceTokenGroup(LocalToken);
 		const uint32_t LocalMode = VoiceTokenMode(LocalToken);
