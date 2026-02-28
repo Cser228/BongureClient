@@ -43,6 +43,7 @@ struct SRClientVoiceConfigSnapshot
 	int m_RiVoiceDebug = 0;
 	int m_RiVoiceGroupMode = 0;
 	int m_RiVoiceHearOnSpecPos = 0;
+	int m_RiVoiceHearPeoplesInSpectate = 0;
 	int m_ClShowOthers = 0;
 	uint32_t m_RiVoiceTokenHash = 0;
 	char m_aRiVoiceWhitelist[512] = {};
@@ -161,6 +162,7 @@ class CRClientVoice
 	std::array<std::array<char, MAX_NAME_LENGTH>, MAX_CLIENTS> m_aClientNameSnap = {};
 	std::array<uint8_t, MAX_CLIENTS> m_aClientOtherTeamSnap = {};
 	std::array<uint8_t, MAX_CLIENTS> m_aClientActiveSnap = {};
+	std::array<uint8_t, MAX_CLIENTS> m_aClientSpecSnap = {};
 
 	bool EnsureSocket();
 	bool EnsureAudio();

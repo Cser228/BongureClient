@@ -786,3 +786,6 @@ In team
 
 Hear from camera center while spectating
 == Слышать от центра камеры при наблюдении
+
+Hear observers (inactive players, not /spec)
+== Слышать наблюдателей (не играющих, не спек)

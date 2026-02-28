@@ -1321,6 +1321,8 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceHearOnSpecPos, RCLocalize("Hear from camera center while spectating"), &g_Config.m_RiVoiceHearOnSpecPos, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceHearPeoplesInSpectate, RCLocalize("Hear observers (inactive players, not /spec)"), &g_Config.m_RiVoiceHearPeoplesInSpectate, &Column, LineSize);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	static std::vector<CButtonContainer> s_vVoiceTeamVisibilityButtonContainers = {{}, {}};
 	DoLine_RadioMenu(Column, RCLocalize("Hear people that:", "VoiceChat"),
 		s_vVoiceTeamVisibilityButtonContainers,

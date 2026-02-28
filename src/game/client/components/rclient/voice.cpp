@@ -123,7 +123,7 @@ static bool VoiceNameVolume(const char *pList, const char *pName, int &OutPercen
 }
 
 static constexpr char VOICE_MAGIC[4] = {'R', 'V', '0', '1'};
-static constexpr uint8_t VOICE_VERSION = 3;
+static constexpr uint8_t VOICE_VERSION = 2;
 static constexpr uint8_t VOICE_TYPE_AUDIO = 1;
 static constexpr uint8_t VOICE_TYPE_PING = 2;
 static constexpr int VOICE_SAMPLE_RATE = 48000;
@@ -951,6 +951,7 @@ void CRClientVoice::UpdateClientSnapshot()
 		str_copy(m_aClientNameSnap[i].data(), m_pGameClient->m_aClients[i].m_aName, MAX_NAME_LENGTH);
 		m_aClientOtherTeamSnap[i] = m_pGameClient->m_Teams.Team(i) != m_pGameClient->m_Teams.Team(m_LocalClientIdSnap);
 		m_aClientActiveSnap[i] = m_pGameClient->m_Snap.m_aCharacters[i].m_Active;
+		m_aClientSpecSnap[i] = m_pGameClient->m_aClients[i].m_Spec;
 	}
 }
 
@@ -1177,6 +1178,7 @@ void CRClientVoice::ProcessIncoming()
 		char aSenderName[MAX_NAME_LENGTH];
 		bool SenderOtherTeam = false;
 		bool SenderActive = false;
+		bool SenderSpec = false;
 		{
 			std::lock_guard<std::mutex> Guard(m_SnapshotMutex);
 			if(!m_OnlineSnap)
@@ -1190,6 +1192,7 @@ void CRClientVoice::ProcessIncoming()
 			str_copy(aSenderName, m_aClientNameSnap[SenderId].data(), sizeof(aSenderName));
 			SenderOtherTeam = m_aClientOtherTeamSnap[SenderId] != 0;
 			SenderActive = m_aClientActiveSnap[SenderId] != 0;
+			SenderSpec = m_aClientSpecSnap[SenderId] != 0;
 		}
 
 		if(SpecActive && Config.m_RiVoiceHearOnSpecPos)
@@ -1197,14 +1200,16 @@ void CRClientVoice::ProcessIncoming()
 
 		if(SenderId == LocalId)
 			continue;
+
+		const bool AllowObserver = Config.m_RiVoiceHearPeoplesInSpectate && !SenderActive && !SenderSpec;
 		if(Config.m_RiVoiceVisibilityMode == 0)
 		{
-			if(!SenderActive)
+			if(!SenderActive && !AllowObserver)
 				continue;
 		}
 		else if(Config.m_RiVoiceVisibilityMode == 1)
 		{
-			if(SenderOtherTeam)
+			if(SenderOtherTeam && !AllowObserver)
 				continue;
 		}
 		const char *pSenderName = aSenderName;
@@ -1351,6 +1356,7 @@ void CRClientVoice::UpdateConfigSnapshot()
 	m_ConfigSnapshot.m_RiVoiceDebug = g_Config.m_RiVoiceDebug;
 	m_ConfigSnapshot.m_RiVoiceGroupMode = g_Config.m_RiVoiceGroupMode;
 	m_ConfigSnapshot.m_RiVoiceHearOnSpecPos = g_Config.m_RiVoiceHearOnSpecPos;
+	m_ConfigSnapshot.m_RiVoiceHearPeoplesInSpectate = g_Config.m_RiVoiceHearPeoplesInSpectate;
 	m_ConfigSnapshot.m_ClShowOthers = g_Config.m_ClShowOthers;
 	uint32_t GroupHash = g_Config.m_RiVoiceToken[0] != '\0' ? str_quickhash(g_Config.m_RiVoiceToken) : 0;
 	uint32_t Mode = (uint32_t)std::clamp(g_Config.m_RiVoiceGroupMode, 0, 3);
