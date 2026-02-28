@@ -259,9 +259,9 @@ static void ApplyHpfCompressor(const SRClientVoiceConfigSnapshot &Config, int16_
 		const float x = pSamples[i] / 32768.0f;
 		const float y = Alpha * (PrevOut + x - PrevIn);
 		PrevIn = x;
-		PrevOut = y;
+		PrevOut = SanitizeFloat(y);
 
-		const float AbsY = std::fabs(y);
+		const float AbsY = std::fabs(PrevOut);
 		if(AbsY > Env)
 			Env += (AbsY - Env) * AttackCoeff;
 		else
@@ -273,7 +273,7 @@ static void ApplyHpfCompressor(const SRClientVoiceConfigSnapshot &Config, int16_
 		if(Env > NoiseFloor)
 			Gain *= MakeupGain;
 
-		const float Out = std::clamp(y * Gain, -Limiter, Limiter);
+		const float Out = std::clamp(PrevOut * Gain, -Limiter, Limiter);
 		const int Sample = (int)std::clamp(Out * 32767.0f, -32768.0f, 32767.0f);
 		pSamples[i] = (int16_t)Sample;
 	}
@@ -360,7 +360,7 @@ static int ClampJitterTarget(float JitterMs)
 
 static int SeqDelta(uint16_t NewSeq, uint16_t OldSeq)
 {
-	return (int)(uint16_t)(NewSeq - OldSeq);
+	return (int)(int16_t)(NewSeq - OldSeq);
 }
 
 static bool SeqLess(uint16_t A, uint16_t B)
@@ -967,6 +967,19 @@ void CRClientVoice::ProcessCapture()
 	const bool PttHeld = m_PttActive.load() || (ReleaseDeadline != 0 && Now < ReleaseDeadline);
 	const bool TokenChanged = Config.m_RiVoiceTokenHash != m_LastTokenHashSent;
 	const bool NeedKeepalive = m_LastKeepalive == 0 || Now - m_LastKeepalive > time_freq() * 2;
+
+	static bool s_WasPttHeld = false;
+	if(PttHeld && !s_WasPttHeld)
+	{
+		if(m_pEncoder)
+			opus_encoder_ctl(m_pEncoder, OPUS_RESET_STATE);
+		m_HpfPrevIn = 0.0f;
+		m_HpfPrevOut = 0.0f;
+		m_CompEnv = 0.0f;
+		m_Sequence += 1000;
+	}
+	s_WasPttHeld = PttHeld;
+
 	if(TokenChanged || (!PttHeld && NeedKeepalive))
 	{
 		NETADDR ServerAddrLocal = NETADDR_ZEROED;
@@ -988,7 +1001,7 @@ void CRClientVoice::ProcessCapture()
 		Offset += sizeof(uint32_t);
 		WriteU16(aPacket + Offset, 0);
 		Offset += sizeof(uint16_t);
-		WriteU16(aPacket + Offset, m_Sequence++);
+		WriteU16(aPacket + Offset, m_Sequence);
 		Offset += sizeof(uint16_t);
 		WriteFloat(aPacket + Offset, 0.0f);
 		Offset += sizeof(float);
@@ -1262,7 +1275,8 @@ void CRClientVoice::ProcessIncoming()
 				Peer.m_LossEwma = 0.9f * Peer.m_LossEwma + 0.1f * LossRatio;
 			}
 		}
-		Peer.m_LastRecvSeq = Sequence;
+		if(!Peer.m_HasLastRecvSeq || SeqLess(Peer.m_LastRecvSeq, Sequence))
+			Peer.m_LastRecvSeq = Sequence;
 		Peer.m_HasLastRecvSeq = true;
 		Peer.m_LastGainLeft = LeftGain;
 		Peer.m_LastGainRight = RightGain;
