@@ -1651,6 +1651,7 @@ set(EXPECTED_DATA
   rclient/languages/russian.txt
   rclient/menu_afk.png
   rclient/rclient_icon.png
+  rclient/rclient_icon_red.png
   rclient/riactions.png
   rclient/rihammer.png
   rclient/rihook.png
