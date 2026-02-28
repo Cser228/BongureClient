@@ -771,3 +771,15 @@ If change backend u need restart game
 
 PTT release delay (ms)
 == PTT задержка после отпускания (мс)
+
+[VoiceChat]
+Hear people that:
+== Слышать людей которые:
+
+[VoiceChat]
+You see
+== Ты видишь
+
+[VoiceChat]
+In team
+== В команде
