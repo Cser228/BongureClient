@@ -61,6 +61,8 @@ class CRClient : public CComponent
 	static void ConVoiceListVolumes(IConsole::IResult *pResult, void *pUserData);
 	static void ConVoiceMuteAdd(IConsole::IResult *pResult, void *pUserData);
 	static void ConVoiceMuteRemove(IConsole::IResult *pResult, void *pUserData);
+	static void ConVoiceVadAllowAdd(IConsole::IResult *pResult, void *pUserData);
+	static void ConVoiceVadAllowRemove(IConsole::IResult *pResult, void *pUserData);
 	void AppendListItem(char *pList, int ListSize, const char *pItem);
 	CRClientVoice m_Voice;
 

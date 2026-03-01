@@ -77,6 +77,8 @@ void CRClient::OnConsoleInit()
 	Console()->Register("ri_voice_list_volumes", "", CFGFLAG_CLIENT, ConVoiceListVolumes, this, "List per-name voice volumes");
 	Console()->Register("ri_voice_mute_add", "s[name]", CFGFLAG_CLIENT, ConVoiceMuteAdd, this, "Add player to voice mute list");
 	Console()->Register("ri_voice_mute_remove", "s[name]", CFGFLAG_CLIENT, ConVoiceMuteRemove, this, "Remove player from voice mute list");
+	Console()->Register("ri_voice_vad_allow_add", "s[name]", CFGFLAG_CLIENT, ConVoiceVadAllowAdd, this, "Allow voice from voice-activated players");
+	Console()->Register("ri_voice_vad_allow_remove", "s[name]", CFGFLAG_CLIENT, ConVoiceVadAllowRemove, this, "Remove player from voice activation allow list");
 	Console()->Register("ri_get_checkpoint_id", "", CFGFLAG_CLIENT, ConGetCheckpointId, this, "Get id of checkpoint (write id or nickname player)");
 	Console()->Chain(
 		"ri_regex_player_whitelist", [](IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData) {
@@ -1926,6 +1928,54 @@ void CRClient::ConVoiceMuteRemove(IConsole::IResult *pResult, void *pUserData)
 	else
 	{
 		pSelf->GameClient()->Echo("Voice mute: name not found");
+	}
+}
+
+void CRClient::ConVoiceVadAllowAdd(IConsole::IResult *pResult, void *pUserData)
+{
+	CRClient *pSelf = static_cast<CRClient *>(pUserData);
+	const char *pName = pResult->GetString(0);
+
+	char aName[MAX_NAME_LENGTH];
+	if(!VoiceListTrimName(pName, aName, sizeof(aName)))
+	{
+		pSelf->GameClient()->Echo("Voice VAD allow add failed: empty name");
+		return;
+	}
+
+	if(VoiceListAddName(g_Config.m_RiVoiceVadAllow, sizeof(g_Config.m_RiVoiceVadAllow), aName))
+	{
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "Voice VAD allow added: %s", aName);
+		pSelf->GameClient()->Echo(aBuf);
+	}
+	else
+	{
+		pSelf->GameClient()->Echo("Voice VAD allow: already allowed");
+	}
+}
+
+void CRClient::ConVoiceVadAllowRemove(IConsole::IResult *pResult, void *pUserData)
+{
+	CRClient *pSelf = static_cast<CRClient *>(pUserData);
+	const char *pName = pResult->GetString(0);
+
+	char aName[MAX_NAME_LENGTH];
+	if(!VoiceListTrimName(pName, aName, sizeof(aName)))
+	{
+		pSelf->GameClient()->Echo("Voice VAD allow remove failed: empty name");
+		return;
+	}
+
+	if(VoiceListRemoveName(g_Config.m_RiVoiceVadAllow, sizeof(g_Config.m_RiVoiceVadAllow), aName))
+	{
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "Voice VAD allow removed: %s", aName);
+		pSelf->GameClient()->Echo(aBuf);
+	}
+	else
+	{
+		pSelf->GameClient()->Echo("Voice VAD allow: name not found");
 	}
 }
 

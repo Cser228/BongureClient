@@ -36,6 +36,9 @@ struct SRClientVoiceConfigSnapshot
 	int m_RiVoiceRadius = 0;
 	int m_RiVoiceVolume = 0;
 	int m_RiVoiceMicVolume = 0;
+	int m_RiVoiceVadEnable = 0;
+	int m_RiVoiceVadThreshold = 0;
+	int m_RiVoiceVadReleaseDelayMs = 0;
 	int m_RiVoiceIgnoreDistance = 0;
 	int m_RiVoiceGroupGlobal = 0;
 	int m_RiVoiceVisibilityMode = 0;
@@ -44,11 +47,13 @@ struct SRClientVoiceConfigSnapshot
 	int m_RiVoiceGroupMode = 0;
 	int m_RiVoiceHearOnSpecPos = 0;
 	int m_RiVoiceHearPeoplesInSpectate = 0;
+	int m_RiVoiceHearVad = 0;
 	int m_ClShowOthers = 0;
 	uint32_t m_RiVoiceTokenHash = 0;
 	char m_aRiVoiceWhitelist[512] = {};
 	char m_aRiVoiceBlacklist[512] = {};
 	char m_aRiVoiceMute[512] = {};
+	char m_aRiVoiceVadAllow[512] = {};
 	char m_aRiVoiceNameVolumes[512] = {};
 };
 
@@ -141,6 +146,9 @@ class CRClientVoice
 
 	std::atomic<bool> m_PttActive = false;
 	std::atomic<int64_t> m_PttReleaseDeadline = 0;
+	bool m_VadActive = false;
+	int64_t m_VadReleaseDeadline = 0;
+	bool m_TxWasActive = false;
 	uint16_t m_Sequence = 0;
 	std::atomic<uint32_t> m_ContextHash = 0;
 	int64_t m_LastKeepalive = 0;

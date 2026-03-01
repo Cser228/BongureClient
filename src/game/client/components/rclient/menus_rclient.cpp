@@ -1343,6 +1343,16 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceHearPeoplesInSpectate, RCLocalize("Hear observers (inactive players, not /spec)"), &g_Config.m_RiVoiceHearPeoplesInSpectate, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceHearVad, RCLocalize("Hear players using voice activation"), &g_Config.m_RiVoiceHearVad, &Column, LineSize);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	Column.HSplitTop(LineSize, &Label, &Column);
+	Ui()->DoLabel(&Label, RCLocalize("VAD allow list"), FontSize, TEXTALIGN_ML);
+	Column.HSplitTop(MarginExtraSmall, nullptr, &Column);
+	Column.HSplitTop(LineSize, &Button, &Column);
+	static CLineInput s_VoiceVadAllow(g_Config.m_RiVoiceVadAllow, sizeof(g_Config.m_RiVoiceVadAllow));
+	s_VoiceVadAllow.SetEmptyText(RCLocalize("Name1,Name2"));
+	Ui()->DoEditBox(&s_VoiceVadAllow, &Button, FontSize);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	static std::vector<CButtonContainer> s_vVoiceTeamVisibilityButtonContainers = {{}, {}};
 	DoLine_RadioMenu(Column, RCLocalize("Hear people that:", "VoiceChat"),
 		s_vVoiceTeamVisibilityButtonContainers,
@@ -1380,6 +1390,17 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	else
 	{
 		Column.HSplitTop(LineSize, nullptr, &Column);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceVadEnable, RCLocalize("Voice activation (VAD)"), &g_Config.m_RiVoiceVadEnable, &Column, LineSize);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	if(g_Config.m_RiVoiceVadEnable)
+	{
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Ui()->DoScrollbarOption(&g_Config.m_RiVoiceVadThreshold, &g_Config.m_RiVoiceVadThreshold, &Button, RCLocalize("VAD threshold (%)"), 0, 100);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Ui()->DoScrollbarOption(&g_Config.m_RiVoiceVadReleaseDelayMs, &g_Config.m_RiVoiceVadReleaseDelayMs, &Button, RCLocalize("VAD release delay (ms)"), 0, 1000);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 	}
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceStereo, RCLocalize("Stereo output (pan left/right)"), &g_Config.m_RiVoiceStereo, &Column, LineSize);
@@ -1671,12 +1692,21 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	DoVoiceDeviceDropDown(Column, RCLocalize("Output device"), g_Config.m_RiVoiceOutputDevice, sizeof(g_Config.m_RiVoiceOutputDevice), false, s_VoiceOutputDropDownState);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	static CButtonContainer s_ReaderButtonVoicePtt, s_ClearButtonVoicePtt;
-	Column.HSplitTop(LineSize, &Label, &Column);
-	DoLine_KeyReader(Label, s_ReaderButtonVoicePtt, s_ClearButtonVoicePtt, RCLocalize("Voice PTT"), "+ri_voice_ptt");
-	Column.HSplitTop(MarginSmall, nullptr, &Column);
-	Column.HSplitTop(LineSize, &Button, &Column);
-	Ui()->DoScrollbarOption(&g_Config.m_RiVoicePttReleaseDelayMs, &g_Config.m_RiVoicePttReleaseDelayMs, &Button, RCLocalize("PTT release delay (ms)"), 0, 1000);
-	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	if(!g_Config.m_RiVoiceVadEnable)
+	{
+		Column.HSplitTop(LineSize, &Label, &Column);
+		DoLine_KeyReader(Label, s_ReaderButtonVoicePtt, s_ClearButtonVoicePtt, RCLocalize("Voice PTT"), "+ri_voice_ptt");
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Ui()->DoScrollbarOption(&g_Config.m_RiVoicePttReleaseDelayMs, &g_Config.m_RiVoicePttReleaseDelayMs, &Button, RCLocalize("PTT release delay (ms)"), 0, 1000);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
+	else
+	{
+		Column.HSplitTop(LineSize, &Label, &Column);
+		Ui()->DoLabel(&Label, RCLocalize("PTT disabled while voice activation is enabled"), FontSize * 0.9f, TEXTALIGN_ML);
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
+	}
 	static std::vector<CButtonContainer> s_vVoiceWhiteListButtonContainers = {{}, {}, {}};
 	DoLine_RadioMenu(Column, RCLocalize("Block people with:", "VoiceChat"),
 		s_vVoiceWhiteListButtonContainers,
