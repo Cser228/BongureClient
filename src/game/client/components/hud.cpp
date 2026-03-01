@@ -2048,6 +2048,65 @@ void CHud::RenderVoiceIndicator()
 	}
 }
 
+void CHud::RenderVoiceSpeakerOverlay()
+{
+	if(!g_Config.m_RiVoiceEnable)
+		return;
+	if(!g_Config.m_RiVoiceShowOverlay)
+		return;
+	if(Client()->State() == IClient::STATE_DEMOPLAYBACK)
+		return;
+
+	const int LocalId = GameClient()->m_Snap.m_LocalClientId;
+	if(LocalId < 0 || LocalId >= MAX_CLIENTS)
+		return;
+
+	int aSpeakerIds[MAX_CLIENTS];
+	int SpeakerCount = 0;
+	for(int i = 0; i < MAX_CLIENTS; i++)
+	{
+		if(i == LocalId || g_Config.m_RiVoiceIndicatorAboveSelf)
+			continue;
+		if(!GameClient()->m_RClient.IsVoiceActive(i))
+			continue;
+		if(GameClient()->m_aClients[i].m_aName[0] == '\0')
+			continue;
+		aSpeakerIds[SpeakerCount++] = i;
+	}
+	if(SpeakerCount == 0)
+		return;
+
+	const float FontSize = 6.0f;
+	const float Padding = 3.0f;
+	const float Gap = 3.0f;
+	const float RowHeight = FontSize + Padding * 2.0f;
+	const float TextYOff = (RowHeight - FontSize) * 0.5f;
+	const float X = 0.0f;
+	const float TotalHeight = RowHeight * SpeakerCount;
+	float Y = m_Height * 0.5f - TotalHeight * 0.5f;
+
+	TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
+	const float IconWidth = TextRender()->TextWidth(FontSize, FontIcon::RC_MICROPHONE);
+	TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
+	for(int Index = 0; Index < SpeakerCount; Index++)
+	{
+		const int ClientId = aSpeakerIds[Index];
+		const char *pName = GameClient()->m_aClients[ClientId].m_aName;
+
+		const float NameWidth = TextRender()->TextWidth(FontSize, pName);
+		const float RowWidth = Padding * 2.0f + IconWidth + Gap + NameWidth;
+
+		Graphics()->DrawRect(X, Y, RowWidth, RowHeight, ColorRGBA(0.0f, 0.0f, 0.0f, 0.4f), IGraphics::CORNER_R, 3.0f);
+
+		TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
+		TextRender()->Text(X + Padding, Y + TextYOff, FontSize, FontIcon::RC_MICROPHONE, -1.0f);
+		TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
+		TextRender()->Text(X + Padding + IconWidth + Gap, Y + TextYOff, FontSize, pName, -1.0f);
+
+		Y += RowHeight;
+	}
+}
+
 void CHud::OnNewSnapshot()
 {
 	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
@@ -2157,6 +2216,7 @@ void CHud::OnRender()
 		GameClient()->m_TClient.RenderCenterLines();
 		RenderLocalTime((m_Width / 7) * 3);
 		RenderVoiceIndicator();
+		RenderVoiceSpeakerOverlay();
 		if(Client()->State() != IClient::STATE_DEMOPLAYBACK)
 			RenderConnectionWarning();
 		RenderTeambalanceWarning();

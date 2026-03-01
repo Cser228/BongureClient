@@ -1333,6 +1333,8 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceOffNonActive, RCLocalize("Off voice when window nonactive"), &g_Config.m_RiVoiceOffNonActive, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
+	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceShowOverlay, RCLocalize("Show overlay"), &g_Config.m_RiVoiceShowOverlay, &Column, LineSize);
+	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceIgnoreDistance, RCLocalize("Ignore distance"), &g_Config.m_RiVoiceIgnoreDistance, &Column, LineSize);
 	Column.HSplitTop(MarginSmall, nullptr, &Column);
 	DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceGroupGlobal, RCLocalize("Hear group members everywhere"), &g_Config.m_RiVoiceGroupGlobal, &Column, LineSize);
