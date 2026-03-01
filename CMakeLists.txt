@@ -870,6 +870,27 @@ if(NOT CRYPTO_FOUND)
   set(DEP_MD5 $<TARGET_OBJECTS:md5>)
 endif()
 
+set(RNNOISE_DIR "${PROJECT_SOURCE_DIR}/src/engine/external/rnnoise")
+set(RNNOISE_FOUND OFF)
+if(EXISTS "${RNNOISE_DIR}/src/denoise.c" AND EXISTS "${RNNOISE_DIR}/src/rnnoise_data.c")
+  set(RNNOISE_SRC
+    "${RNNOISE_DIR}/src/denoise.c"
+    "${RNNOISE_DIR}/src/rnn.c"
+    "${RNNOISE_DIR}/src/pitch.c"
+    "${RNNOISE_DIR}/src/kiss_fft.c"
+    "${RNNOISE_DIR}/src/celt_lpc.c"
+    "${RNNOISE_DIR}/src/nnet.c"
+    "${RNNOISE_DIR}/src/nnet_default.c"
+    "${RNNOISE_DIR}/src/parse_lpcnet_weights.c"
+    "${RNNOISE_DIR}/src/rnnoise_data.c"
+    "${RNNOISE_DIR}/src/rnnoise_tables.c"
+  )
+  add_library(rnnoise STATIC ${RNNOISE_SRC})
+  target_include_directories(rnnoise PUBLIC "${RNNOISE_DIR}/include" "${RNNOISE_DIR}/src")
+  list(APPEND TARGETS_DEP rnnoise)
+  set(RNNOISE_FOUND ON)
+endif()
+
 ########################################################################
 # RUST
 ########################################################################
@@ -2850,6 +2871,10 @@ if(CLIENT)
     endif()
   endif()
 
+  if(RNNOISE_FOUND)
+    list(APPEND LIBS_CLIENT rnnoise)
+  endif()
+
   if(TARGET_OS STREQUAL "windows")
     set(VERSION_EXECUTABLE "${CLIENT_EXECUTABLE}")
     set(VERSION_COMPANY "${CLIENT_EXECUTABLE} Team")
@@ -2930,6 +2955,14 @@ if(CLIENT)
 
     ${PLATFORM_CLIENT_INCLUDE_DIRS}
   )
+
+  if(RNNOISE_FOUND)
+    target_include_directories(game-client SYSTEM PRIVATE
+      ${RNNOISE_DIR}/include
+      ${RNNOISE_DIR}/src
+    )
+    target_compile_definitions(game-client PRIVATE CONF_RNNOISE)
+  endif()
 
   if(STEAMAPI_KIND STREQUAL SHARED OR DISCORD_DYNAMIC)
     set_own_rpath(game-client)

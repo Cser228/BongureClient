@@ -16,6 +16,10 @@
 
 #include <opus/opus.h>
 
+#if defined(CONF_RNNOISE)
+#include <rnnoise.h>
+#endif
+
 #include <SDL.h>
 
 #include <algorithm>
@@ -123,7 +127,7 @@ static bool VoiceNameVolume(const char *pList, const char *pName, int &OutPercen
 }
 
 static constexpr char VOICE_MAGIC[4] = {'R', 'V', '0', '1'};
-static constexpr uint8_t VOICE_VERSION = 4;
+static constexpr uint8_t VOICE_VERSION = 3;
 static constexpr uint8_t VOICE_TYPE_AUDIO = 1;
 static constexpr uint8_t VOICE_TYPE_PING = 2;
 static constexpr uint8_t VOICE_TYPE_PONG = 3;
@@ -138,6 +142,9 @@ static constexpr uint32_t VOICE_GROUP_MASK = 0x3fffffff;
 static constexpr uint32_t VOICE_MODE_SHIFT = 30;
 static constexpr uint32_t VOICE_MODE_MASK = 0x3u;
 static constexpr uint8_t VOICE_FLAG_VAD = 1 << 0;
+#if defined(CONF_RNNOISE)
+static constexpr int RNNOISE_FRAME_SAMPLES = 480;
+#endif
 
 static uint32_t VoicePackToken(uint32_t GroupHash, uint32_t Mode)
 {
@@ -292,6 +299,128 @@ static void ApplyHpfCompressor(const SRClientVoiceConfigSnapshot &Config, int16_
 		const int Sample = (int)std::clamp(Out * 32767.0f, -32768.0f, 32767.0f);
 		pSamples[i] = (int16_t)Sample;
 	}
+}
+
+static float VoiceFrameRms(const int16_t *pSamples, int Count)
+{
+	if(Count <= 0)
+		return 0.0f;
+	double Sum = 0.0;
+	for(int i = 0; i < Count; i++)
+	{
+		const float x = pSamples[i] / 32768.0f;
+		Sum += x * x;
+	}
+	return (float)std::sqrt(Sum / (double)Count);
+}
+
+static void ApplyNoiseSuppressorSimple(const SRClientVoiceConfigSnapshot &Config, int16_t *pSamples, int Count, float &NoiseFloor, float &Gate)
+{
+	if(!Config.m_RiVoiceNoiseSuppressEnable)
+		return;
+
+	const float Strength = std::clamp(Config.m_RiVoiceNoiseSuppressStrength / 100.0f, 0.0f, 1.0f);
+	if(Strength <= 0.0f)
+		return;
+
+	const float Rms = VoiceFrameRms(pSamples, Count);
+	if(!std::isfinite(Rms))
+		return;
+
+	if(NoiseFloor <= 0.0f)
+		NoiseFloor = Rms;
+
+	// Update noise floor estimate only when signal is close to noise.
+	const float UpdateFast = 0.2f;
+	const float UpdateSlow = 0.05f;
+	if(Rms < NoiseFloor * 1.2f)
+		NoiseFloor += (Rms - NoiseFloor) * UpdateFast;
+	else if(Rms < NoiseFloor * 1.5f)
+		NoiseFloor += (Rms - NoiseFloor) * UpdateSlow;
+
+	NoiseFloor = std::clamp(NoiseFloor, 1.0f / 32768.0f, 0.5f);
+
+	const float MinGain = 1.0f - Strength * 0.9f;
+	const float Low = 1.2f;
+	const float High = 2.5f;
+	const float Snr = Rms / (NoiseFloor + 1e-6f);
+
+	float Target = 1.0f;
+	if(Snr <= Low)
+		Target = MinGain;
+	else if(Snr >= High)
+		Target = 1.0f;
+	else
+	{
+		const float T = (Snr - Low) / (High - Low);
+		Target = MinGain + (1.0f - MinGain) * T;
+	}
+
+	const float Dt = Count / (float)VOICE_SAMPLE_RATE;
+	const float AttackSec = 0.01f;
+	const float ReleaseSec = 0.08f;
+	const float AttackCoeff = 1.0f - std::exp(-Dt / AttackSec);
+	const float ReleaseCoeff = 1.0f - std::exp(-Dt / ReleaseSec);
+
+	if(Target > Gate)
+		Gate += (Target - Gate) * AttackCoeff;
+	else
+		Gate += (Target - Gate) * ReleaseCoeff;
+
+	Gate = std::clamp(Gate, MinGain, 1.0f);
+
+	if(Gate >= 0.999f)
+		return;
+
+	for(int i = 0; i < Count; i++)
+	{
+		const float Out = pSamples[i] * Gate;
+		pSamples[i] = (int16_t)std::clamp(Out, -32768.0f, 32767.0f);
+	}
+}
+
+static void ApplyNoiseSuppressor(const SRClientVoiceConfigSnapshot &Config, int16_t *pSamples, int Count, float &NoiseFloor, float &Gate, DenoiseState *&pState)
+{
+	if(!Config.m_RiVoiceNoiseSuppressEnable)
+		return;
+
+	const float Strength = std::clamp(Config.m_RiVoiceNoiseSuppressStrength / 100.0f, 0.0f, 1.0f);
+	if(Strength <= 0.0f)
+		return;
+
+#if defined(CONF_RNNOISE)
+	if(!pState)
+		pState = rnnoise_create(nullptr);
+	if(!pState)
+	{
+		ApplyNoiseSuppressorSimple(Config, pSamples, Count, NoiseFloor, Gate);
+		return;
+	}
+
+	const int FrameSize = rnnoise_get_frame_size();
+	if(FrameSize != RNNOISE_FRAME_SAMPLES || Count < FrameSize)
+		return;
+
+	const int Frames = Count / FrameSize;
+	for(int f = 0; f < Frames; f++)
+	{
+		float aIn[RNNOISE_FRAME_SAMPLES];
+		float aOut[RNNOISE_FRAME_SAMPLES];
+		const int Base = f * FrameSize;
+		for(int i = 0; i < FrameSize; i++)
+			aIn[i] = (float)pSamples[Base + i];
+
+		rnnoise_process_frame(pState, aOut, aIn);
+
+		for(int i = 0; i < FrameSize; i++)
+		{
+			const float y = aIn[i] + (aOut[i] - aIn[i]) * Strength;
+			pSamples[Base + i] = (int16_t)std::clamp(y, -32768.0f, 32767.0f);
+		}
+	}
+#else
+	ApplyNoiseSuppressorSimple(Config, pSamples, Count, NoiseFloor, Gate);
+#endif
 }
 
 void CRClientVoice::SDLAudioCallback(void *pUserData, Uint8 *pStream, int Len)
@@ -862,6 +991,15 @@ void CRClientVoice::Shutdown()
 	m_HpfPrevIn = 0.0f;
 	m_HpfPrevOut = 0.0f;
 	m_CompEnv = 0.0f;
+	m_NsNoiseFloor = 0.0f;
+	m_NsGain = 1.0f;
+#if defined(CONF_RNNOISE)
+	if(m_pNoiseSuppress)
+	{
+		rnnoise_destroy(m_pNoiseSuppress);
+		m_pNoiseSuppress = nullptr;
+	}
+#endif
 	m_aAudioBackend[0] = '\0';
 	m_aAudioBackendMismatchReq[0] = '\0';
 	m_aAudioBackendMismatchCur[0] = '\0';
@@ -1081,6 +1219,7 @@ void CRClientVoice::ProcessCapture()
 		int16_t aPcm[VOICE_FRAME_SAMPLES];
 		SDL_DequeueAudio(m_CaptureDevice, aPcm, VOICE_FRAME_BYTES);
 		ApplyMicGain(Config, aPcm, VOICE_FRAME_SAMPLES);
+		ApplyNoiseSuppressor(Config, aPcm, VOICE_FRAME_SAMPLES, m_NsNoiseFloor, m_NsGain, m_pNoiseSuppress);
 		ApplyHpfCompressor(Config, aPcm, VOICE_FRAME_SAMPLES, m_HpfPrevIn, m_HpfPrevOut, m_CompEnv);
 
 		if(UseVad)
@@ -1434,6 +1573,8 @@ void CRClientVoice::UpdateConfigSnapshot()
 {
 	std::lock_guard<std::mutex> Guard(m_ConfigMutex);
 	m_ConfigSnapshot.m_RiVoiceFilterEnable = g_Config.m_RiVoiceFilterEnable;
+	m_ConfigSnapshot.m_RiVoiceNoiseSuppressEnable = g_Config.m_RiVoiceNoiseSuppressEnable;
+	m_ConfigSnapshot.m_RiVoiceNoiseSuppressStrength = g_Config.m_RiVoiceNoiseSuppressStrength;
 	m_ConfigSnapshot.m_RiVoiceCompThreshold = g_Config.m_RiVoiceCompThreshold;
 	m_ConfigSnapshot.m_RiVoiceCompRatio = g_Config.m_RiVoiceCompRatio;
 	m_ConfigSnapshot.m_RiVoiceCompAttackMs = g_Config.m_RiVoiceCompAttackMs;

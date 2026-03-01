@@ -21,10 +21,13 @@ class IConsole;
 class IEngineGraphics;
 struct OpusDecoder;
 struct OpusEncoder;
+struct DenoiseState;
 
 struct SRClientVoiceConfigSnapshot
 {
 	int m_RiVoiceFilterEnable = 0;
+	int m_RiVoiceNoiseSuppressEnable = 0;
+	int m_RiVoiceNoiseSuppressStrength = 0;
 	int m_RiVoiceCompThreshold = 0;
 	int m_RiVoiceCompRatio = 0;
 	int m_RiVoiceCompAttackMs = 0;
@@ -130,6 +133,9 @@ class CRClientVoice
 	float m_HpfPrevIn = 0.0f;
 	float m_HpfPrevOut = 0.0f;
 	float m_CompEnv = 0.0f;
+	float m_NsNoiseFloor = 0.0f;
+	float m_NsGain = 1.0f;
+	DenoiseState *m_pNoiseSuppress = nullptr;
 	std::atomic<int> m_OutputChannels = 0;
 	std::vector<int32_t> m_MixBuffer;
 
