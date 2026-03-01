@@ -2142,7 +2142,7 @@ float CRClient::GetScoreboardHeight(bool IsDefaultRender ,bool IsBigger, int Cli
 		ExtraButtonRows++; // Lock
 
 	// Both popup entry points currently render the same stack of buttons.
-	const int ButtonRows = (IsDefaultRender ? 9 : 8) + ExtraButtonRows;
+	const int ButtonRows = (IsDefaultRender ? 10 : 9) + ExtraButtonRows;
 
 	float ScoreboardHeight = OuterPopupPadding + InnerMargin + LabelHeight;
 	if(IsBigger)

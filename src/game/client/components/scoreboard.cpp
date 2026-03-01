@@ -1393,6 +1393,20 @@ CUi::EPopupMenuFunctionResult CScoreboard::CScoreboardPopupContext::Render(void 
 			CRClient::VoiceListAddName(g_Config.m_RiVoiceMute, sizeof(g_Config.m_RiVoiceMute), Client.m_aName);
 	}
 
+	View.HSplitTop(ItemSpacing * 2, nullptr, &View);
+	View.HSplitTop(ButtonSize, &Container, &View);
+
+	const int CurrentVoiceVolume = pScoreboard->GameClient()->m_RClient.VoiceNameVolume(Client.m_aName, 100);
+	int NewVoiceVolume = CurrentVoiceVolume;
+	pUi->DoScrollbarOption(&pPopupContext->m_VoiceVolumeSlider, &NewVoiceVolume, &Container, Localize("Voice"), 0, 200, &CUi::ms_LinearScrollbarScale, 0u, "%");
+	if(NewVoiceVolume != CurrentVoiceVolume)
+	{
+		if(NewVoiceVolume == 100)
+			pScoreboard->GameClient()->m_RClient.VoiceNameVolumeClear(Client.m_aName);
+		else
+			pScoreboard->GameClient()->m_RClient.VoiceNameVolumeSet(Client.m_aName, NewVoiceVolume);
+	}
+
 	View.HSplitTop(ItemSpacing * 4, nullptr, &View);
 
 	const int LocalId = pScoreboard->GameClient()->m_aLocalIds[g_Config.m_ClDummy];
