@@ -200,6 +200,7 @@ public:
 	//Voice public
 	bool IsVoiceActive(int ClientId) const;
 	int VoicePingMs() const;
+	float VoiceMicLevel() const;
 	bool IsVoiceInputUnavailable() const;
 	bool IsVoiceOutputUnavailable() const;
 	static bool VoiceListHasName(const char *pList, const char *pName);

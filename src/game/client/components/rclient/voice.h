@@ -148,6 +148,7 @@ class CRClientVoice
 	bool m_EncFec = false;
 	int64_t m_LastEncUpdate = 0;
 	std::atomic<int> m_PingMs = -1;
+	std::atomic<float> m_MicLevel = 0.0f;
 	int64_t m_LastPingSentTime = 0;
 	uint16_t m_LastPingSeq = 0;
 	std::array<SVoicePeer, MAX_CLIENTS> m_aPeers = {};
@@ -196,6 +197,7 @@ class CRClientVoice
 	void ProcessIncoming();
 	void DecodeJitter();
 	void UpdateEncoderParams();
+	void UpdateMicLevel(float Peak);
 	void PushPeerFrame(int PeerId, const int16_t *pPcm, int Samples, float LeftGain, float RightGain);
 	void MixAudio(int16_t *pOut, int Samples, int OutputChannels);
 	void ClearPeerFrames();
@@ -214,6 +216,7 @@ public:
 	void ListDevices();
 	bool IsVoiceActive(int ClientId) const;
 	int PingMs() const { return m_PingMs.load(); }
+	float MicLevel() const { return m_MicLevel.load(); }
 	bool IsCaptureUnavailable() const { return m_CaptureUnavailable; }
 	bool IsOutputUnavailable() const { return m_OutputUnavailable; }
 };

@@ -1749,6 +1749,30 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 			{0, 1, 2},
 			g_Config.m_RiVoiceTestMode);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
+		Column.HSplitTop(LineSize, &Button, &Column);
+		Button.VSplitLeft(120.0f, &Label, &Button);
+		Ui()->DoLabel(&Label, RCLocalize("Microphone level"), FontSize, TEXTALIGN_ML);
+		{
+			const float MicLevel = std::clamp(GameClient()->m_RClient.VoiceMicLevel(), 0.0f, 1.0f);
+			const float Rounding = minimum(5.0f, Button.h / 2.0f);
+			Button.Draw(ColorRGBA(0.0f, 0.0f, 0.0f, 0.4f), IGraphics::CORNER_ALL, Rounding);
+			ColorRGBA FillColor(0.2f, 0.8f, 0.2f, 0.85f);
+			if(MicLevel > 0.85f)
+				FillColor = ColorRGBA(0.9f, 0.2f, 0.2f, 0.85f);
+			else if(MicLevel > 0.65f)
+				FillColor = ColorRGBA(0.9f, 0.75f, 0.2f, 0.85f);
+			if(MicLevel > 0.001f)
+			{
+				CUIRect Fill = Button;
+				Fill.w = maximum(2.0f * Rounding, Button.w * MicLevel);
+				Fill.Draw(FillColor, IGraphics::CORNER_ALL, Rounding);
+			}
+			char aBuf[16];
+			const int Percent = (int)(MicLevel * 100.0f + 0.5f);
+			str_format(aBuf, sizeof(aBuf), "%d%%", Percent);
+			Ui()->DoLabel(&Button, aBuf, FontSize * 0.9f, TEXTALIGN_MR);
+		}
+		Column.HSplitTop(MarginSmall, nullptr, &Column);
 
 		static char s_aVoiceNameVolumeName[32];
 		static int s_VoiceNameVolumePercent = 100;

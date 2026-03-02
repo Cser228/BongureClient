@@ -997,6 +997,19 @@ void CRClientVoice::ListDevices()
 	}
 }
 
+void CRClientVoice::UpdateMicLevel(float Peak)
+{
+	const float Prev = m_MicLevel.load();
+	if(Peak < 0.0f)
+	{
+		m_MicLevel.store(Prev * 0.97f);
+		return;
+	}
+	Peak = std::clamp(Peak, 0.0f, 1.0f);
+	const float Next = Peak >= Prev ? Peak : (Prev * 0.9f);
+	m_MicLevel.store(Next);
+}
+
 void CRClientVoice::Shutdown()
 {
 	if(m_ShutdownDone)
@@ -1059,6 +1072,7 @@ void CRClientVoice::Shutdown()
 	m_aAudioInitLoggedBackend[0] = '\0';
 	m_AudioSubsystemInitializedByVoice = false;
 	m_PingMs.store(-1);
+	m_MicLevel.store(0.0f);
 	m_LastPingSentTime = 0;
 	m_LastPingSeq = 0;
 }
@@ -1173,6 +1187,7 @@ void CRClientVoice::ProcessCapture()
 	GetConfigSnapshot(Config);
 	const int TestMode = std::clamp(Config.m_RiVoiceTestMode, 0, 2);
 	const bool TestLocal = TestMode == 1;
+	const bool ShowMicLevel = TestMode != 0;
 	const float TestGain = std::clamp(Config.m_RiVoiceVolume / 100.0f, 0.0f, 4.0f);
 
 	int LocalClientId = -1;
@@ -1249,6 +1264,27 @@ void CRClientVoice::ProcessCapture()
 
 	if(!UseVad && !PttHeld)
 	{
+		if(ShowMicLevel)
+		{
+			bool UpdatedMicLevel = false;
+			while(SDL_GetQueuedAudioSize(m_CaptureDevice) >= VOICE_FRAME_BYTES)
+			{
+				int16_t aPcm[VOICE_FRAME_SAMPLES];
+				SDL_DequeueAudio(m_CaptureDevice, aPcm, VOICE_FRAME_BYTES);
+				ApplyMicGain(Config, aPcm, VOICE_FRAME_SAMPLES);
+				ApplyNoiseSuppressor(Config, aPcm, VOICE_FRAME_SAMPLES, m_NsNoiseFloor, m_NsGain, m_pNoiseSuppress);
+				ApplyHpfCompressor(Config, aPcm, VOICE_FRAME_SAMPLES, m_HpfPrevIn, m_HpfPrevOut, m_CompEnv);
+				const float Peak = VoiceFramePeak(aPcm, VOICE_FRAME_SAMPLES);
+				UpdateMicLevel(Peak);
+				UpdatedMicLevel = true;
+			}
+			if(!UpdatedMicLevel)
+				UpdateMicLevel(-1.0f);
+		}
+		else
+		{
+			UpdateMicLevel(0.0f);
+		}
 		if(ReleaseDeadline != 0 && Now >= ReleaseDeadline)
 			m_PttReleaseDeadline.store(0);
 		m_TxWasActive = false;
@@ -1270,6 +1306,7 @@ void CRClientVoice::ProcessCapture()
 	uint8_t aPacket[VOICE_MAX_PACKET];
 	uint8_t aPayload[VOICE_MAX_PAYLOAD];
 
+	bool UpdatedMicLevel = false;
 	while(SDL_GetQueuedAudioSize(m_CaptureDevice) >= VOICE_FRAME_BYTES)
 	{
 		int16_t aPcm[VOICE_FRAME_SAMPLES];
@@ -1278,9 +1315,15 @@ void CRClientVoice::ProcessCapture()
 		ApplyNoiseSuppressor(Config, aPcm, VOICE_FRAME_SAMPLES, m_NsNoiseFloor, m_NsGain, m_pNoiseSuppress);
 		ApplyHpfCompressor(Config, aPcm, VOICE_FRAME_SAMPLES, m_HpfPrevIn, m_HpfPrevOut, m_CompEnv);
 
+		const float Peak = VoiceFramePeak(aPcm, VOICE_FRAME_SAMPLES);
+		if(ShowMicLevel)
+		{
+			UpdateMicLevel(Peak);
+			UpdatedMicLevel = true;
+		}
+
 		if(UseVad)
 		{
-			const float Peak = VoiceFramePeak(aPcm, VOICE_FRAME_SAMPLES);
 			const bool Trigger = VadThreshold <= 0.0f || Peak >= VadThreshold;
 			const int64_t FrameNow = time_get();
 			if(Trigger)
@@ -1375,6 +1418,16 @@ void CRClientVoice::ProcessCapture()
 				s_TxPackets = 0;
 			}
 		}
+	}
+
+	if(ShowMicLevel)
+	{
+		if(!UpdatedMicLevel)
+			UpdateMicLevel(-1.0f);
+	}
+	else
+	{
+		UpdateMicLevel(0.0f);
 	}
 }
 

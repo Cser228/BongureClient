@@ -2299,6 +2299,11 @@ int CRClient::VoicePingMs() const
 	return m_Voice.PingMs();
 }
 
+float CRClient::VoiceMicLevel() const
+{
+	return m_Voice.MicLevel();
+}
+
 bool CRClient::IsVoiceInputUnavailable() const
 {
 	return m_Voice.IsCaptureUnavailable();
