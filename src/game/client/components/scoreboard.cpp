@@ -1398,7 +1398,7 @@ CUi::EPopupMenuFunctionResult CScoreboard::CScoreboardPopupContext::Render(void 
 
 	const int CurrentVoiceVolume = pScoreboard->GameClient()->m_RClient.VoiceNameVolume(Client.m_aName, 100);
 	int NewVoiceVolume = CurrentVoiceVolume;
-	pUi->DoScrollbarOption(&pPopupContext->m_VoiceVolumeSlider, &NewVoiceVolume, &Container, Localize("Voice"), 0, 200, &CUi::ms_LinearScrollbarScale, 0u, "%");
+	pUi->DoScrollbarOption(&pPopupContext->m_VoiceVolumeSlider, &NewVoiceVolume, &Container, Localize("Voice"), 0, 200, &CUi::ms_LinearScrollbarScale, CUi::SCROLLBAR_OPTION_NO_SLOWSHIFT, "%");
 	if(NewVoiceVolume != CurrentVoiceVolume)
 	{
 		if(NewVoiceVolume == 100)
