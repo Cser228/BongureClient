@@ -1673,12 +1673,14 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 #endif
 		DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiVoiceNoiseSuppressEnable, pNoiseSuppressLabel, &g_Config.m_RiVoiceNoiseSuppressEnable, &Column, LineSize);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
+#if !defined(CONF_RNNOISE)
 		if(g_Config.m_RiVoiceNoiseSuppressEnable)
 		{
 			Column.HSplitTop(LineSize, &Button, &Column);
 			Ui()->DoScrollbarOption(&g_Config.m_RiVoiceNoiseSuppressStrength, &g_Config.m_RiVoiceNoiseSuppressStrength, &Button, RCLocalize("Noise suppress strength (%)"), 0, 100);
 			Column.HSplitTop(MarginSmall, nullptr, &Column);
 		}
+#endif
 		Column.HSplitTop(LineSize, &Label, &Column);
 		Ui()->DoLabel(&Label, RCLocalize("Filter presets"), FontSize, TEXTALIGN_ML);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);

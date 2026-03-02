@@ -414,7 +414,8 @@ static void ApplyNoiseSuppressor(const SRClientVoiceConfigSnapshot &Config, int1
 
 		for(int i = 0; i < FrameSize; i++)
 		{
-			const float y = aIn[i] + (aOut[i] - aIn[i]) * Strength;
+			// Use RNNoise output only to avoid combing/doubling from dry+wet mix.
+			const float y = aOut[i];
 			pSamples[Base + i] = (int16_t)std::clamp(y, -32768.0f, 32767.0f);
 		}
 	}
