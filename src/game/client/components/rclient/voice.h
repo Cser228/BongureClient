@@ -130,6 +130,8 @@ class CRClientVoice
 	char m_aOutputDeviceName[128] = {0};
 	bool m_OutputStereo = true;
 	bool m_LogDeviceChange = false;
+	bool m_CaptureUnavailable = false;
+	bool m_OutputUnavailable = false;
 	float m_HpfPrevIn = 0.0f;
 	float m_HpfPrevOut = 0.0f;
 	float m_CompEnv = 0.0f;

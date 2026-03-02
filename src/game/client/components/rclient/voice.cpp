@@ -575,6 +575,8 @@ bool CRClientVoice::EnsureAudio()
 		m_aAudioBackendMismatchCur[0] = '\0';
 		m_aAudioInitLoggedBackend[0] = '\0';
 		m_LogDeviceChange = true;
+		m_CaptureUnavailable = false;
+		m_OutputUnavailable = false;
 	}
 
 	const char *pRequestedBackend = g_Config.m_RiVoiceAudioBackend[0] ? g_Config.m_RiVoiceAudioBackend : nullptr;
@@ -638,6 +640,7 @@ bool CRClientVoice::EnsureAudio()
 		}
 		str_copy(m_aInputDeviceName, g_Config.m_RiVoiceInputDevice, sizeof(m_aInputDeviceName));
 		m_LogDeviceChange = true;
+		m_CaptureUnavailable = false;
 	}
 
 	if(str_comp(m_aOutputDeviceName, g_Config.m_RiVoiceOutputDevice) != 0)
@@ -649,6 +652,7 @@ bool CRClientVoice::EnsureAudio()
 		}
 		str_copy(m_aOutputDeviceName, g_Config.m_RiVoiceOutputDevice, sizeof(m_aOutputDeviceName));
 		m_LogDeviceChange = true;
+		m_OutputUnavailable = false;
 	}
 
 	if(m_OutputStereo != WantStereo)
@@ -660,6 +664,7 @@ bool CRClientVoice::EnsureAudio()
 		}
 		m_OutputStereo = WantStereo;
 		m_LogDeviceChange = true;
+		m_OutputUnavailable = false;
 	}
 
 	if(HadCapture && HadOutput && HadEncoder && m_CaptureDevice && m_OutputDevice && m_pEncoder)
@@ -668,46 +673,7 @@ bool CRClientVoice::EnsureAudio()
 	}
 
 	const char *pInputName = FindDeviceName(true, m_aInputDeviceName);
-	if(m_aInputDeviceName[0] != '\0' && pInputName == nullptr)
-	{
-		log_error("voice", "Input device not found: '%s'", m_aInputDeviceName);
-		return false;
-	}
-
 	const char *pOutputName = FindDeviceName(false, m_aOutputDeviceName);
-	if(m_aOutputDeviceName[0] != '\0' && pOutputName == nullptr)
-	{
-		log_error("voice", "Output device not found: '%s'", m_aOutputDeviceName);
-		return false;
-	}
-
-	if(!m_CaptureDevice)
-	{
-		m_CaptureDevice = SDL_OpenAudioDevice(pInputName, 1, &WantCapture, &m_CaptureSpec, 0);
-		if(!m_CaptureDevice)
-		{
-			log_error("voice", "Failed to open capture device: %s", SDL_GetError());
-			return false;
-		}
-		SDL_PauseAudioDevice(m_CaptureDevice, 0);
-	}
-
-	if(!m_OutputDevice)
-	{
-		m_OutputDevice = SDL_OpenAudioDevice(pOutputName, 0, &WantOutput, &m_OutputSpec, 0);
-		if(!m_OutputDevice)
-		{
-			log_error("voice", "Failed to open output device: %s", SDL_GetError());
-			SDL_CloseAudioDevice(m_CaptureDevice);
-			m_CaptureDevice = 0;
-			return false;
-		}
-		const int Channels = m_OutputSpec.channels > 0 ? m_OutputSpec.channels : (WantStereo ? 2 : 1);
-		m_OutputChannels.store(Channels);
-		m_MixBuffer.resize((size_t)m_OutputSpec.samples * Channels);
-		SDL_PauseAudioDevice(m_OutputDevice, 0);
-		ClearPeerFrames();
-	}
 
 	if(!m_pEncoder)
 	{
@@ -726,6 +692,86 @@ bool CRClientVoice::EnsureAudio()
 		opus_encoder_ctl(m_pEncoder, OPUS_SET_PACKET_LOSS_PERC(m_EncLossPerc));
 		opus_encoder_ctl(m_pEncoder, OPUS_SET_INBAND_FEC(m_EncFec ? 1 : 0));
 		opus_encoder_ctl(m_pEncoder, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
+	}
+
+	if(!m_OutputDevice)
+	{
+		const bool OutputMissing = m_aOutputDeviceName[0] != '\0' && pOutputName == nullptr;
+		const bool NoOutputDevices = SDL_GetNumAudioDevices(0) <= 0;
+
+		if(OutputMissing)
+		{
+			if(!m_OutputUnavailable)
+				log_error("voice", "Output device not found: '%s'", m_aOutputDeviceName);
+			m_OutputUnavailable = true;
+		}
+		else if(NoOutputDevices)
+		{
+			if(!m_OutputUnavailable)
+				log_error("voice", "No output devices available");
+			m_OutputUnavailable = true;
+		}
+		else
+		{
+			m_OutputDevice = SDL_OpenAudioDevice(pOutputName, 0, &WantOutput, &m_OutputSpec, 0);
+			if(!m_OutputDevice)
+			{
+				if(!m_OutputUnavailable)
+					log_error("voice", "Failed to open output device: %s", SDL_GetError());
+				m_OutputUnavailable = true;
+			}
+			else
+			{
+				const int Channels = m_OutputSpec.channels > 0 ? m_OutputSpec.channels : (WantStereo ? 2 : 1);
+				m_OutputChannels.store(Channels);
+				m_MixBuffer.resize((size_t)m_OutputSpec.samples * Channels);
+				SDL_PauseAudioDevice(m_OutputDevice, 0);
+				ClearPeerFrames();
+				m_OutputUnavailable = false;
+			}
+		}
+	}
+	else
+	{
+		m_OutputUnavailable = false;
+	}
+
+	if(!m_CaptureDevice)
+	{
+		const bool InputMissing = m_aInputDeviceName[0] != '\0' && pInputName == nullptr;
+		const bool NoCaptureDevices = SDL_GetNumAudioDevices(1) <= 0;
+
+		if(InputMissing)
+		{
+			if(!m_CaptureUnavailable)
+				log_error("voice", "Input device not found: '%s'", m_aInputDeviceName);
+			m_CaptureUnavailable = true;
+		}
+		else if(NoCaptureDevices)
+		{
+			if(!m_CaptureUnavailable)
+				log_error("voice", "No capture devices available");
+			m_CaptureUnavailable = true;
+		}
+		else
+		{
+			m_CaptureDevice = SDL_OpenAudioDevice(pInputName, 1, &WantCapture, &m_CaptureSpec, 0);
+			if(!m_CaptureDevice)
+			{
+				if(!m_CaptureUnavailable)
+					log_error("voice", "Failed to open capture device: %s", SDL_GetError());
+				m_CaptureUnavailable = true;
+			}
+			else
+			{
+				SDL_PauseAudioDevice(m_CaptureDevice, 0);
+				m_CaptureUnavailable = false;
+			}
+		}
+	}
+	else
+	{
+		m_CaptureUnavailable = false;
 	}
 
 	if(m_LogDeviceChange)
@@ -971,6 +1017,8 @@ void CRClientVoice::Shutdown()
 	}
 	m_OutputChannels.store(0);
 	m_MixBuffer.clear();
+	m_CaptureUnavailable = false;
+	m_OutputUnavailable = false;
 	if(m_pEncoder)
 	{
 		opus_encoder_destroy(m_pEncoder);
@@ -1899,8 +1947,18 @@ void CRClientVoice::OnRender()
 		m_MixBuffer.clear();
 		NeedReinit = true;
 	}
-	if(!m_CaptureDevice || !m_OutputDevice || !m_pEncoder)
+	if(!m_pEncoder)
 		NeedReinit = true;
+	if(!m_OutputDevice)
+	{
+		if(!m_OutputUnavailable)
+			NeedReinit = true;
+	}
+	if(!m_CaptureDevice)
+	{
+		if(!m_CaptureUnavailable)
+			NeedReinit = true;
+	}
 	if(ContextChanged)
 	{
 		StopWorker();
