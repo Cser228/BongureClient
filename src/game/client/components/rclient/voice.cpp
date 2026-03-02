@@ -1171,6 +1171,9 @@ void CRClientVoice::ProcessCapture()
 
 	SRClientVoiceConfigSnapshot Config;
 	GetConfigSnapshot(Config);
+	const int TestMode = std::clamp(Config.m_RiVoiceTestMode, 0, 2);
+	const bool TestLocal = TestMode == 1;
+	const float TestGain = std::clamp(Config.m_RiVoiceVolume / 100.0f, 0.0f, 2.0f);
 
 	int LocalClientId = -1;
 	vec2 LocalPos = vec2(0.0f, 0.0f);
@@ -1315,6 +1318,17 @@ void CRClientVoice::ProcessCapture()
 			m_TxWasActive = true;
 		}
 
+		if(TestLocal)
+		{
+			if(m_OutputDevice && TestGain > 0.0f)
+			{
+				SDL_LockAudioDevice(m_OutputDevice);
+				PushPeerFrame(LocalClientId, aPcm, VOICE_FRAME_SAMPLES, TestGain, TestGain);
+				SDL_UnlockAudioDevice(m_OutputDevice);
+			}
+			continue;
+		}
+
 		const int EncSize = opus_encode(m_pEncoder, aPcm, VOICE_FRAME_SAMPLES, aPayload, (int)sizeof(aPayload));
 		if(EncSize <= 0)
 			continue;
@@ -1371,6 +1385,8 @@ void CRClientVoice::ProcessIncoming()
 
 	SRClientVoiceConfigSnapshot Config;
 	GetConfigSnapshot(Config);
+	const int TestMode = std::clamp(Config.m_RiVoiceTestMode, 0, 2);
+	const bool TestServer = TestMode == 2;
 
 	static int64_t s_RxLastLog = 0;
 	static int s_RxPackets = 0;
@@ -1483,30 +1499,35 @@ void CRClientVoice::ProcessIncoming()
 		if(SpecActive && Config.m_RiVoiceHearOnSpecPos)
 			LocalPos = SpecPos;
 
-		if(SenderId == LocalId)
+		const bool IsSelf = SenderId == LocalId;
+		if(IsSelf && !TestServer)
 			continue;
 
-		const bool AllowObserver = Config.m_RiVoiceHearPeoplesInSpectate && !SenderActive && !SenderSpec;
-		if(Config.m_RiVoiceVisibilityMode == 0)
-		{
-			if(!SenderActive && !AllowObserver)
-				continue;
-		}
-		else if(Config.m_RiVoiceVisibilityMode == 1)
-		{
-			if(SenderOtherTeam && !AllowObserver)
-				continue;
-		}
 		const char *pSenderName = aSenderName;
-		if(VoiceListMatch(Config.m_aRiVoiceMute, pSenderName))
-			continue;
-		if(Config.m_RiVoiceListMode == 1 && !VoiceListMatch(Config.m_aRiVoiceWhitelist, pSenderName))
-			continue;
-		if(Config.m_RiVoiceListMode == 2 && VoiceListMatch(Config.m_aRiVoiceBlacklist, pSenderName))
-			continue;
-		const bool SenderUsesVad = (Flags & VOICE_FLAG_VAD) != 0;
-		if(SenderUsesVad && !Config.m_RiVoiceHearVad && !VoiceListMatch(Config.m_aRiVoiceVadAllow, pSenderName))
-			continue;
+		if(!IsSelf)
+		{
+			const bool AllowObserver = Config.m_RiVoiceHearPeoplesInSpectate && !SenderActive && !SenderSpec;
+			if(Config.m_RiVoiceVisibilityMode == 0)
+			{
+				if(!SenderActive && !AllowObserver)
+					continue;
+			}
+			else if(Config.m_RiVoiceVisibilityMode == 1)
+			{
+				if(SenderOtherTeam && !AllowObserver)
+					continue;
+			}
+
+			if(VoiceListMatch(Config.m_aRiVoiceMute, pSenderName))
+				continue;
+			if(Config.m_RiVoiceListMode == 1 && !VoiceListMatch(Config.m_aRiVoiceWhitelist, pSenderName))
+				continue;
+			if(Config.m_RiVoiceListMode == 2 && VoiceListMatch(Config.m_aRiVoiceBlacklist, pSenderName))
+				continue;
+			const bool SenderUsesVad = (Flags & VOICE_FLAG_VAD) != 0;
+			if(SenderUsesVad && !Config.m_RiVoiceHearVad && !VoiceListMatch(Config.m_aRiVoiceVadAllow, pSenderName))
+				continue;
+		}
 		m_aLastHeard[SenderId].store(time_get());
 
 		if(PayloadSize > (uint16_t)(VOICE_MAX_PACKET - VOICE_HEADER_SIZE))
@@ -1639,6 +1660,7 @@ void CRClientVoice::UpdateConfigSnapshot()
 	m_ConfigSnapshot.m_RiVoiceRadius = g_Config.m_RiVoiceRadius;
 	m_ConfigSnapshot.m_RiVoiceVolume = g_Config.m_RiVoiceVolume;
 	m_ConfigSnapshot.m_RiVoiceMicVolume = g_Config.m_RiVoiceMicVolume;
+	m_ConfigSnapshot.m_RiVoiceTestMode = g_Config.m_RiVoiceTestMode;
 	m_ConfigSnapshot.m_RiVoiceVadEnable = g_Config.m_RiVoiceVadEnable;
 	m_ConfigSnapshot.m_RiVoiceVadThreshold = g_Config.m_RiVoiceVadThreshold;
 	m_ConfigSnapshot.m_RiVoiceVadReleaseDelayMs = g_Config.m_RiVoiceVadReleaseDelayMs;
