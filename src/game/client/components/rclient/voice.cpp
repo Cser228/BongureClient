@@ -142,6 +142,7 @@ static constexpr uint32_t VOICE_GROUP_MASK = 0x3fffffff;
 static constexpr uint32_t VOICE_MODE_SHIFT = 30;
 static constexpr uint32_t VOICE_MODE_MASK = 0x3u;
 static constexpr uint8_t VOICE_FLAG_VAD = 1 << 0;
+static constexpr uint8_t VOICE_FLAG_LOOPBACK = 1 << 1;
 #if defined(CONF_RNNOISE)
 static constexpr int RNNOISE_FRAME_SAMPLES = 480;
 #endif
@@ -1226,7 +1227,9 @@ void CRClientVoice::ProcessCapture()
 	const bool TokenChanged = Config.m_RiVoiceTokenHash != m_LastTokenHashSent;
 	const bool NeedKeepalive = m_LastKeepalive == 0 || Now - m_LastKeepalive > time_freq() * 2;
 	const bool TxActiveSnapshot = UseVad ? m_VadActive : PttHeld;
-	const uint8_t TxFlags = UseVad ? VOICE_FLAG_VAD : 0;
+	uint8_t TxFlags = UseVad ? VOICE_FLAG_VAD : 0;
+	if(TestMode == 2)
+		TxFlags |= VOICE_FLAG_LOOPBACK;
 
 	if(TokenChanged || (!TxActiveSnapshot && NeedKeepalive))
 	{
