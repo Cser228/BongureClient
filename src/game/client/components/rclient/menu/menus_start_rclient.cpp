@@ -49,6 +49,27 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 	const float LogoCenterY = Lerp(LogoCenterYCollapsed, LogoCenterYExpanded, AnimProgress);
 
 	CUIRect LogoCircle = {LogoCenterX - LogoCircleSize / 2.0f, LogoCenterY - LogoCircleSize / 2.0f, LogoCircleSize, LogoCircleSize};
+	static CButtonContainer s_LogoButton;
+	const auto RenderLogo = [&]() {
+		const bool LogoHovered = Ui()->MouseHovered(&LogoCircle);
+		const bool LogoActive = Ui()->CheckActiveItem(&s_LogoButton);
+		const float LogoShade = LogoActive ? 0.92f : (LogoHovered ? 1.0f : 0.97f);
+		LogoCircle.Draw(ColorRGBA(LogoShade, LogoShade, LogoShade, 1.0f), IGraphics::CORNER_ALL, LogoCircle.h / 2.0f);
+
+		CUIRect LogoCircleInner;
+		LogoCircle.Margin(LogoBorderSize, &LogoCircleInner);
+		LogoCircleInner.Draw(ColorRGBA(0.12f, 0.12f, 0.12f, 1.0f), IGraphics::CORNER_ALL, LogoCircleInner.h / 2.0f);
+
+		CUIRect LogoRect;
+		LogoCircleInner.Margin((LogoCircleInner.w - LogoSize) / 2.0f, &LogoRect);
+
+		Graphics()->TextureSet(g_pData->m_aImages[IMAGE_RCLIENT_BIG_LOGO].m_Id);
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(1, 1, 1, 1);
+		IGraphics::CQuadItem QuadItem(LogoRect.x, LogoRect.y, LogoRect.w, LogoRect.h);
+		Graphics()->QuadsDrawTL(&QuadItem, 1);
+		Graphics()->QuadsEnd();
+	};
 
 	// render ribbon
 	const CUIRect *pScreen = Ui()->Screen();
@@ -66,26 +87,6 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 			RibbonHeight};
 		Ribbon.Draw(ColorRGBA(0.32f, 0.32f, 0.34f, 1.0f), IGraphics::CORNER_NONE, 0.0f);
 	}
-
-	static CButtonContainer s_LogoButton;
-	const bool LogoHovered = Ui()->MouseHovered(&LogoCircle);
-	const bool LogoActive = Ui()->CheckActiveItem(&s_LogoButton);
-	const float LogoShade = LogoActive ? 0.92f : (LogoHovered ? 1.0f : 0.97f);
-	LogoCircle.Draw(ColorRGBA(LogoShade, LogoShade, LogoShade, 1.0f), IGraphics::CORNER_ALL, LogoCircle.h / 2.0f);
-
-	CUIRect LogoCircleInner;
-	LogoCircle.Margin(LogoBorderSize, &LogoCircleInner);
-	LogoCircleInner.Draw(ColorRGBA(0.12f, 0.12f, 0.12f, 1.0f), IGraphics::CORNER_ALL, LogoCircleInner.h / 2.0f);
-
-	CUIRect LogoRect;
-	LogoCircleInner.Margin((LogoCircleInner.w - LogoSize) / 2.0f, &LogoRect);
-
-	Graphics()->TextureSet(g_pData->m_aImages[IMAGE_RCLIENT_BIG_LOGO].m_Id);
-	Graphics()->QuadsBegin();
-	Graphics()->SetColor(1, 1, 1, 1);
-	IGraphics::CQuadItem QuadItem(LogoRect.x, LogoRect.y, LogoRect.w, LogoRect.h);
-	Graphics()->QuadsDrawTL(&QuadItem, 1);
-	Graphics()->QuadsEnd();
 
 	if(Ui()->DoButtonLogic(&s_LogoButton, 0, &LogoCircle, BUTTONFLAG_LEFT))
 	{
@@ -113,7 +114,8 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 
 	const float ButtonWidthTarget = std::clamp(View.w * 0.115f, 108.0f, 150.0f);
 	const float ButtonHeight = RibbonHeight;
-	const float ButtonSpacing = 3.0f;
+	const float ButtonSpacing = 8.0f;
+	const float ButtonFloatOffset = 10.0f;
 	const float SideGap = 18.0f;
 	const float ButtonsCollapsedX = LogoCenterX - ButtonWidthTarget / 2.0f;
 	const float ButtonsCollapsedY = RibbonY;
@@ -139,42 +141,121 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 		*pButtonRect = {X, Y, Width, ButtonHeight};
 		return Progress;
 	};
-	const auto RenderRibbonButton = [&](CButtonContainer *pButton, const CUIRect &Rect, float Progress, ColorRGBA BaseColor, const char *pIcon, const char *pLabel) -> bool {
-		if(Progress <= 0.0f)
+	enum ERibbonButtonSlot
+	{
+		RIBBON_BUTTON_QUIT = 0,
+		RIBBON_BUTTON_LOCAL_SERVER,
+		RIBBON_BUTTON_DEMOS,
+		RIBBON_BUTTON_PLAY,
+		RIBBON_BUTTON_SETTINGS,
+		NUM_RIBBON_BUTTONS
+	};
+	struct CRibbonButtonState
+	{
+		CButtonContainer *m_pButton = nullptr;
+		CUIRect m_HitRect{};
+		CUIRect m_VisualRect{};
+		float m_RevealProgress = 0.0f;
+		float m_HoverProgress = 0.0f;
+		ColorRGBA m_BaseColor{};
+		const char *m_pIcon = nullptr;
+		const char *m_pLabel = nullptr;
+		bool m_FillLeftGap = false;
+		bool m_FillRightGap = false;
+	};
+	const auto GetVisualButtonRect = [&](const CUIRect &HitRect, float HoverProgress, bool FillLeftGap, bool FillRightGap) {
+		CUIRect VisualRect = HitRect;
+		const float GapFillLeft = FillLeftGap ? ButtonSpacing * HoverProgress : 0.0f;
+		const float GapFillRight = FillRightGap ? ButtonSpacing * HoverProgress : 0.0f;
+		VisualRect.x -= GapFillLeft;
+		VisualRect.w += GapFillLeft + GapFillRight;
+		VisualRect.y -= ButtonFloatOffset * HoverProgress;
+		return VisualRect;
+	};
+	const auto UpdateButtonHover = [&](int Slot, CButtonContainer *pButton, const CUIRect &HitRect) {
+		const bool WantsHover = Ui()->MouseHovered(&HitRect) || Ui()->CheckActiveItem(pButton);
+		m_aRibbonButtonHoverAnim[Slot] = std::clamp(m_aRibbonButtonHoverAnim[Slot] + Client()->RenderFrameTime() * (WantsHover ? 10.0f : -10.0f), 0.0f, 1.0f);
+		return ButtonEase(m_aRibbonButtonHoverAnim[Slot]);
+	};
+	const auto RenderRibbonButton = [&](const CRibbonButtonState &ButtonState) -> bool {
+		if(ButtonState.m_RevealProgress <= 0.0f)
 			return false;
 
-		const bool Hovered = Ui()->MouseHovered(&Rect);
-		const bool Active = Ui()->CheckActiveItem(pButton);
-		const float Highlight = Active ? 0.82f : (Hovered ? 1.08f : 1.0f);
-		ColorRGBA Fill = BaseColor;
+		const bool Hovered = Ui()->MouseHovered(&ButtonState.m_HitRect);
+		const bool Active = Ui()->CheckActiveItem(ButtonState.m_pButton);
+		const float Highlight = Active ? 0.82f : Lerp(1.0f, Hovered ? 1.1f : 1.04f, ButtonState.m_HoverProgress);
+		const float ShadowStrength = ButtonState.m_HoverProgress;
+		ColorRGBA Fill = ButtonState.m_BaseColor;
 		Fill.r = std::clamp(Fill.r * Highlight, 0.0f, 1.0f);
 		Fill.g = std::clamp(Fill.g * Highlight, 0.0f, 1.0f);
 		Fill.b = std::clamp(Fill.b * Highlight, 0.0f, 1.0f);
 		Fill.a = 1.0f;
 
-		CUIRect Panel = Rect;
+		CUIRect Panel = ButtonState.m_VisualRect;
+		CUIRect Shadow = Panel;
+		Shadow.x += 2.0f;
+		Shadow.y += Lerp(2.0f, 7.0f, ShadowStrength);
+		Shadow.Draw(ColorRGBA(0.0f, 0.0f, 0.0f, Lerp(0.05f, 0.18f, ShadowStrength)), IGraphics::CORNER_NONE, 0.0f);
 		Panel.Draw(Fill, IGraphics::CORNER_NONE, 0.0f);
 
-		CUIRect LabelRect = Rect;
+		CUIRect LabelRect = Panel;
 		LabelRect.Margin(8.0f, &LabelRect);
 		CUIRect IconRect, TextRect;
 		LabelRect.HSplitTop(LabelRect.h * 0.58f, &IconRect, &TextRect);
 
 		TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
 		TextRender()->SetRenderFlags(ETextRenderFlags::TEXT_RENDER_FLAG_ONLY_ADVANCE_WIDTH | ETextRenderFlags::TEXT_RENDER_FLAG_NO_X_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_Y_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | ETextRenderFlags::TEXT_RENDER_FLAG_NO_OVERSIZE);
-		Ui()->DoLabel(&IconRect, pIcon, IconRect.h * 0.55f, TEXTALIGN_MC);
+		Ui()->DoLabel(&IconRect, ButtonState.m_pIcon, IconRect.h * 0.55f, TEXTALIGN_MC);
 		TextRender()->SetRenderFlags(0);
 		TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
-		Ui()->DoLabel(&TextRect, pLabel, TextRect.h * 0.72f, TEXTALIGN_MC);
+		Ui()->DoLabel(&TextRect, ButtonState.m_pLabel, TextRect.h * 0.72f, TEXTALIGN_MC);
 
-		return Ui()->DoButtonLogic(pButton, 0, &Rect, BUTTONFLAG_LEFT) != 0;
+		return Ui()->DoButtonLogic(ButtonState.m_pButton, 0, &ButtonState.m_HitRect, BUTTONFLAG_LEFT) != 0;
+	};
+	const auto CreateRibbonButton = [&](CRibbonButtonState &ButtonState, int Slot, CButtonContainer *pButton, bool LeftSide, int Index, ColorRGBA BaseColor, const char *pIcon, const char *pLabel, bool FillLeftGap, bool FillRightGap) {
+		ButtonState.m_pButton = pButton;
+		ButtonState.m_RevealProgress = PrepareAnimatedButton(LeftSide, Index, &ButtonState.m_HitRect);
+		ButtonState.m_BaseColor = BaseColor;
+		ButtonState.m_pIcon = pIcon;
+		ButtonState.m_pLabel = pLabel;
+		ButtonState.m_FillLeftGap = FillLeftGap;
+		ButtonState.m_FillRightGap = FillRightGap;
+		if(ButtonState.m_RevealProgress <= 0.0f)
+		{
+			m_aRibbonButtonHoverAnim[Slot] = 0.0f;
+			ButtonState.m_HoverProgress = 0.0f;
+			ButtonState.m_VisualRect = ButtonState.m_HitRect;
+			return;
+		}
+
+		ButtonState.m_HoverProgress = UpdateButtonHover(Slot, pButton, ButtonState.m_HitRect);
+		ButtonState.m_VisualRect = GetVisualButtonRect(ButtonState.m_HitRect, ButtonState.m_HoverProgress, FillLeftGap, FillRightGap);
 	};
 
 	static CButtonContainer s_QuitButton;
+	static CButtonContainer s_LocalServerButton;
+	static CButtonContainer s_DemoButton;
+	static CButtonContainer s_PlayButton;
+	static CButtonContainer s_SettingsButton;
+	std::array<CRibbonButtonState, NUM_RIBBON_BUTTONS> aRibbonButtons;
+	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_QUIT], RIBBON_BUTTON_QUIT, &s_QuitButton, true, 0, ColorRGBA(0.88f, 0.18f, 0.56f, 1.0f), FontIcon::XMARK, Localize("Quit"), false, true);
+	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_LOCAL_SERVER], RIBBON_BUTTON_LOCAL_SERVER, &s_LocalServerButton, true, 1, GameClient()->m_LocalServer.IsServerRunning() ? ColorRGBA(0.15f, 0.73f, 0.34f, 1.0f) : ColorRGBA(0.92f, 0.66f, 0.08f, 1.0f), FontIcon::NETWORK_WIRED, GameClient()->m_LocalServer.IsServerRunning() ? Localize("Stop server") : Localize("Run server"), true, true);
+	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_DEMOS], RIBBON_BUTTON_DEMOS, &s_DemoButton, true, 2, ColorRGBA(0.63f, 0.81f, 0.02f, 1.0f), FontIcon::CLAPPERBOARD, Localize("Demos"), true, true);
+	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_PLAY], RIBBON_BUTTON_PLAY, &s_PlayButton, true, 3, ColorRGBA(0.43f, 0.29f, 0.88f, 1.0f), FontIcon::CIRCLE_PLAY, Localize("Play", "Start menu"), true, false);
+	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_SETTINGS], RIBBON_BUTTON_SETTINGS, &s_SettingsButton, false, 0, ColorRGBA(0.35f, 0.35f, 0.38f, 1.0f), FontIcon::GEAR, Localize("Settings"), false, false);
+	std::array<int, NUM_RIBBON_BUTTONS> aRibbonButtonRenderOrder = {RIBBON_BUTTON_QUIT, RIBBON_BUTTON_LOCAL_SERVER, RIBBON_BUTTON_DEMOS, RIBBON_BUTTON_PLAY, RIBBON_BUTTON_SETTINGS};
+	std::sort(aRibbonButtonRenderOrder.begin(), aRibbonButtonRenderOrder.end(), [&](int Left, int Right) {
+		return aRibbonButtons[Left].m_HoverProgress < aRibbonButtons[Right].m_HoverProgress;
+	});
+	std::array<bool, NUM_RIBBON_BUTTONS> aRibbonButtonClicked{};
+	for(const int Slot : aRibbonButtonRenderOrder)
+	{
+		aRibbonButtonClicked[Slot] = RenderRibbonButton(aRibbonButtons[Slot]);
+	}
+	RenderLogo();
+
 	bool UsedEscape = false;
-	float ButtonProgress;
-	ButtonProgress = PrepareAnimatedButton(true, 0, &Button);
-	if((ButtonProgress > 0.0f && RenderRibbonButton(&s_QuitButton, Button, ButtonProgress, ColorRGBA(0.88f, 0.18f, 0.56f, 1.0f), FontIcon::XMARK, Localize("Quit"))) || (UsedEscape = Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE)) || CheckHotKey(KEY_Q))
+	if((aRibbonButtonClicked[RIBBON_BUTTON_QUIT]) || (UsedEscape = Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE)) || CheckHotKey(KEY_Q))
 	{
 		if(UsedEscape || GameClient()->Editor()->HasUnsavedData() || (GameClient()->CurrentRaceTime() / 60 >= g_Config.m_ClConfirmQuitTime && g_Config.m_ClConfirmQuitTime >= 0))
 		{
@@ -186,18 +267,13 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 		}
 	}
 
-	static CButtonContainer s_SettingsButton;
-	ButtonProgress = PrepareAnimatedButton(false, 0, &Button);
-	if((ButtonProgress > 0.0f && RenderRibbonButton(&s_SettingsButton, Button, ButtonProgress, ColorRGBA(0.35f, 0.35f, 0.38f, 1.0f), FontIcon::GEAR, Localize("Settings"))) || CheckHotKey(KEY_S))
+	if((aRibbonButtonClicked[RIBBON_BUTTON_SETTINGS]) || CheckHotKey(KEY_S))
 		NewPage = CMenus::PAGE_SETTINGS;
 
-	static CButtonContainer s_LocalServerButton;
 	const bool LocalServerRunning = GameClient()->m_LocalServer.IsServerRunning();
-	ButtonProgress = PrepareAnimatedButton(true, 1, &Button);
-	if(ButtonProgress > 0.0f)
+	if(aRibbonButtons[RIBBON_BUTTON_LOCAL_SERVER].m_RevealProgress > 0.0f)
 	{
-		const ColorRGBA ServerColor = LocalServerRunning ? ColorRGBA(0.15f, 0.73f, 0.34f, 1.0f) : ColorRGBA(0.92f, 0.66f, 0.08f, 1.0f);
-		if(RenderRibbonButton(&s_LocalServerButton, Button, ButtonProgress, ServerColor, FontIcon::NETWORK_WIRED, LocalServerRunning ? Localize("Stop server") : Localize("Run server")) || (CheckHotKey(KEY_R) && Input()->KeyPress(KEY_R)))
+		if(aRibbonButtonClicked[RIBBON_BUTTON_LOCAL_SERVER] || (CheckHotKey(KEY_R) && Input()->KeyPress(KEY_R)))
 		{
 			if(LocalServerRunning)
 			{
@@ -210,16 +286,12 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 		}
 	}
 
-	static CButtonContainer s_DemoButton;
-	ButtonProgress = PrepareAnimatedButton(true, 2, &Button);
-	if((ButtonProgress > 0.0f && RenderRibbonButton(&s_DemoButton, Button, ButtonProgress, ColorRGBA(0.63f, 0.81f, 0.02f, 1.0f), FontIcon::CLAPPERBOARD, Localize("Demos"))) || CheckHotKey(KEY_D))
+	if((aRibbonButtonClicked[RIBBON_BUTTON_DEMOS]) || CheckHotKey(KEY_D))
 	{
 		NewPage = CMenus::PAGE_DEMOS;
 	}
 
-	static CButtonContainer s_PlayButton;
-	ButtonProgress = PrepareAnimatedButton(true, 3, &Button);
-	if((ButtonProgress > 0.0f && RenderRibbonButton(&s_PlayButton, Button, ButtonProgress, ColorRGBA(0.43f, 0.29f, 0.88f, 1.0f), FontIcon::CIRCLE_PLAY, Localize("Play", "Start menu"))) ||
+	if((aRibbonButtonClicked[RIBBON_BUTTON_PLAY]) ||
 		Ui()->ConsumeHotkey(CUi::HOTKEY_ENTER) || CheckHotKey(KEY_P))
 	{
 		NewPage = g_Config.m_UiPage >= CMenus::PAGE_INTERNET && g_Config.m_UiPage <= CMenus::PAGE_FAVORITE_COMMUNITY_5 ? g_Config.m_UiPage : CMenus::PAGE_INTERNET;
@@ -234,35 +306,28 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 	ConsoleButton.VSplitRight(40.0f, nullptr, &ConsoleButton);
 	Ui()->DoLabel(&CurVersion, GAME_RELEASE_VERSION, 14.0f, TEXTALIGN_MR);
 
-	CUIRect TClientVersion;
-	View.HSplitTop(15.0f, &TClientVersion, nullptr);
-	TClientVersion.VSplitRight(40.0f, &TClientVersion, nullptr);
+	CUIRect TopBar, AboutClient, ClientVersions, TClientVersion, RClientVersion;
+	View.HSplitTop(30.0f, &TopBar, nullptr);
+	TopBar.VSplitRight(260.0f, &AboutClient, &ClientVersions);
+	ClientVersions.VSplitLeft(125.0f, &TClientVersion, &RClientVersion);
+
+	char aBuf[128] = "Based on Tater client. Thanks Pulse and Entity clients for some functions";
+	Ui()->DoLabel(&AboutClient, aBuf, 14.0f, TEXTALIGN_TC);
+
 	char aTBuf[64];
 	char aRBuf[64];
 	str_format(aTBuf, sizeof(aTBuf), "TClient %s", TCLIENT_VERSION);
 	if(GameClient()->m_TClient.NeedUpdate())
 		TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
-	Ui()->DoLabel(&TClientVersion, aTBuf, 14.0f, TEXTALIGN_MR);
+	Ui()->DoLabel(&TClientVersion, aTBuf, 14.0f, TEXTALIGN_TC);
 	TextRender()->TextColor(TextRender()->DefaultTextColor());
 
-	// Position RClient below TClient
-	{
-		CUIRect RClientVersion;
-		View.HSplitTop(25.0f, &RClientVersion, nullptr);
-		RClientVersion.VSplitRight(42.5f, &RClientVersion, nullptr);
-		str_format(aRBuf, sizeof(aRBuf), "RClient %s", RCLIENT_VERSION);
-		if(GameClient()->m_RClient.NeedUpdate())
-			TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
-		Ui()->DoLabel(&RClientVersion, aRBuf, 14.0f, TEXTALIGN_MR);
-		TextRender()->TextColor(TextRender()->DefaultTextColor());
-	}
+	str_format(aRBuf, sizeof(aRBuf), "RClient %s", RCLIENT_VERSION);
+	if(GameClient()->m_RClient.NeedUpdate())
+		TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
+	Ui()->DoLabel(&RClientVersion, aRBuf, 14.0f, TEXTALIGN_TC);
+	TextRender()->TextColor(TextRender()->DefaultTextColor());
 
-	{
-		CUIRect Version;
-		View.HSplitTop(40.0f, &Version, nullptr);
-		char aBuf[128] = "Based on Tater client. Thanks Pulse and Entity clients for some functions";
-		Ui()->DoLabel(&Version, aBuf, 14.0f, TEXTALIGN_CENTER);
-	}
 	static CButtonContainer s_ConsoleButton;
 	TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
 	TextRender()->SetRenderFlags(ETextRenderFlags::TEXT_RENDER_FLAG_ONLY_ADVANCE_WIDTH | ETextRenderFlags::TEXT_RENDER_FLAG_NO_X_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_Y_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | ETextRenderFlags::TEXT_RENDER_FLAG_NO_OVERSIZE);
