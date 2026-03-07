@@ -2583,9 +2583,56 @@ void CMenus::RenderBackground()
 	{
 		Graphics()->TextureClear();
 		Graphics()->QuadsBegin();
-		Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+		Graphics()->SetColor4(
+			ColorRGBA(0.05f, 0.07f, 0.11f, 1.0f),
+			ColorRGBA(0.10f, 0.08f, 0.13f, 1.0f),
+			ColorRGBA(0.01f, 0.02f, 0.05f, 1.0f),
+			ColorRGBA(0.04f, 0.03f, 0.08f, 1.0f));
 		const IGraphics::CQuadItem BackgroundQuadItem = IGraphics::CQuadItem(0, 0, ScreenWidth, ScreenHeight);
 		Graphics()->QuadsDrawTL(&BackgroundQuadItem, 1);
+		Graphics()->QuadsEnd();
+
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 0.035f);
+		const float GridSize = 22.0f;
+		const float GridOffset = std::fmod(Client()->GlobalTime() * 10.0f, GridSize);
+		IGraphics::CQuadItem aGridItems[128];
+		int NumGridItems = 0;
+		for(float x = -GridOffset; x < ScreenWidth + GridSize; x += GridSize)
+		{
+			aGridItems[NumGridItems++] = IGraphics::CQuadItem(x, 0.0f, 1.0f, ScreenHeight);
+			if(NumGridItems == std::size(aGridItems))
+			{
+				Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
+				NumGridItems = 0;
+			}
+		}
+		for(float y = GridOffset - GridSize; y < ScreenHeight + GridSize; y += GridSize)
+		{
+			aGridItems[NumGridItems++] = IGraphics::CQuadItem(0.0f, y, ScreenWidth, 1.0f);
+			if(NumGridItems == std::size(aGridItems))
+			{
+				Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
+				NumGridItems = 0;
+			}
+		}
+		if(NumGridItems > 0)
+			Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
+		Graphics()->QuadsEnd();
+
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		const IGraphics::CQuadItem TopTintQuad = IGraphics::CQuadItem(0.0f, 0.0f, ScreenWidth, ScreenHeight * 0.28f);
+		Graphics()->SetColor4(
+			ColorRGBA(0.05f, 0.24f, 0.28f, 0.08f),
+			ColorRGBA(0.26f, 0.08f, 0.17f, 0.08f),
+			ColorRGBA(0.05f, 0.24f, 0.28f, 0.0f),
+			ColorRGBA(0.26f, 0.08f, 0.17f, 0.0f));
+		Graphics()->QuadsDrawTL(&TopTintQuad, 1);
+		Graphics()->SetColor(0.01f, 0.02f, 0.05f, 0.20f);
+		const IGraphics::CQuadItem VignetteQuad = IGraphics::CQuadItem(-100.0f, -100.0f, ScreenWidth + 200.0f, ScreenHeight + 200.0f);
+		Graphics()->QuadsDrawTL(&VignetteQuad, 1);
 		Graphics()->QuadsEnd();
 
 		Ui()->MapScreen();
