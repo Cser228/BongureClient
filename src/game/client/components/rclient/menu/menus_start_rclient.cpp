@@ -47,12 +47,25 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 	const float LogoSize = Lerp(LogoSizeCollapsed, LogoSizeExpanded, AnimProgress);
 	const float LogoCenterX = Lerp(ViewCenterX, LogoCenterXExpanded, AnimProgress);
 	const float LogoCenterY = Lerp(LogoCenterYCollapsed, LogoCenterYExpanded, AnimProgress);
-
-	CUIRect LogoCircle = {LogoCenterX - LogoCircleSize / 2.0f, LogoCenterY - LogoCircleSize / 2.0f, LogoCircleSize, LogoCircleSize};
 	static CButtonContainer s_LogoButton;
+	const auto Ease = [](float Progress) {
+		return Progress * Progress * (3.0f - 2.0f * Progress);
+	};
+	const float PrevHoverScale = Lerp(1.0f, 1.08f, Ease(m_LogoHoverAnim));
+	CUIRect LogoCircleHoverRect = {
+		LogoCenterX - LogoCircleSize * PrevHoverScale / 2.0f,
+		LogoCenterY - LogoCircleSize * PrevHoverScale / 2.0f,
+		LogoCircleSize * PrevHoverScale,
+		LogoCircleSize * PrevHoverScale};
+	const bool LogoHovered = Ui()->MouseHovered(&LogoCircleHoverRect);
+	const bool LogoActive = Ui()->CheckActiveItem(&s_LogoButton);
+	m_LogoHoverAnim = std::clamp(m_LogoHoverAnim + Client()->RenderFrameTime() * ((LogoHovered || LogoActive) ? 10.0f : -10.0f), 0.0f, 1.0f);
+	const float HoverProgress = Ease(m_LogoHoverAnim);
+	const float LogoHoverScale = Lerp(1.0f, 1.08f, HoverProgress);
+	const float LogoCircleSizeHovered = LogoCircleSize * LogoHoverScale;
+	const float LogoSizeHovered = LogoSize * LogoHoverScale;
+	CUIRect LogoCircle = {LogoCenterX - LogoCircleSizeHovered / 2.0f, LogoCenterY - LogoCircleSizeHovered / 2.0f, LogoCircleSizeHovered, LogoCircleSizeHovered};
 	const auto RenderLogo = [&]() {
-		const bool LogoHovered = Ui()->MouseHovered(&LogoCircle);
-		const bool LogoActive = Ui()->CheckActiveItem(&s_LogoButton);
 		const float LogoShade = LogoActive ? 0.92f : (LogoHovered ? 1.0f : 0.97f);
 		LogoCircle.Draw(ColorRGBA(LogoShade, LogoShade, LogoShade, 1.0f), IGraphics::CORNER_ALL, LogoCircle.h / 2.0f);
 
@@ -61,7 +74,7 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 		LogoCircleInner.Draw(ColorRGBA(0.12f, 0.12f, 0.12f, 1.0f), IGraphics::CORNER_ALL, LogoCircleInner.h / 2.0f);
 
 		CUIRect LogoRect;
-		LogoCircleInner.Margin((LogoCircleInner.w - LogoSize) / 2.0f, &LogoRect);
+		LogoCircleInner.Margin((LogoCircleInner.w - LogoSizeHovered) / 2.0f, &LogoRect);
 
 		Graphics()->TextureSet(g_pData->m_aImages[IMAGE_RCLIENT_BIG_LOGO].m_Id);
 		Graphics()->QuadsBegin();

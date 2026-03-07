@@ -2592,11 +2592,92 @@ void CMenus::RenderBackground()
 		Graphics()->QuadsDrawTL(&BackgroundQuadItem, 1);
 		Graphics()->QuadsEnd();
 
+		const float GlobalTime = Client()->GlobalTime();
+		const float GridSize = 22.0f;
+		const float GridMovement = GlobalTime * 10.0f;
+		const float GridOffset = std::fmod(GridMovement, GridSize);
+		CSkins::CSkinList &SkinList = GameClient()->m_Skins.SkinList();
+		const CSkin *pDefaultSkin = GameClient()->m_Skins.Find("default");
+		std::vector<CSkins::CSkinListEntry *> vpSkinEntries;
+		vpSkinEntries.reserve(SkinList.Skins().size());
+		for(CSkins::CSkinListEntry &SkinEntry : SkinList.Skins())
+		{
+			const CSkins::CSkinContainer *pSkinContainer = SkinEntry.SkinContainer();
+			if(pSkinContainer == nullptr)
+				continue;
+
+			vpSkinEntries.push_back(&SkinEntry);
+		}
+
+		if(!vpSkinEntries.empty())
+		{
+			const CAnimState *pIdleState = CAnimState::GetIdle();
+			const float CellTeeSize = GridSize * 0.68f;
+			const float TeeScreenPadding = CellTeeSize;
+			const vec2 MousePos(
+				Ui()->MousePos().x * ScreenWidth / Ui()->Screen()->w,
+				Ui()->MousePos().y * ScreenHeight / Ui()->Screen()->h);
+			CTeeRenderInfo BaseSkinInfo;
+			BaseSkinInfo.Apply(GameClient()->m_Skins.Find(g_Config.m_ClPlayerSkin));
+			BaseSkinInfo.ApplyColors(g_Config.m_ClPlayerUseCustomColor, g_Config.m_ClPlayerColorBody, g_Config.m_ClPlayerColorFeet);
+			BaseSkinInfo.m_Size = CellTeeSize;
+			const auto HashCell = [](int CellX, int CellY) {
+				unsigned Hash = 2166136261u;
+				Hash = (Hash ^ (unsigned)CellX) * 16777619u;
+				Hash = (Hash ^ (unsigned)CellY) * 16777619u;
+				Hash ^= Hash >> 16;
+				Hash *= 0x7feb352du;
+				Hash ^= Hash >> 15;
+				return Hash;
+			};
+
+			const int StartWorldCellX = (int)std::floor(GridMovement / GridSize) - 1;
+			const int StartWorldCellY = (int)std::floor(-GridMovement / GridSize) - 1;
+			for(int WorldCellY = StartWorldCellY;; WorldCellY++)
+			{
+				const float CenterY = WorldCellY * GridSize + GridSize * 0.5f + GridMovement;
+				if(CenterY >= ScreenHeight + TeeScreenPadding)
+					break;
+				if(CenterY < -TeeScreenPadding)
+					continue;
+
+				for(int WorldCellX = StartWorldCellX;; WorldCellX++)
+				{
+					const float CenterX = WorldCellX * GridSize + GridSize * 0.5f - GridMovement;
+					if(CenterX >= ScreenWidth + TeeScreenPadding)
+						break;
+					if(CenterX < -TeeScreenPadding)
+						continue;
+
+					const unsigned CellHash = HashCell(WorldCellX, WorldCellY);
+					if(CellHash % 11u != 0)
+						continue;
+
+					CSkins::CSkinListEntry *pSkinEntry = vpSkinEntries[CellHash % vpSkinEntries.size()];
+					pSkinEntry->RequestLoad();
+
+					const CSkins::CSkinContainer *pSkinContainer = pSkinEntry->SkinContainer();
+					const CSkin *pSkin = pSkinContainer != nullptr && pSkinContainer->State() == CSkins::CSkinContainer::EState::LOADED ? pSkinContainer->Skin().get() : pDefaultSkin;
+					CTeeRenderInfo TeeInfo = BaseSkinInfo;
+					TeeInfo.Apply(pSkin);
+
+					vec2 TeeOffsetToMid;
+					CRenderTools::GetRenderTeeOffsetToRenderedTee(pIdleState, &TeeInfo, TeeOffsetToMid);
+					const float FloatOffset = sinf(GlobalTime * 0.8f + (float)(CellHash % 360u)) * 0.6f;
+					const vec2 TeePos(CenterX, CenterY + TeeOffsetToMid.y + FloatOffset);
+					const vec2 DeltaPosition = MousePos - TeePos;
+					const float Distance = length(DeltaPosition);
+					const float InteractionDistance = CellTeeSize * 0.45f;
+					const vec2 TeeDir = Distance < InteractionDistance ? normalize(vec2(DeltaPosition.x, maximum(DeltaPosition.y, 0.5f))) : normalize(DeltaPosition);
+					const int TeeEmote = Distance < InteractionDistance ? EMOTE_HAPPY : g_Config.m_ClPlayerDefaultEyes;
+					RenderTools()->RenderTee(pIdleState, &TeeInfo, TeeEmote, TeeDir, TeePos);
+				}
+			}
+		}
+
 		Graphics()->TextureClear();
 		Graphics()->QuadsBegin();
 		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 0.035f);
-		const float GridSize = 22.0f;
-		const float GridOffset = std::fmod(Client()->GlobalTime() * 10.0f, GridSize);
 		IGraphics::CQuadItem aGridItems[128];
 		int NumGridItems = 0;
 		for(float x = -GridOffset; x < ScreenWidth + GridSize; x += GridSize)

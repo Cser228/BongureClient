@@ -15,6 +15,7 @@ private:
 	bool CheckHotKey(int Key) const;
 	bool m_LogoMenuExpanded = false;
 	float m_LogoMenuAnim = 0.0f;
+	float m_LogoHoverAnim = 0.0f;
 	std::array<float, 5> m_aRibbonButtonHoverAnim{};
 };
 
