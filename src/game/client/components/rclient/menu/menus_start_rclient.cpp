@@ -110,20 +110,12 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 
 	int NewPage = -1;
 
-	CUIRect ExtMenu;
-	View.HSplitBottom(15.0f, nullptr, &ExtMenu);
-	CUIRect Button;
-	ExtMenu.VSplitLeft(75.0f, &Button, &ExtMenu);
-
-	static CButtonContainer s_DiscordButton;
-	TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
-	TextRender()->SetRenderFlags(ETextRenderFlags::TEXT_RENDER_FLAG_ONLY_ADVANCE_WIDTH | ETextRenderFlags::TEXT_RENDER_FLAG_NO_X_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_Y_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | ETextRenderFlags::TEXT_RENDER_FLAG_NO_OVERSIZE);
-	if(GameClient()->m_Menus.DoButton_Menu(&s_DiscordButton, FontIcon::TERMINAL, 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.1f)))
-	{
-		Client()->ViewLink(Localize("https://ddnet.org/discord"));
-	}
-	TextRender()->SetRenderFlags(0);
-	TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
+	CUIRect TopStatus, BottomStatus;
+	BottomStatus = *pScreen;
+	BottomStatus.y += BottomStatus.h - 30.0f;
+	BottomStatus.h = 30.0f;
+	TopStatus = *pScreen;
+	TopStatus.h = 25.0f;
 
 	const float ButtonWidthTarget = std::clamp(View.w * 0.115f, 108.0f, 150.0f);
 	const float ButtonHeight = RibbonHeight;
@@ -310,41 +302,109 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 		NewPage = g_Config.m_UiPage >= CMenus::PAGE_INTERNET && g_Config.m_UiPage <= CMenus::PAGE_FAVORITE_COMMUNITY_5 ? g_Config.m_UiPage : CMenus::PAGE_INTERNET;
 	}
 
-	// render version
-	CUIRect CurVersion, ConsoleButton;
-	View.HSplitBottom(45.0f, nullptr, &CurVersion);
-	CurVersion.VSplitRight(40.0f, &CurVersion, nullptr);
-	CurVersion.HSplitTop(20.0f, &ConsoleButton, &CurVersion);
-	CurVersion.HSplitTop(5.0f, nullptr, &CurVersion);
-	ConsoleButton.VSplitRight(40.0f, nullptr, &ConsoleButton);
-	Ui()->DoLabel(&CurVersion, GAME_RELEASE_VERSION, 14.0f, TEXTALIGN_MR);
-
-	CUIRect TopBar, AboutClient, ClientVersions, TClientVersion, RClientVersion;
-	View.HSplitTop(30.0f, &TopBar, nullptr);
-	TopBar.VSplitRight(260.0f, &AboutClient, &ClientVersions);
-	ClientVersions.VSplitLeft(125.0f, &TClientVersion, &RClientVersion);
+	CUIRect TopBar, AboutClient, ClientVersions, TClientVersion, RClientVersion, CurVersion;
+	TopBar = BottomStatus;
+	TopBar.VSplitRight(390.0f, &AboutClient, &ClientVersions);
+	ClientVersions.VSplitRight(130.0f, &TClientVersion, &RClientVersion);
+	TClientVersion.VSplitMid(&CurVersion, &TClientVersion);
 
 	char aBuf[128] = "Based on Tater client. Thanks Pulse and Entity clients for some functions";
-	Ui()->DoLabel(&AboutClient, aBuf, 14.0f, TEXTALIGN_TC);
+	Ui()->DoLabel(&AboutClient, aBuf, 14.0f, TEXTALIGN_MC);
 
 	char aTBuf[64];
 	char aRBuf[64];
+	str_format(aTBuf, sizeof(aTBuf), "DDNet %s", GAME_RELEASE_VERSION);
+	Ui()->DoLabel(&CurVersion, aTBuf, 14.0f, TEXTALIGN_MC);
+	TextRender()->TextColor(TextRender()->DefaultTextColor());
+
 	str_format(aTBuf, sizeof(aTBuf), "TClient %s", TCLIENT_VERSION);
 	if(GameClient()->m_TClient.NeedUpdate())
 		TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
-	Ui()->DoLabel(&TClientVersion, aTBuf, 14.0f, TEXTALIGN_TC);
+	Ui()->DoLabel(&TClientVersion, aTBuf, 14.0f, TEXTALIGN_MC);
 	TextRender()->TextColor(TextRender()->DefaultTextColor());
 
 	str_format(aRBuf, sizeof(aRBuf), "RClient %s", RCLIENT_VERSION);
 	if(GameClient()->m_RClient.NeedUpdate())
 		TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
-	Ui()->DoLabel(&RClientVersion, aRBuf, 14.0f, TEXTALIGN_TC);
+	Ui()->DoLabel(&RClientVersion, aRBuf, 14.0f, TEXTALIGN_MC);
 	TextRender()->TextColor(TextRender()->DefaultTextColor());
 
+
+	// render console
+	CUIRect Button, ExtBar;
+	ExtBar = TopStatus;
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.HSplitTop(5.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(80.0f, &Button, &ExtBar);
+
+	Ui()->DoLabel(&Button, "Discords:", 14.0f, TEXTALIGN_MC);
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(60.0f, &Button, &ExtBar);
+	static CButtonContainer s_DiscordDDButton;
+	if(GameClient()->m_Menus.DoButton_Menu(&s_DiscordDDButton, "DDNet", 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.5f, 0.0f, 0.0f, 0.5f)))
+	{
+		Client()->ViewLink(Localize("https://ddnet.org/discord"));
+	}
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(60.0f, &Button, &ExtBar);
+	static CButtonContainer s_DiscordTCButton;
+	if(GameClient()->m_Menus.DoButton_Menu(&s_DiscordTCButton, "TClient", 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.5f, 0.0f, 0.0f, 0.5f)))
+	{
+		Client()->ViewLink(Localize("https://discord.gg/BgPSapKRkZ"));
+	}
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(60.0f, &Button, &ExtBar);
+	static CButtonContainer s_DiscordRCButton;
+	if(GameClient()->m_Menus.DoButton_Menu(&s_DiscordRCButton, "RClient", 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.5f, 0.0f, 0.0f, 0.5f)))
+	{
+		Client()->ViewLink(Localize("https://discord.gg/wUFTVAGVGa"));
+	}
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(15.0f, &Button, &ExtBar);
+	Ui()->DoLabel(&Button, "|", 14.0f, TEXTALIGN_MC);
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(60.0f, &Button, &ExtBar);
+	static CButtonContainer s_LearnButton;
+	if(GameClient()->m_Menus.DoButton_Menu(&s_LearnButton, Localize("Learn"), 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)))
+	{
+		Client()->ViewLink(Localize("https://wiki.ddnet.org/"));
+	}
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(60.0f, &Button, &ExtBar);
+	static CButtonContainer s_TutorialButton;
+	if(GameClient()->m_Menus.DoButton_Menu(&s_TutorialButton, Localize("Tutorial"), 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)))
+	{
+		GameClient()->m_Menus.JoinTutorial();
+	}
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(60.0f, &Button, &ExtBar);
+	static CButtonContainer s_WebsiteButton;
+	if(GameClient()->m_Menus.DoButton_Menu(&s_WebsiteButton, Localize("Website"), 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)))
+	{
+		Client()->ViewLink("https://ddnet.org/");
+	}
+
+	ExtBar.VSplitLeft(15.0f, nullptr, &ExtBar);
+	ExtBar.VSplitLeft(60.0f, &Button, &ExtBar);
+	static CButtonContainer s_NewsButton;
+	if(GameClient()->m_Menus.DoButton_Menu(&s_NewsButton, Localize("News"), 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, g_Config.m_UiUnreadNews ? ColorRGBA(0.0f, 1.0f, 0.0f, 0.25f) : ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)) || CheckHotKey(KEY_N))
+		NewPage = CMenus::PAGE_NEWS;
+
+
+	//Right
+	ExtBar.VSplitRight(15.0f, &ExtBar, nullptr);
+	ExtBar.VSplitRight(40.0f, &ExtBar, &Button);
 	static CButtonContainer s_ConsoleButton;
 	TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
 	TextRender()->SetRenderFlags(ETextRenderFlags::TEXT_RENDER_FLAG_ONLY_ADVANCE_WIDTH | ETextRenderFlags::TEXT_RENDER_FLAG_NO_X_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_Y_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | ETextRenderFlags::TEXT_RENDER_FLAG_NO_OVERSIZE);
-	if(GameClient()->m_Menus.DoButton_Menu(&s_ConsoleButton, FontIcon::TERMINAL, 0, &ConsoleButton, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.1f)))
+	if(GameClient()->m_Menus.DoButton_Menu(&s_ConsoleButton, FontIcon::TERMINAL, 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.5f, 0.0f, 0.0f, 0.5f)))
 	{
 		GameClient()->m_GameConsole.Toggle(CGameConsole::CONSOLETYPE_LOCAL);
 	}
