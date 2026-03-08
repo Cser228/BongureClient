@@ -143,7 +143,7 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 	};
 	enum ERibbonButtonSlot
 	{
-		RIBBON_BUTTON_QUIT = 0,
+		RIBBON_BUTTON_EDITOR = 0,
 		RIBBON_BUTTON_LOCAL_SERVER,
 		RIBBON_BUTTON_DEMOS,
 		RIBBON_BUTTON_PLAY,
@@ -238,12 +238,12 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 	static CButtonContainer s_PlayButton;
 	static CButtonContainer s_SettingsButton;
 	std::array<CRibbonButtonState, NUM_RIBBON_BUTTONS> aRibbonButtons;
-	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_QUIT], RIBBON_BUTTON_QUIT, &s_QuitButton, true, 0, ColorRGBA(0.88f, 0.18f, 0.56f, 1.0f), FontIcon::XMARK, Localize("Quit"), false, true);
+	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_EDITOR], RIBBON_BUTTON_EDITOR, &s_QuitButton, true, 0, ColorRGBA(0.88f, 0.18f, 0.56f, 1.0f), FontIcon::PEN_TO_SQUARE, Localize("Editor"), false, true);
 	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_LOCAL_SERVER], RIBBON_BUTTON_LOCAL_SERVER, &s_LocalServerButton, true, 1, GameClient()->m_LocalServer.IsServerRunning() ? ColorRGBA(0.15f, 0.73f, 0.34f, 1.0f) : ColorRGBA(0.92f, 0.66f, 0.08f, 1.0f), FontIcon::NETWORK_WIRED, GameClient()->m_LocalServer.IsServerRunning() ? Localize("Stop server") : Localize("Run server"), true, true);
 	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_DEMOS], RIBBON_BUTTON_DEMOS, &s_DemoButton, true, 2, ColorRGBA(0.63f, 0.81f, 0.02f, 1.0f), FontIcon::CLAPPERBOARD, Localize("Demos"), true, true);
 	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_PLAY], RIBBON_BUTTON_PLAY, &s_PlayButton, true, 3, ColorRGBA(0.43f, 0.29f, 0.88f, 1.0f), FontIcon::CIRCLE_PLAY, Localize("Play", "Start menu"), true, false);
 	CreateRibbonButton(aRibbonButtons[RIBBON_BUTTON_SETTINGS], RIBBON_BUTTON_SETTINGS, &s_SettingsButton, false, 0, ColorRGBA(0.35f, 0.35f, 0.38f, 1.0f), FontIcon::GEAR, Localize("Settings"), false, false);
-	std::array<int, NUM_RIBBON_BUTTONS> aRibbonButtonRenderOrder = {RIBBON_BUTTON_QUIT, RIBBON_BUTTON_LOCAL_SERVER, RIBBON_BUTTON_DEMOS, RIBBON_BUTTON_PLAY, RIBBON_BUTTON_SETTINGS};
+	std::array<int, NUM_RIBBON_BUTTONS> aRibbonButtonRenderOrder = {RIBBON_BUTTON_EDITOR, RIBBON_BUTTON_LOCAL_SERVER, RIBBON_BUTTON_DEMOS, RIBBON_BUTTON_PLAY, RIBBON_BUTTON_SETTINGS};
 	std::sort(aRibbonButtonRenderOrder.begin(), aRibbonButtonRenderOrder.end(), [&](int Left, int Right) {
 		return aRibbonButtons[Left].m_HoverProgress < aRibbonButtons[Right].m_HoverProgress;
 	});
@@ -254,17 +254,10 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 	}
 	RenderLogo();
 
-	bool UsedEscape = false;
-	if((aRibbonButtonClicked[RIBBON_BUTTON_QUIT]) || (UsedEscape = Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE)) || CheckHotKey(KEY_Q))
+	if((aRibbonButtonClicked[RIBBON_BUTTON_EDITOR]) || CheckHotKey(KEY_E))
 	{
-		if(UsedEscape || GameClient()->Editor()->HasUnsavedData() || (GameClient()->CurrentRaceTime() / 60 >= g_Config.m_ClConfirmQuitTime && g_Config.m_ClConfirmQuitTime >= 0))
-		{
-			GameClient()->m_Menus.ShowQuitPopup();
-		}
-		else
-		{
-			Client()->Quit();
-		}
+		g_Config.m_ClEditor = 1;
+		Input()->MouseModeRelative();
 	}
 
 	if((aRibbonButtonClicked[RIBBON_BUTTON_SETTINGS]) || CheckHotKey(KEY_S))
@@ -401,6 +394,26 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 
 
 		//Right
+		bool UsedEscape = false;
+		ExtBar.VSplitRight(15.0f, &ExtBar, nullptr);
+		ExtBar.VSplitRight(40.0f, &ExtBar, &Button);
+		static CButtonContainer s_ExitButton;
+		TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
+		TextRender()->SetRenderFlags(ETextRenderFlags::TEXT_RENDER_FLAG_ONLY_ADVANCE_WIDTH | ETextRenderFlags::TEXT_RENDER_FLAG_NO_X_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_Y_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | ETextRenderFlags::TEXT_RENDER_FLAG_NO_OVERSIZE);
+		if(GameClient()->m_Menus.DoButton_Menu(&s_ExitButton, FontIcon::POWER_OFF, 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.5f, 0.0f, 0.0f, 0.5f)))
+		{
+			if(UsedEscape || GameClient()->Editor()->HasUnsavedData() || (GameClient()->CurrentRaceTime() / 60 >= g_Config.m_ClConfirmQuitTime && g_Config.m_ClConfirmQuitTime >= 0))
+			{
+				GameClient()->m_Menus.ShowQuitPopup();
+			}
+			else
+			{
+				Client()->Quit();
+			}
+		}
+		TextRender()->SetRenderFlags(0);
+		TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
+
 		ExtBar.VSplitRight(15.0f, &ExtBar, nullptr);
 		ExtBar.VSplitRight(40.0f, &ExtBar, &Button);
 		static CButtonContainer s_ConsoleButton;
