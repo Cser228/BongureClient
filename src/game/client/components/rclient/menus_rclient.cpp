@@ -58,6 +58,7 @@ enum
 	RCLIENT_SETTINGS_SECTION_RCLIENT_INDICATOR,
 	RCLIENT_SETTINGS_SECTION_EDGE_INFO,
 	RCLIENT_SETTINGS_SECTION_VOICE,
+	RCLIENT_SETTINGS_SECTION_MENUS,
 	NUM_RCLIENT_SETTINGS_SECTIONS
 };
 
@@ -579,7 +580,7 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	};
 
 	static bool s_aSectionExpanded[NUM_RCLIENT_SETTINGS_SECTIONS] = {
-		true, true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true, true, true,
 		true, true, true, true, true, true, true, true, true};
 	static CButtonContainer s_aSectionExpandButtons[NUM_RCLIENT_SETTINGS_SECTIONS];
 
@@ -1035,6 +1036,13 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 			Column.HSplitTop(LineSize, nullptr, &Column);
 			Column.HSplitTop(MarginSmall, nullptr, &Column);
 		}
+	}
+	EndSection(Column);
+
+	BeginSectionHeader(Column, MarginBetweenSections, RCLIENT_SETTINGS_SECTION_MENUS, RCLocalize("Menus"));
+	if(s_aSectionExpanded[RCLIENT_SETTINGS_SECTION_MENUS])
+	{
+
 	}
 	EndSection(Column);
 
