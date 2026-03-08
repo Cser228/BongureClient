@@ -1543,31 +1543,9 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 		Label.VSplitLeft(LineSize, nullptr, &Label);
 		Ui()->DoLabel(&Label, RCLocalize("If change backend u need restart game"), FontSize - 4, TEXTALIGN_ML);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
-		if(g_Config.m_RiVoiceEnable)
-		{
-			if(GameClient()->m_RClient.IsVoiceInputUnavailable())
-			{
-				Column.HSplitTop(LineSize, &Label, &Column);
-				Ui()->DoLabel(&Label, RCLocalize("Voice input device not available"), FontSize * 0.9f, TEXTALIGN_ML);
-			}
-			else
-				DoVoiceDeviceDropDown(Column, RCLocalize("Input device"), g_Config.m_RiVoiceInputDevice, sizeof(g_Config.m_RiVoiceInputDevice), true, s_VoiceInputDropDownState);
-		}
-		else
-			DoVoiceDeviceDropDown(Column, RCLocalize("Input device"), g_Config.m_RiVoiceInputDevice, sizeof(g_Config.m_RiVoiceInputDevice), true, s_VoiceInputDropDownState);
+		DoVoiceDeviceDropDown(Column, RCLocalize("Input device"), g_Config.m_RiVoiceInputDevice, sizeof(g_Config.m_RiVoiceInputDevice), true, s_VoiceInputDropDownState);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
-		if(g_Config.m_RiVoiceEnable)
-		{
-			if(GameClient()->m_RClient.IsVoiceOutputUnavailable())
-			{
-				Column.HSplitTop(LineSize, &Label, &Column);
-				Ui()->DoLabel(&Label, RCLocalize("Voice output device not available"), FontSize * 0.9f, TEXTALIGN_ML);
-			}
-			else
-				DoVoiceDeviceDropDown(Column, RCLocalize("Output device"), g_Config.m_RiVoiceOutputDevice, sizeof(g_Config.m_RiVoiceOutputDevice), false, s_VoiceOutputDropDownState);
-		}
-		else
-			DoVoiceDeviceDropDown(Column, RCLocalize("Output device"), g_Config.m_RiVoiceOutputDevice, sizeof(g_Config.m_RiVoiceOutputDevice), false, s_VoiceOutputDropDownState);
+		DoVoiceDeviceDropDown(Column, RCLocalize("Output device"), g_Config.m_RiVoiceOutputDevice, sizeof(g_Config.m_RiVoiceOutputDevice), false, s_VoiceOutputDropDownState);
 		Column.HSplitTop(MarginSmall, nullptr, &Column);
 
 		Column.HSplitTop(LineSize, nullptr, &Column);
