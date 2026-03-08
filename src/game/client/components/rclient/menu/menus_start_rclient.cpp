@@ -99,16 +99,18 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 		m_LogoMenuExpanded = !m_LogoMenuExpanded;
 	}
 
-	const float VMargin = std::max(30.0f, View.w / 2.0f - 190.0f);
+	const float VMargin = std::max(30.0f, View.w / 2.0f - 140.0f);
 
 	int NewPage = -1;
 
-	CUIRect TopStatus, BottomStatus;
+	CUIRect TopStatus, BottomStatus, VersionUpdate;
 	BottomStatus = *pScreen;
-	BottomStatus.y += BottomStatus.h - 30.0f;
-	BottomStatus.h = 30.0f;
+	BottomStatus.y += BottomStatus.h - 60.0f;
+	BottomStatus.h = 60.0f;
 	TopStatus = *pScreen;
 	TopStatus.h = 30.0f;
+	BottomStatus.HSplitBottom(30.0f, &VersionUpdate, &BottomStatus);
+	VersionUpdate.HSplitBottom(10.0f, &VersionUpdate, nullptr);
 
 	const float ButtonWidthTarget = std::clamp(View.w * 0.115f, 108.0f, 150.0f);
 	const float ButtonHeight = RibbonHeight;
@@ -412,12 +414,10 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 		TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
 	}
 
-	CUIRect VersionUpdate;
-	View.HSplitBottom(20.0f, nullptr, &VersionUpdate);
-	VersionUpdate.VMargin(VMargin, &VersionUpdate);
 	if(GameClient()->m_RClient.NeedUpdate())
 	{
 		CUIRect UpdateButton;
+		VersionUpdate.VMargin(VMargin, &VersionUpdate);
 		VersionUpdate.VSplitRight(100.0f, &VersionUpdate, &UpdateButton);
 		VersionUpdate.VSplitRight(10.0f, &VersionUpdate, nullptr);
 
