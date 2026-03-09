@@ -43,19 +43,12 @@ static bool VoiceRememberLogMessage(char *pLastMessage, size_t LastMessageSize, 
 	return true;
 }
 
-static void VoiceLogErrorOnce(char *pLastMessage, size_t LastMessageSize, const char *pFormat, ...)
+static void VoiceLogErrorOnce(char *pLastMessage, size_t LastMessageSize, const char *pMessage)
 {
-	char aMessage[256];
-	va_list Args;
-	va_start(Args, pFormat);
-	vsnprintf(aMessage, sizeof(aMessage), pFormat, Args);
-	va_end(Args);
-	aMessage[sizeof(aMessage) - 1] = '\0';
-
-	if(!VoiceRememberLogMessage(pLastMessage, LastMessageSize, aMessage))
+	if(!VoiceRememberLogMessage(pLastMessage, LastMessageSize, pMessage))
 		return;
 
-	log_error("voice", "%s", aMessage);
+	log_error("voice", "%s", pMessage);
 }
 
 static bool VoiceListMatch(const char *pList, const char *pName)
@@ -616,9 +609,13 @@ bool CRClientVoice::EnsureAudio()
 		if(SDL_AudioInit(pRequestedBackend) < 0)
 		{
 			if(pRequestedBackend)
-				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to init audio backend '%s': %s", pRequestedBackend, SDL_GetError());
+				char aError[256];
+				str_format(aError, sizeof(aError), "Failed to init audio backend '%s': %s", pRequestedBackend, SDL_GetError());
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
 			else
-				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to init audio: %s", SDL_GetError());
+				char aError[256];
+				str_format(aError, sizeof(aError), "Failed to init audio: %s", SDL_GetError());
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
 			return false;
 		}
 		m_AudioSubsystemInitializedByVoice = true;
@@ -715,7 +712,9 @@ bool CRClientVoice::EnsureAudio()
 		m_pEncoder = opus_encoder_create(VOICE_SAMPLE_RATE, VOICE_CHANNELS, OPUS_APPLICATION_VOIP, &Error);
 		if(!m_pEncoder || Error != OPUS_OK)
 		{
-			VoiceLogErrorOnce(m_aEncoderErrorLog, sizeof(m_aEncoderErrorLog), "Failed to create Opus encoder: %d", Error);
+			char aError[256];
+			str_format(aError, sizeof(aError), "Failed to create Opus encoder: %d", Error);
+			VoiceLogErrorOnce(m_aEncoderErrorLog, sizeof(m_aEncoderErrorLog), aError);
 			return false;
 		}
 		m_aEncoderErrorLog[0] = '\0';
@@ -737,7 +736,9 @@ bool CRClientVoice::EnsureAudio()
 		if(OutputMissing)
 		{
 			if(!m_OutputUnavailable)
-				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Output device not found: '%s'", m_aOutputDeviceName);
+				char aError[256];
+				str_format(aError, sizeof(aError), "Output device not found: '%s'", m_aOutputDeviceName);
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
 			m_OutputUnavailable = true;
 		}
 		else if(NoOutputDevices)
@@ -753,7 +754,9 @@ bool CRClientVoice::EnsureAudio()
 			if(!m_OutputDevice)
 			{
 				if(!m_OutputUnavailable)
-					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to open output device: %s", SDL_GetError());
+					char aError[256];
+					str_format(aError, sizeof(aError), "Failed to open output device: %s", SDL_GetError());
+					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
 				m_OutputUnavailable = true;
 			}
 			else
@@ -792,7 +795,9 @@ bool CRClientVoice::EnsureAudio()
 		if(InputMissing)
 		{
 			if(!m_CaptureUnavailable)
-				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Input device not found: '%s'", m_aInputDeviceName);
+				char aError[256];
+				str_format(aError, sizeof(aError), "Input device not found: '%s'", m_aInputDeviceName);
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
 			m_CaptureUnavailable = true;
 		}
 		else if(NoCaptureDevices)
@@ -808,7 +813,9 @@ bool CRClientVoice::EnsureAudio()
 			if(!m_CaptureDevice)
 			{
 				if(!m_CaptureUnavailable)
-					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to open capture device: %s", SDL_GetError());
+					char aError[256];
+					str_format(aError, sizeof(aError), "Failed to open capture device: %s", SDL_GetError());
+					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
 				m_CaptureUnavailable = true;
 			}
 			else
@@ -1184,7 +1191,9 @@ void CRClientVoice::UpdateServerAddr()
 	int Port = 0;
 	if(!ParseHostPort(m_aServerAddrStr, aHost, sizeof(aHost), Port))
 	{
-		VoiceLogErrorOnce(m_aServerAddrErrorLog, sizeof(m_aServerAddrErrorLog), "Invalid voice server address '%s'", m_aServerAddrStr);
+		char aError[256];
+		str_format(aError, sizeof(aError), "Invalid voice server address '%s'", m_aServerAddrStr);
+		VoiceLogErrorOnce(m_aServerAddrErrorLog, sizeof(m_aServerAddrErrorLog), aError);
 		return;
 	}
 
@@ -1200,7 +1209,9 @@ void CRClientVoice::UpdateServerAddr()
 		return;
 	}
 
-	VoiceLogErrorOnce(m_aServerAddrErrorLog, sizeof(m_aServerAddrErrorLog), "Failed to resolve voice server '%s'", m_aServerAddrStr);
+	char aError[256];
+	str_format(aError, sizeof(aError), "Failed to resolve voice server '%s'", m_aServerAddrStr);
+	VoiceLogErrorOnce(m_aServerAddrErrorLog, sizeof(m_aServerAddrErrorLog), aError);
 }
 
 bool CRClientVoice::UpdateContext()
@@ -1966,7 +1977,9 @@ void CRClientVoice::DecodeJitter()
 			Peer.m_pDecoder = opus_decoder_create(VOICE_SAMPLE_RATE, VOICE_CHANNELS, &Error);
 			if(!Peer.m_pDecoder || Error != OPUS_OK)
 			{
-				VoiceLogErrorOnce(m_aDecoderErrorLog, sizeof(m_aDecoderErrorLog), "Failed to create Opus decoder: %d", Error);
+				char aError[256];
+				str_format(aError, sizeof(aError), "Failed to create Opus decoder: %d", Error);
+				VoiceLogErrorOnce(m_aDecoderErrorLog, sizeof(m_aDecoderErrorLog), aError);
 				continue;
 			}
 			m_aDecoderErrorLog[0] = '\0';
