@@ -33,6 +33,29 @@
 // !!WARNING!!
 // Voice full wrote by AI don't use that pls
 
+static bool VoiceRememberLogMessage(char *pLastMessage, size_t LastMessageSize, const char *pMessage)
+{
+	if(str_comp(pLastMessage, pMessage) == 0)
+		return false;
+
+	str_copy(pLastMessage, pMessage, LastMessageSize);
+	return true;
+}
+
+static void VoiceLogErrorOnce(char *pLastMessage, size_t LastMessageSize, const char *pFormat, ...)
+{
+	char aMessage[256];
+	va_list Args;
+	va_start(Args, pFormat);
+	str_format_v(aMessage, sizeof(aMessage), pFormat, Args);
+	va_end(Args);
+
+	if(!VoiceRememberLogMessage(pLastMessage, LastMessageSize, aMessage))
+		return;
+
+	log_error("voice", "%s", aMessage);
+}
+
 static bool VoiceListMatch(const char *pList, const char *pName)
 {
 	if(!pList || pList[0] == '\0')
@@ -529,9 +552,10 @@ bool CRClientVoice::EnsureSocket()
 	m_Socket = net_udp_create(BindAddr);
 	if(!m_Socket)
 	{
-		log_error("voice", "Failed to open UDP socket");
+		VoiceLogErrorOnce(m_aSocketErrorLog, sizeof(m_aSocketErrorLog), "Failed to open UDP socket");
 		return false;
 	}
+	m_aSocketErrorLog[0] = '\0';
 	return true;
 }
 
@@ -576,6 +600,8 @@ bool CRClientVoice::EnsureAudio()
 		m_aAudioBackendMismatchReq[0] = '\0';
 		m_aAudioBackendMismatchCur[0] = '\0';
 		m_aAudioInitLoggedBackend[0] = '\0';
+		m_aAudioErrorLog[0] = '\0';
+		m_aEncoderErrorLog[0] = '\0';
 		m_LogDeviceChange = true;
 		m_CaptureUnavailable = false;
 		m_OutputUnavailable = false;
@@ -587,9 +613,9 @@ bool CRClientVoice::EnsureAudio()
 		if(SDL_AudioInit(pRequestedBackend) < 0)
 		{
 			if(pRequestedBackend)
-				log_error("voice", "Failed to init audio backend '%s': %s", pRequestedBackend, SDL_GetError());
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to init audio backend '%s': %s", pRequestedBackend, SDL_GetError());
 			else
-				log_error("voice", "Failed to init audio: %s", SDL_GetError());
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to init audio: %s", SDL_GetError());
 			return false;
 		}
 		m_AudioSubsystemInitializedByVoice = true;
@@ -683,9 +709,10 @@ bool CRClientVoice::EnsureAudio()
 		m_pEncoder = opus_encoder_create(VOICE_SAMPLE_RATE, VOICE_CHANNELS, OPUS_APPLICATION_VOIP, &Error);
 		if(!m_pEncoder || Error != OPUS_OK)
 		{
-			log_error("voice", "Failed to create Opus encoder: %d", Error);
+			VoiceLogErrorOnce(m_aEncoderErrorLog, sizeof(m_aEncoderErrorLog), "Failed to create Opus encoder: %d", Error);
 			return false;
 		}
+		m_aEncoderErrorLog[0] = '\0';
 		m_EncBitrate = 24000;
 		m_EncLossPerc = 0;
 		m_EncFec = false;
@@ -704,13 +731,13 @@ bool CRClientVoice::EnsureAudio()
 		if(OutputMissing)
 		{
 			if(!m_OutputUnavailable)
-				log_error("voice", "Output device not found: '%s'", m_aOutputDeviceName);
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Output device not found: '%s'", m_aOutputDeviceName);
 			m_OutputUnavailable = true;
 		}
 		else if(NoOutputDevices)
 		{
 			if(!m_OutputUnavailable)
-				log_error("voice", "No output devices available");
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "No output devices available");
 			m_OutputUnavailable = true;
 		}
 		else
@@ -719,7 +746,7 @@ bool CRClientVoice::EnsureAudio()
 			if(!m_OutputDevice)
 			{
 				if(!m_OutputUnavailable)
-					log_error("voice", "Failed to open output device: %s", SDL_GetError());
+					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to open output device: %s", SDL_GetError());
 				m_OutputUnavailable = true;
 			}
 			else
@@ -746,13 +773,13 @@ bool CRClientVoice::EnsureAudio()
 		if(InputMissing)
 		{
 			if(!m_CaptureUnavailable)
-				log_error("voice", "Input device not found: '%s'", m_aInputDeviceName);
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Input device not found: '%s'", m_aInputDeviceName);
 			m_CaptureUnavailable = true;
 		}
 		else if(NoCaptureDevices)
 		{
 			if(!m_CaptureUnavailable)
-				log_error("voice", "No capture devices available");
+				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "No capture devices available");
 			m_CaptureUnavailable = true;
 		}
 		else
@@ -761,7 +788,7 @@ bool CRClientVoice::EnsureAudio()
 			if(!m_CaptureDevice)
 			{
 				if(!m_CaptureUnavailable)
-					log_error("voice", "Failed to open capture device: %s", SDL_GetError());
+					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), "Failed to open capture device: %s", SDL_GetError());
 				m_CaptureUnavailable = true;
 			}
 			else
@@ -789,6 +816,8 @@ bool CRClientVoice::EnsureAudio()
 		m_LogDeviceChange = false;
 	}
 
+	m_aAudioErrorLog[0] = '\0';
+	m_aEncoderErrorLog[0] = '\0';
 	return true;
 }
 
@@ -1072,6 +1101,11 @@ void CRClientVoice::Shutdown()
 	m_aAudioBackendMismatchReq[0] = '\0';
 	m_aAudioBackendMismatchCur[0] = '\0';
 	m_aAudioInitLoggedBackend[0] = '\0';
+	m_aSocketErrorLog[0] = '\0';
+	m_aAudioErrorLog[0] = '\0';
+	m_aEncoderErrorLog[0] = '\0';
+	m_aServerAddrErrorLog[0] = '\0';
+	m_aDecoderErrorLog[0] = '\0';
 	m_AudioSubsystemInitializedByVoice = false;
 	m_PingMs.store(-1);
 	m_MicLevel.store(0.0f);
@@ -1091,6 +1125,7 @@ void CRClientVoice::UpdateServerAddr()
 	{
 		str_copy(m_aServerAddrStr, g_Config.m_RiVoiceServer, sizeof(m_aServerAddrStr));
 		m_ServerAddrValid.store(false);
+		m_aServerAddrErrorLog[0] = '\0';
 	}
 	if(m_aServerAddrStr[0] == '\0')
 		return;
@@ -1105,6 +1140,7 @@ void CRClientVoice::UpdateServerAddr()
 			m_ServerAddr = NewAddr;
 		}
 		m_ServerAddrValid.store(true);
+		m_aServerAddrErrorLog[0] = '\0';
 		return;
 	}
 
@@ -1112,7 +1148,7 @@ void CRClientVoice::UpdateServerAddr()
 	int Port = 0;
 	if(!ParseHostPort(m_aServerAddrStr, aHost, sizeof(aHost), Port))
 	{
-		log_error("voice", "Invalid voice server address '%s'", m_aServerAddrStr);
+		VoiceLogErrorOnce(m_aServerAddrErrorLog, sizeof(m_aServerAddrErrorLog), "Invalid voice server address '%s'", m_aServerAddrStr);
 		return;
 	}
 
@@ -1124,10 +1160,11 @@ void CRClientVoice::UpdateServerAddr()
 			m_ServerAddr = NewAddr;
 		}
 		m_ServerAddrValid.store(true);
+		m_aServerAddrErrorLog[0] = '\0';
 		return;
 	}
 
-	log_error("voice", "Failed to resolve voice server '%s'", m_aServerAddrStr);
+	VoiceLogErrorOnce(m_aServerAddrErrorLog, sizeof(m_aServerAddrErrorLog), "Failed to resolve voice server '%s'", m_aServerAddrStr);
 }
 
 bool CRClientVoice::UpdateContext()
@@ -1880,9 +1917,10 @@ void CRClientVoice::DecodeJitter()
 			Peer.m_pDecoder = opus_decoder_create(VOICE_SAMPLE_RATE, VOICE_CHANNELS, &Error);
 			if(!Peer.m_pDecoder || Error != OPUS_OK)
 			{
-				log_error("voice", "Failed to create Opus decoder: %d", Error);
+				VoiceLogErrorOnce(m_aDecoderErrorLog, sizeof(m_aDecoderErrorLog), "Failed to create Opus decoder: %d", Error);
 				continue;
 			}
+			m_aDecoderErrorLog[0] = '\0';
 			Peer.m_HasSeq = false;
 		}
 

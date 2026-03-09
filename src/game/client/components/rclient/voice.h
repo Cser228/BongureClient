@@ -126,6 +126,11 @@ class CRClientVoice
 	char m_aAudioBackendMismatchReq[64] = {0};
 	char m_aAudioBackendMismatchCur[64] = {0};
 	char m_aAudioInitLoggedBackend[64] = {0};
+	char m_aSocketErrorLog[256] = {0};
+	char m_aAudioErrorLog[256] = {0};
+	char m_aEncoderErrorLog[256] = {0};
+	char m_aServerAddrErrorLog[256] = {0};
+	char m_aDecoderErrorLog[256] = {0};
 	bool m_AudioSubsystemInitializedByVoice = false;
 	char m_aInputDeviceName[128] = {0};
 	char m_aOutputDeviceName[128] = {0};
