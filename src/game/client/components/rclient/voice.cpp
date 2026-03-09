@@ -60,17 +60,6 @@ static void VoiceLogErrorOnce(char *pLastMessage, size_t LastMessageSize, const 
 	log_error("voice", "%s", aMessage);
 }
 
-static void VoiceLogError(const char *pFormat, ...)
-{
-	char aMessage[256];
-	va_list Args;
-	va_start(Args, pFormat);
-	str_format_v(aMessage, sizeof(aMessage), pFormat, Args);
-	va_end(Args);
-
-	log_error("voice", "%s", aMessage);
-}
-
 static bool VoiceListMatch(const char *pList, const char *pName)
 {
 	if(!pList || pList[0] == '\0')
