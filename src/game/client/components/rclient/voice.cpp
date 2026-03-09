@@ -12,8 +12,6 @@
 
 #include <game/client/gameclient.h>
 
-#include <game/gamecore.h>
-
 #if defined(CONF_PLATFORM_ANDROID)
 #include <android/android_main.h>
 #endif
@@ -30,7 +28,6 @@
 #include <cctype>
 #include <chrono>
 #include <cmath>
-#include <limits>
 #include <thread>
 #include <vector>
 
@@ -51,8 +48,9 @@ static void VoiceLogErrorOnce(char *pLastMessage, size_t LastMessageSize, const 
 	char aMessage[256];
 	va_list Args;
 	va_start(Args, pFormat);
-	str_format_v(aMessage, sizeof(aMessage), pFormat, Args);
+	vsnprintf(aMessage, sizeof(aMessage), pFormat, Args);
 	va_end(Args);
+	aMessage[sizeof(aMessage) - 1] = '\0';
 
 	if(!VoiceRememberLogMessage(pLastMessage, LastMessageSize, aMessage))
 		return;
