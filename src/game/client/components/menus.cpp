@@ -759,14 +759,14 @@ void CMenus::RenderLoading(const char *pCaption, const char *pContent, int Incre
 
 	Ui()->MapScreen();
 
-	if(GameClient()->m_MenuBackground.IsLoading())
+	if(!g_Config.m_RiUiCustomBg && GameClient()->m_MenuBackground.IsLoading())
 	{
 		// Avoid rendering while loading the menu background as this would otherwise
 		// cause the regular menu background to be rendered for a few frames while
 		// the menu background is not loaded yet.
 		return;
 	}
-	if(!GameClient()->m_MenuBackground.Render())
+	if(g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render())
 	{
 		RenderBackground();
 	}
@@ -847,6 +847,7 @@ void CMenus::OnInterfacesInit(CGameClient *pClient)
 	m_MenusIngameTouchControls.OnInterfacesInit(pClient);
 	m_MenusSettingsControls.OnInterfacesInit(pClient);
 	m_MenusStart.OnInterfacesInit(pClient);
+	m_MenusStartRClient.OnInterfacesInit(pClient);
 	m_CommunityIcons.OnInterfacesInit(pClient);
 }
 
@@ -1067,7 +1068,7 @@ void CMenus::Render()
 	}
 	else
 	{
-		if(!GameClient()->m_MenuBackground.Render())
+		if(g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render())
 		{
 			RenderBackground();
 		}
@@ -1104,7 +1105,11 @@ void CMenus::Render()
 		}
 		else if(m_ShowStart)
 		{
-			m_MenusStart.RenderStartMenu(Screen);
+			if(!g_Config.m_RiUiNewMenu)
+				m_MenusStart.RenderStartMenu(Screen);
+			else
+				m_MenusStartRClient.RenderStartMenu(Screen);
+
 		}
 		else
 		{
@@ -2573,6 +2578,147 @@ void CMenus::RenderBackground()
 	const float ScreenHeight = 300.0f;
 	const float ScreenWidth = ScreenHeight * Graphics()->ScreenAspect();
 	Graphics()->MapScreen(0.0f, 0.0f, ScreenWidth, ScreenHeight);
+
+	if(g_Config.m_RiUiCustomBg)
+	{
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor4(
+			ColorRGBA(0.05f, 0.07f, 0.11f, 1.0f),
+			ColorRGBA(0.10f, 0.08f, 0.13f, 1.0f),
+			ColorRGBA(0.01f, 0.02f, 0.05f, 1.0f),
+			ColorRGBA(0.04f, 0.03f, 0.08f, 1.0f));
+		const IGraphics::CQuadItem BackgroundQuadItem = IGraphics::CQuadItem(0, 0, ScreenWidth, ScreenHeight);
+		Graphics()->QuadsDrawTL(&BackgroundQuadItem, 1);
+		Graphics()->QuadsEnd();
+
+		const float GlobalTime = Client()->GlobalTime();
+		const float GridSize = 22.0f;
+		const float GridMovement = GlobalTime * 10.0f;
+		const float GridOffset = std::fmod(GridMovement, GridSize);
+		CSkins::CSkinList &SkinList = GameClient()->m_Skins.SkinList();
+		const CSkin *pDefaultSkin = GameClient()->m_Skins.Find("default");
+		std::vector<CSkins::CSkinListEntry *> vpSkinEntries;
+		vpSkinEntries.reserve(SkinList.Skins().size());
+		for(CSkins::CSkinListEntry &SkinEntry : SkinList.Skins())
+		{
+			const CSkins::CSkinContainer *pSkinContainer = SkinEntry.SkinContainer();
+			if(pSkinContainer == nullptr)
+				continue;
+
+			vpSkinEntries.push_back(&SkinEntry);
+		}
+
+		if(!vpSkinEntries.empty())
+		{
+			const CAnimState *pIdleState = CAnimState::GetIdle();
+			const float CellTeeSize = GridSize * 0.68f;
+			const float TeeScreenPadding = CellTeeSize;
+			const vec2 MousePos(
+				Ui()->MousePos().x * ScreenWidth / Ui()->Screen()->w,
+				Ui()->MousePos().y * ScreenHeight / Ui()->Screen()->h);
+			CTeeRenderInfo BaseSkinInfo;
+			BaseSkinInfo.Apply(GameClient()->m_Skins.Find(g_Config.m_ClPlayerSkin));
+			BaseSkinInfo.ApplyColors(g_Config.m_ClPlayerUseCustomColor, g_Config.m_ClPlayerColorBody, g_Config.m_ClPlayerColorFeet);
+			BaseSkinInfo.m_Size = CellTeeSize;
+			const auto HashCell = [](int CellX, int CellY) {
+				unsigned Hash = 2166136261u;
+				Hash = (Hash ^ (unsigned)CellX) * 16777619u;
+				Hash = (Hash ^ (unsigned)CellY) * 16777619u;
+				Hash ^= Hash >> 16;
+				Hash *= 0x7feb352du;
+				Hash ^= Hash >> 15;
+				return Hash;
+			};
+
+			const int StartWorldCellX = (int)std::floor(GridMovement / GridSize) - 1;
+			const int StartWorldCellY = (int)std::floor(-GridMovement / GridSize) - 1;
+			for(int WorldCellY = StartWorldCellY;; WorldCellY++)
+			{
+				const float CenterY = WorldCellY * GridSize + GridSize * 0.5f + GridMovement;
+				if(CenterY >= ScreenHeight + TeeScreenPadding)
+					break;
+				if(CenterY < -TeeScreenPadding)
+					continue;
+
+				for(int WorldCellX = StartWorldCellX;; WorldCellX++)
+				{
+					const float CenterX = WorldCellX * GridSize + GridSize * 0.5f - GridMovement;
+					if(CenterX >= ScreenWidth + TeeScreenPadding)
+						break;
+					if(CenterX < -TeeScreenPadding)
+						continue;
+
+					const unsigned CellHash = HashCell(WorldCellX, WorldCellY);
+					if(CellHash % 11u != 0)
+						continue;
+
+					CSkins::CSkinListEntry *pSkinEntry = vpSkinEntries[CellHash % vpSkinEntries.size()];
+					pSkinEntry->RequestLoad();
+
+					const CSkins::CSkinContainer *pSkinContainer = pSkinEntry->SkinContainer();
+					const CSkin *pSkin = pSkinContainer != nullptr && pSkinContainer->State() == CSkins::CSkinContainer::EState::LOADED ? pSkinContainer->Skin().get() : pDefaultSkin;
+					CTeeRenderInfo TeeInfo = BaseSkinInfo;
+					TeeInfo.Apply(pSkin);
+
+					vec2 TeeOffsetToMid;
+					CRenderTools::GetRenderTeeOffsetToRenderedTee(pIdleState, &TeeInfo, TeeOffsetToMid);
+					const float FloatOffset = sinf(GlobalTime * 0.8f + (float)(CellHash % 360u)) * 0.6f;
+					const vec2 TeePos(CenterX, CenterY + TeeOffsetToMid.y + FloatOffset);
+					const vec2 DeltaPosition = MousePos - TeePos;
+					const float Distance = length(DeltaPosition);
+					const float InteractionDistance = CellTeeSize * 0.45f;
+					const vec2 TeeDir = Distance < InteractionDistance ? normalize(vec2(DeltaPosition.x, maximum(DeltaPosition.y, 0.5f))) : normalize(DeltaPosition);
+					const int TeeEmote = Distance < InteractionDistance ? EMOTE_HAPPY : g_Config.m_ClPlayerDefaultEyes;
+					RenderTools()->RenderTee(pIdleState, &TeeInfo, TeeEmote, TeeDir, TeePos);
+				}
+			}
+		}
+
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 0.035f);
+		IGraphics::CQuadItem aGridItems[128];
+		int NumGridItems = 0;
+		for(float x = -GridOffset; x < ScreenWidth + GridSize; x += GridSize)
+		{
+			aGridItems[NumGridItems++] = IGraphics::CQuadItem(x, 0.0f, 1.0f, ScreenHeight);
+			if(NumGridItems == std::size(aGridItems))
+			{
+				Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
+				NumGridItems = 0;
+			}
+		}
+		for(float y = GridOffset - GridSize; y < ScreenHeight + GridSize; y += GridSize)
+		{
+			aGridItems[NumGridItems++] = IGraphics::CQuadItem(0.0f, y, ScreenWidth, 1.0f);
+			if(NumGridItems == std::size(aGridItems))
+			{
+				Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
+				NumGridItems = 0;
+			}
+		}
+		if(NumGridItems > 0)
+			Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
+		Graphics()->QuadsEnd();
+
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		const IGraphics::CQuadItem TopTintQuad = IGraphics::CQuadItem(0.0f, 0.0f, ScreenWidth, ScreenHeight * 0.28f);
+		Graphics()->SetColor4(
+			ColorRGBA(0.05f, 0.24f, 0.28f, 0.08f),
+			ColorRGBA(0.26f, 0.08f, 0.17f, 0.08f),
+			ColorRGBA(0.05f, 0.24f, 0.28f, 0.0f),
+			ColorRGBA(0.26f, 0.08f, 0.17f, 0.0f));
+		Graphics()->QuadsDrawTL(&TopTintQuad, 1);
+		Graphics()->SetColor(0.01f, 0.02f, 0.05f, 0.20f);
+		const IGraphics::CQuadItem VignetteQuad = IGraphics::CQuadItem(-100.0f, -100.0f, ScreenWidth + 200.0f, ScreenHeight + 200.0f);
+		Graphics()->QuadsDrawTL(&VignetteQuad, 1);
+		Graphics()->QuadsEnd();
+
+		Ui()->MapScreen();
+		return;
+	}
 
 	// render background color
 	Graphics()->TextureClear();
