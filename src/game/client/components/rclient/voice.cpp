@@ -609,13 +609,17 @@ bool CRClientVoice::EnsureAudio()
 		if(SDL_AudioInit(pRequestedBackend) < 0)
 		{
 			if(pRequestedBackend)
+			{
 				char aError[256];
 				str_format(aError, sizeof(aError), "Failed to init audio backend '%s': %s", pRequestedBackend, SDL_GetError());
 				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
+			}
 			else
+			{
 				char aError[256];
 				str_format(aError, sizeof(aError), "Failed to init audio: %s", SDL_GetError());
 				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
+			}
 			return false;
 		}
 		m_AudioSubsystemInitializedByVoice = true;
@@ -736,9 +740,11 @@ bool CRClientVoice::EnsureAudio()
 		if(OutputMissing)
 		{
 			if(!m_OutputUnavailable)
+			{
 				char aError[256];
 				str_format(aError, sizeof(aError), "Output device not found: '%s'", m_aOutputDeviceName);
 				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
+			}
 			m_OutputUnavailable = true;
 		}
 		else if(NoOutputDevices)
@@ -754,9 +760,11 @@ bool CRClientVoice::EnsureAudio()
 			if(!m_OutputDevice)
 			{
 				if(!m_OutputUnavailable)
+				{
 					char aError[256];
 					str_format(aError, sizeof(aError), "Failed to open output device: %s", SDL_GetError());
 					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
+				}
 				m_OutputUnavailable = true;
 			}
 			else
@@ -795,9 +803,11 @@ bool CRClientVoice::EnsureAudio()
 		if(InputMissing)
 		{
 			if(!m_CaptureUnavailable)
+			{
 				char aError[256];
 				str_format(aError, sizeof(aError), "Input device not found: '%s'", m_aInputDeviceName);
 				VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
+			}
 			m_CaptureUnavailable = true;
 		}
 		else if(NoCaptureDevices)
@@ -813,9 +823,11 @@ bool CRClientVoice::EnsureAudio()
 			if(!m_CaptureDevice)
 			{
 				if(!m_CaptureUnavailable)
+				{
 					char aError[256];
 					str_format(aError, sizeof(aError), "Failed to open capture device: %s", SDL_GetError());
 					VoiceLogErrorOnce(m_aAudioErrorLog, sizeof(m_aAudioErrorLog), aError);
+				}
 				m_CaptureUnavailable = true;
 			}
 			else
