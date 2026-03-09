@@ -1043,7 +1043,7 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 	}
 	EndSection(Column);
 
-	BeginSectionHeader(Column, MarginBetweenSections, RCLIENT_SETTINGS_SECTION_MENUS, RCLocalize("Menus"));
+	BeginSectionHeader(Column, MarginBetweenSections, RCLIENT_SETTINGS_SECTION_MENUS, RCLocalize("Menu"));
 	if(s_aSectionExpanded[RCLIENT_SETTINGS_SECTION_MENUS])
 	{
 		MACRO_CONFIG_CHECKBOX(RiUiNewMenu, "Show new RClient's menu");

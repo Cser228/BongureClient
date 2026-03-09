@@ -884,3 +884,6 @@ show RClient's menu topbar
 
 show RClient's menu bottombar
 == Вкл нижнюю панель
+
+Menu
+== Меню
