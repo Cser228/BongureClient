@@ -133,7 +133,9 @@ class CRClientVoice
 	char m_aServerAddrErrorLog[256] = {0};
 	char m_aDecoderErrorLog[256] = {0};
 	bool m_AudioSubsystemInitializedByVoice = false;
+#if defined(CONF_PLATFORM_EMSCRIPTEN)
 	bool m_UnsupportedPlatformLogged = false;
+#endif
 	char m_aInputDeviceName[128] = {0};
 	char m_aOutputDeviceName[128] = {0};
 	int64_t m_LastAudioRetryAttempt = 0;
