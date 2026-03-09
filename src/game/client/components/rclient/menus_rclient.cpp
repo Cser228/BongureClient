@@ -1134,6 +1134,10 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 			Column.HSplitTop(LineSize, nullptr, &Column);
 			DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiToggle45degrees, RCLocalize("Toggle 45 degrees"), &g_Config.m_RiToggle45degrees, &Rightoffset, LineSize);
 			Column.HSplitTop(MarginSmall, nullptr, &Column);
+			Column.VSplitLeft(25.0f, &Label, &Rightoffset);
+			Column.HSplitTop(LineSize, nullptr, &Column);
+			DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_Ri45degreesEcho, RCLocalize("Echo 45 degrees"), &g_Config.m_Ri45degreesEcho, &Rightoffset, LineSize);
+			Column.HSplitTop(MarginSmall, nullptr, &Column);
 		}
 		Column.HSplitTop(LineSize, &Label, &Column);
 		DoLine_KeyReader(Label, s_ReaderButtonSmallSens, s_ClearButtonSmallSens, RCLocalize("Small sens bind"), "+ri_small_sens");
@@ -1143,6 +1147,10 @@ void CMenus::RenderSettingsRushieSettings(CUIRect MainView)
 			Column.VSplitLeft(25.0f, &Label, &Rightoffset);
 			Column.HSplitTop(LineSize, nullptr, &Column);
 			DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiToggleSmallSens, RCLocalize("Toggle small sens"), &g_Config.m_RiToggleSmallSens, &Rightoffset, LineSize);
+			Column.HSplitTop(MarginSmall, nullptr, &Column);
+			Column.VSplitLeft(25.0f, &Label, &Rightoffset);
+			Column.HSplitTop(LineSize, nullptr, &Column);
+			DoButton_CheckBoxAutoVMarginAndSet(&g_Config.m_RiSmallSensEcho, RCLocalize("Echo small sens"), &g_Config.m_RiSmallSensEcho, &Rightoffset, LineSize);
 			Column.HSplitTop(MarginSmall, nullptr, &Column);
 		}
 		Column.HSplitTop(LineSize, &Label, &Column);

@@ -88,7 +88,9 @@ MACRO_CONFIG_INT(RiVoiceShowOverlay, ri_voice_show_overlay, 1, 0, 1, CFGFLAG_CLI
 
 //Controls
 MACRO_CONFIG_INT(RiToggle45degrees, ri_toggle_45_degrees, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Toggle 45 degrees bind or not")
+MACRO_CONFIG_INT(Ri45degreesEcho, ri_45_degrees_echo, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "45 degrees echo")
 MACRO_CONFIG_INT(RiToggleSmallSens, ri_toggle_small_sens, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Toggle small sens bind or not")
+MACRO_CONFIG_INT(RiSmallSensEcho, ri_small_sens_echo, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Small sens echo")
 
 //Hud
 MACRO_CONFIG_INT(RiShowMilliSecondsTimer, ri_show_milliseconds_timer, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show milliseconds in game timer")
