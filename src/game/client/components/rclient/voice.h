@@ -134,6 +134,7 @@ class CRClientVoice
 	bool m_AudioSubsystemInitializedByVoice = false;
 	char m_aInputDeviceName[128] = {0};
 	char m_aOutputDeviceName[128] = {0};
+	int64_t m_LastAudioRetryAttempt = 0;
 	bool m_OutputStereo = true;
 	bool m_LogDeviceChange = false;
 	bool m_CaptureUnavailable = false;
@@ -172,6 +173,7 @@ class CRClientVoice
 	std::thread m_Worker;
 	std::atomic<bool> m_WorkerStop = false;
 	std::atomic<bool> m_WorkerEnabled = false;
+	std::atomic<bool> m_AudioRefreshRequested = true;
 	bool m_ShutdownDone = true;
 
 	std::mutex m_ServerAddrMutex;

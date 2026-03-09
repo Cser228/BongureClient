@@ -56,6 +56,17 @@ static void VoiceLogErrorOnce(char *pLastMessage, size_t LastMessageSize, const 
 	log_error("voice", "%s", aMessage);
 }
 
+static void VoiceLogError(const char *pFormat, ...)
+{
+	char aMessage[256];
+	va_list Args;
+	va_start(Args, pFormat);
+	str_format_v(aMessage, sizeof(aMessage), pFormat, Args);
+	va_end(Args);
+
+	log_error("voice", "%s", aMessage);
+}
+
 static bool VoiceListMatch(const char *pList, const char *pName)
 {
 	if(!pList || pList[0] == '\0')
@@ -605,6 +616,7 @@ bool CRClientVoice::EnsureAudio()
 		m_LogDeviceChange = true;
 		m_CaptureUnavailable = false;
 		m_OutputUnavailable = false;
+		m_LastAudioRetryAttempt = 0;
 	}
 
 	const char *pRequestedBackend = g_Config.m_RiVoiceAudioBackend[0] ? g_Config.m_RiVoiceAudioBackend : nullptr;
@@ -669,6 +681,7 @@ bool CRClientVoice::EnsureAudio()
 		str_copy(m_aInputDeviceName, g_Config.m_RiVoiceInputDevice, sizeof(m_aInputDeviceName));
 		m_LogDeviceChange = true;
 		m_CaptureUnavailable = false;
+		m_LastAudioRetryAttempt = 0;
 	}
 
 	if(str_comp(m_aOutputDeviceName, g_Config.m_RiVoiceOutputDevice) != 0)
@@ -681,6 +694,7 @@ bool CRClientVoice::EnsureAudio()
 		str_copy(m_aOutputDeviceName, g_Config.m_RiVoiceOutputDevice, sizeof(m_aOutputDeviceName));
 		m_LogDeviceChange = true;
 		m_OutputUnavailable = false;
+		m_LastAudioRetryAttempt = 0;
 	}
 
 	if(m_OutputStereo != WantStereo)
@@ -693,6 +707,7 @@ bool CRClientVoice::EnsureAudio()
 		m_OutputStereo = WantStereo;
 		m_LogDeviceChange = true;
 		m_OutputUnavailable = false;
+		m_LastAudioRetryAttempt = 0;
 	}
 
 	if(HadCapture && HadOutput && HadEncoder && m_CaptureDevice && m_OutputDevice && m_pEncoder)
@@ -742,6 +757,7 @@ bool CRClientVoice::EnsureAudio()
 		}
 		else
 		{
+			log_info("voice", "attempting to open output device '%s'", pOutputName ? pOutputName : "<default>");
 			m_OutputDevice = SDL_OpenAudioDevice(pOutputName, 0, &WantOutput, &m_OutputSpec, 0);
 			if(!m_OutputDevice)
 			{
@@ -752,6 +768,10 @@ bool CRClientVoice::EnsureAudio()
 			else
 			{
 				const int Channels = m_OutputSpec.channels > 0 ? m_OutputSpec.channels : (WantStereo ? 2 : 1);
+				log_info("voice", "output device opened '%s' %dch@%d",
+					pOutputName ? pOutputName : "<default>",
+					Channels,
+					m_OutputSpec.freq);
 				m_OutputChannels.store(Channels);
 				m_MixBuffer.resize((size_t)m_OutputSpec.samples * Channels);
 				SDL_PauseAudioDevice(m_OutputDevice, 0);
@@ -784,6 +804,7 @@ bool CRClientVoice::EnsureAudio()
 		}
 		else
 		{
+			log_info("voice", "attempting to open capture device '%s'", pInputName ? pInputName : "<default>");
 			m_CaptureDevice = SDL_OpenAudioDevice(pInputName, 1, &WantCapture, &m_CaptureSpec, 0);
 			if(!m_CaptureDevice)
 			{
@@ -793,6 +814,10 @@ bool CRClientVoice::EnsureAudio()
 			}
 			else
 			{
+				log_info("voice", "capture device opened '%s' %dch@%d",
+					pInputName ? pInputName : "<default>",
+					m_CaptureSpec.channels,
+					m_CaptureSpec.freq);
 				SDL_PauseAudioDevice(m_CaptureDevice, 0);
 				m_CaptureUnavailable = false;
 			}
@@ -815,6 +840,11 @@ bool CRClientVoice::EnsureAudio()
 			m_OutputSpec.channels, m_OutputSpec.freq);
 		m_LogDeviceChange = false;
 	}
+
+	if(m_CaptureUnavailable || m_OutputUnavailable)
+		m_LastAudioRetryAttempt = time_get();
+	else
+		m_LastAudioRetryAttempt = 0;
 
 	m_aAudioErrorLog[0] = '\0';
 	m_aEncoderErrorLog[0] = '\0';
@@ -1063,6 +1093,8 @@ void CRClientVoice::Shutdown()
 	m_MixBuffer.clear();
 	m_CaptureUnavailable = false;
 	m_OutputUnavailable = false;
+	m_LastAudioRetryAttempt = 0;
+	m_AudioRefreshRequested.store(true);
 	if(m_pEncoder)
 	{
 		opus_encoder_destroy(m_pEncoder);
@@ -2003,6 +2035,17 @@ void CRClientVoice::WorkerLoop()
 			continue;
 		}
 
+		bool ShouldEnsureAudio = m_AudioRefreshRequested.exchange(false);
+		if(!ShouldEnsureAudio && (m_CaptureUnavailable || m_OutputUnavailable))
+		{
+			const int64_t RetryInterval = time_freq();
+			const int64_t Now = time_get();
+			if(m_LastAudioRetryAttempt == 0 || Now - m_LastAudioRetryAttempt >= RetryInterval)
+				ShouldEnsureAudio = true;
+		}
+		if(ShouldEnsureAudio)
+			EnsureAudio();
+
 		ProcessIncoming();
 		DecodeJitter();
 		UpdateEncoderParams();
@@ -2088,12 +2131,17 @@ void CRClientVoice::OnRender()
 		return;
 	}
 	if(NeedReinit)
+	{
 		StopWorker();
-	if(!EnsureSocket() || !EnsureAudio())
+		m_AudioRefreshRequested.store(true);
+	}
+	if(!EnsureSocket())
 	{
 		StopWorker();
 		return;
 	}
+	if(!m_Worker.joinable())
+		m_AudioRefreshRequested.store(true);
 
 	StartWorker();
 }
