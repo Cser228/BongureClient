@@ -25,6 +25,12 @@ void CMenusStartRClient::RenderStartMenu(CUIRect MainView)
 {
 	GameClient()->m_MenuBackground.ChangePosition(CMenuBackground::POS_START);
 
+	if(g_Config.m_RiUiSkipOpenMenu)
+	{
+		m_LogoMenuExpanded = true;
+		m_LogoMenuAnim = 1.0f;
+	}
+
 	const CUIRect View = MainView;
 	const auto Lerp = [](float From, float To, float Amount) {
 		return From + (To - From) * Amount;
