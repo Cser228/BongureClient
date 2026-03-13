@@ -887,3 +887,6 @@ show RClient's menu bottombar
 
 Menu
 == Меню
+
+Color of settings menu
+== Цвет настроек в меню
