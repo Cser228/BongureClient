@@ -165,6 +165,12 @@ static constexpr uint8_t VOICE_FLAG_LOOPBACK = 1 << 1;
 static constexpr int RNNOISE_FRAME_SAMPLES = 480;
 #endif
 
+static uint8_t VoiceProtocolVersion(const SRClientVoiceConfigSnapshot &Config)
+{
+	const int ProtocolVersion = Config.m_RiVoiceProtocolVersion > 0 ? Config.m_RiVoiceProtocolVersion : VOICE_VERSION;
+	return (uint8_t)std::clamp(ProtocolVersion, 1, 255);
+}
+
 static uint32_t VoicePackToken(uint32_t GroupHash, uint32_t Mode)
 {
 	return (GroupHash & VOICE_GROUP_MASK) | ((Mode & VOICE_MODE_MASK) << VOICE_MODE_SHIFT);
@@ -1346,6 +1352,7 @@ void CRClientVoice::ProcessCapture()
 	const bool TokenChanged = Config.m_RiVoiceTokenHash != m_LastTokenHashSent;
 	const bool NeedKeepalive = m_LastKeepalive == 0 || Now - m_LastKeepalive > time_freq() * 2;
 	const bool TxActiveSnapshot = UseVad ? m_VadActive : PttHeld;
+	const uint8_t ProtocolVersion = VoiceProtocolVersion(Config);
 	uint8_t TxFlags = UseVad ? VOICE_FLAG_VAD : 0;
 	if(TestMode == 2)
 		TxFlags |= VOICE_FLAG_LOOPBACK;
@@ -1361,7 +1368,7 @@ void CRClientVoice::ProcessCapture()
 		size_t Offset = 0;
 		mem_copy(aPacket + Offset, VOICE_MAGIC, sizeof(VOICE_MAGIC));
 		Offset += sizeof(VOICE_MAGIC);
-		aPacket[Offset++] = VOICE_VERSION;
+		aPacket[Offset++] = ProtocolVersion;
 		aPacket[Offset++] = VOICE_TYPE_PING;
 		WriteU16(aPacket + Offset, 0);
 		Offset += sizeof(uint16_t);
@@ -1515,7 +1522,7 @@ void CRClientVoice::ProcessCapture()
 		size_t Offset = 0;
 		mem_copy(aPacket + Offset, VOICE_MAGIC, sizeof(VOICE_MAGIC));
 		Offset += sizeof(VOICE_MAGIC);
-		aPacket[Offset++] = VOICE_VERSION;
+		aPacket[Offset++] = ProtocolVersion;
 		aPacket[Offset++] = VOICE_TYPE_AUDIO;
 		WriteU16(aPacket + Offset, (uint16_t)EncSize);
 		Offset += sizeof(uint16_t);
@@ -1574,6 +1581,7 @@ void CRClientVoice::ProcessIncoming()
 	GetConfigSnapshot(Config);
 	const int TestMode = std::clamp(Config.m_RiVoiceTestMode, 0, 2);
 	const bool TestServer = TestMode == 2;
+	const uint8_t ProtocolVersion = VoiceProtocolVersion(Config);
 
 	static int64_t s_RxLastLog = 0;
 	static int s_RxPackets = 0;
@@ -1606,7 +1614,7 @@ void CRClientVoice::ProcessIncoming()
 
 		const uint8_t Version = pData[Offset++];
 		const uint8_t Type = pData[Offset++];
-		if(Version != VOICE_VERSION)
+		if(Version != ProtocolVersion)
 			continue;
 		if(Type != VOICE_TYPE_AUDIO && Type != VOICE_TYPE_PING && Type != VOICE_TYPE_PONG)
 			continue;
@@ -1834,6 +1842,7 @@ void CRClientVoice::UpdateConfigSnapshot()
 {
 	std::lock_guard<std::mutex> Guard(m_ConfigMutex);
 	m_ConfigSnapshot.m_RiVoiceFilterEnable = g_Config.m_RiVoiceFilterEnable;
+	m_ConfigSnapshot.m_RiVoiceProtocolVersion = g_Config.m_RiVoiceProtocolVersion;
 	m_ConfigSnapshot.m_RiVoiceNoiseSuppressEnable = g_Config.m_RiVoiceNoiseSuppressEnable;
 	m_ConfigSnapshot.m_RiVoiceNoiseSuppressStrength = g_Config.m_RiVoiceNoiseSuppressStrength;
 	m_ConfigSnapshot.m_RiVoiceCompThreshold = g_Config.m_RiVoiceCompThreshold;

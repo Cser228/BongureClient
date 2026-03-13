@@ -27,6 +27,7 @@ struct DenoiseState;
 struct SRClientVoiceConfigSnapshot
 {
 	int m_RiVoiceFilterEnable = 0;
+	int m_RiVoiceProtocolVersion = 0;
 	int m_RiVoiceNoiseSuppressEnable = 0;
 	int m_RiVoiceNoiseSuppressStrength = 0;
 	int m_RiVoiceCompThreshold = 0;
