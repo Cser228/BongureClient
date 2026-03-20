@@ -29,7 +29,7 @@ extern const char *GIT_SHORTREV_HASH;
 #endif
 
 // custom
-#define CLIENT_NAME "RClient"
+#define CLIENT_NAME "Bongure Client"
 #define CLIENT_RELEASE_VERSION RCLIENT_VERSION
 
 #endif

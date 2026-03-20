@@ -64,6 +64,7 @@ public:
 	void RenderCtfFlag(vec2 Pos, float Alpha);
 
 	bool ChatDoSpecId(const char *pInput);
+	bool ChatDoUnfinishSay(const char *pInput);
 	bool InfoTaskDone() { return m_pTClientInfoTask && m_pTClientInfoTask->State() == EHttpState::DONE; }
 	bool m_FetchedTClientInfo = false;
 	char m_aVersionStr[10] = "0";

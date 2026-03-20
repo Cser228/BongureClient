@@ -278,6 +278,8 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 			; // Do nothing as bindchat was executed
 		else if(GameClient()->m_TClient.ChatDoSpecId(m_Input.GetString()))
 			; // Do nothing as specid was executed
+		else if(GameClient()->m_TClient.ChatDoUnfinishSay(m_Input.GetString()))
+			; // Do nothing as unfinishsay was executed
 		else
 			SendChatQueued(m_Input.GetString());
 		m_pHistoryEntry = nullptr;
@@ -332,68 +334,94 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 		if(GameClient()->m_BindChat.ChatDoAutocomplete(ShiftPressed))
 		{
 		}
-		else if(m_aCompletionBuffer[0] == '/' && !m_vServerCommands.empty())
+		else if(m_aCompletionBuffer[0] == '/')
 		{
-			CCommand *pCompletionCommand = nullptr;
-
-			const size_t NumCommands = m_vServerCommands.size();
-
-			if(ShiftPressed && m_CompletionUsed)
-				m_CompletionChosen--;
-			else if(!ShiftPressed)
-				m_CompletionChosen++;
-			m_CompletionChosen = (m_CompletionChosen + 2 * NumCommands) % (2 * NumCommands);
-
-			m_CompletionUsed = true;
-
-			const char *pCommandStart = m_aCompletionBuffer + 1;
-			for(size_t i = 0; i < 2 * NumCommands; ++i)
+			// Client-side commands tab completion
+			static const char *s_apClientCmds[] = {"unfinishsay"};
+			const char *pCmdStart = m_aCompletionBuffer + 1;
+			bool FoundClientCmd = false;
+			for(const auto *pCmd : s_apClientCmds)
 			{
-				int SearchType;
-				int Index;
-
-				if(ShiftPressed)
+				if(str_startswith_nocase(pCmd, pCmdStart))
 				{
-					SearchType = ((m_CompletionChosen - i + 2 * NumCommands) % (2 * NumCommands)) / NumCommands;
-					Index = (m_CompletionChosen - i + NumCommands) % NumCommands;
-				}
-				else
-				{
-					SearchType = ((m_CompletionChosen + i) % (2 * NumCommands)) / NumCommands;
-					Index = (m_CompletionChosen + i) % NumCommands;
-				}
-
-				auto &Command = m_vServerCommands[Index];
-
-				if(str_startswith_nocase(Command.m_aName, pCommandStart))
-				{
-					pCompletionCommand = &Command;
-					m_CompletionChosen = Index + SearchType * NumCommands;
+					char aBuf[MAX_LINE_LENGTH];
+					str_truncate(aBuf, sizeof(aBuf), m_Input.GetString(), m_PlaceholderOffset);
+					str_append(aBuf, "/");
+					str_append(aBuf, pCmd);
+					str_append(aBuf, m_Input.GetString() + m_PlaceholderOffset + m_PlaceholderLength);
+					m_PlaceholderLength = str_length(pCmd) + 1;
+					m_Input.Set(aBuf);
+					m_Input.SetCursorOffset(m_PlaceholderOffset + m_PlaceholderLength);
+					m_CompletionUsed = true;
+					FoundClientCmd = true;
 					break;
 				}
 			}
 
-			// insert the command
-			if(pCompletionCommand)
+			// Server-side commands tab completion
+			if(!FoundClientCmd && !m_vServerCommands.empty())
 			{
-				char aBuf[MAX_LINE_LENGTH];
-				// add part before the name
-				str_truncate(aBuf, sizeof(aBuf), m_Input.GetString(), m_PlaceholderOffset);
+				CCommand *pCompletionCommand = nullptr;
 
-				// add the command
-				str_append(aBuf, "/");
-				str_append(aBuf, pCompletionCommand->m_aName);
+				const size_t NumCommands = m_vServerCommands.size();
 
-				// add separator
-				const char *pSeparator = pCompletionCommand->m_aParams[0] == '\0' ? "" : " ";
-				str_append(aBuf, pSeparator);
+				if(ShiftPressed && m_CompletionUsed)
+					m_CompletionChosen--;
+				else if(!ShiftPressed)
+					m_CompletionChosen++;
+				m_CompletionChosen = (m_CompletionChosen + 2 * NumCommands) % (2 * NumCommands);
 
-				// add part after the name
-				str_append(aBuf, m_Input.GetString() + m_PlaceholderOffset + m_PlaceholderLength);
+				m_CompletionUsed = true;
 
-				m_PlaceholderLength = str_length(pSeparator) + str_length(pCompletionCommand->m_aName) + 1;
-				m_Input.Set(aBuf);
-				m_Input.SetCursorOffset(m_PlaceholderOffset + m_PlaceholderLength);
+				const char *pCommandStart = m_aCompletionBuffer + 1;
+				for(size_t i = 0; i < 2 * NumCommands; ++i)
+				{
+					int SearchType;
+					int Index;
+
+					if(ShiftPressed)
+					{
+						SearchType = ((m_CompletionChosen - i + 2 * NumCommands) % (2 * NumCommands)) / NumCommands;
+						Index = (m_CompletionChosen - i + NumCommands) % NumCommands;
+					}
+					else
+					{
+						SearchType = ((m_CompletionChosen + i) % (2 * NumCommands)) / NumCommands;
+						Index = (m_CompletionChosen + i) % NumCommands;
+					}
+
+					auto &Command = m_vServerCommands[Index];
+
+					if(str_startswith_nocase(Command.m_aName, pCommandStart))
+					{
+						pCompletionCommand = &Command;
+						m_CompletionChosen = Index + SearchType * NumCommands;
+						break;
+					}
+				}
+
+				// insert the command
+				if(pCompletionCommand)
+				{
+					char aBuf[MAX_LINE_LENGTH];
+					// add part before the name
+					str_truncate(aBuf, sizeof(aBuf), m_Input.GetString(), m_PlaceholderOffset);
+
+					// add the command
+					str_append(aBuf, "/");
+					str_append(aBuf, pCompletionCommand->m_aName);
+
+					// add separator
+					const char *pSeparator = pCompletionCommand->m_aParams[0] == '\0' ? "" : " ";
+					str_append(aBuf, pSeparator);
+
+					// add part after the name
+					str_append(aBuf, m_Input.GetString() + m_PlaceholderOffset + m_PlaceholderLength);
+
+					m_PlaceholderLength = str_length(pSeparator) + str_length(pCompletionCommand->m_aName) + 1;
+					m_Input.Set(aBuf);
+					m_Input.SetCursorOffset(m_PlaceholderOffset + m_PlaceholderLength);
+				}
 			}
 		}
 		else
@@ -1384,19 +1412,40 @@ void CChat::OnRender()
 		m_Input.SetScrollOffset(ScrollOffset);
 		m_Input.SetScrollOffsetChange(ScrollOffsetChange);
 
-		// Autocompletion hint
-		if(m_Input.GetString()[0] == '/' && m_Input.GetString()[1] != '\0' && !m_vServerCommands.empty())
+				// Autocompletion hint
+		if(m_Input.GetString()[0] == '/' && m_Input.GetString()[1] != '\0')
 		{
-			for(const auto &Command : m_vServerCommands)
+			// Client-side commands hint
+			static const char *s_apClientCommands[] = {"unfinishsay"};
+			bool FoundClientCmd = false;
+			for(const auto *pCmd : s_apClientCommands)
 			{
-				if(str_startswith_nocase(Command.m_aName, m_Input.GetString() + 1))
+				if(str_startswith_nocase(pCmd, m_Input.GetString() + 1))
 				{
 					InputCursor.m_X = InputCursor.m_X + TextRender()->TextWidth(InputCursor.m_FontSize, m_Input.GetString(), -1, InputCursor.m_LineWidth);
 					InputCursor.m_Y = m_Input.GetCaretPosition().y;
 					TextRender()->TextColor(1.0f, 1.0f, 1.0f, 0.5f);
-					TextRender()->TextEx(&InputCursor, Command.m_aName + str_length(m_Input.GetString() + 1));
+					TextRender()->TextEx(&InputCursor, pCmd + str_length(m_Input.GetString() + 1));
 					TextRender()->TextColor(TextRender()->DefaultTextColor());
+					FoundClientCmd = true;
 					break;
+				}
+			}
+
+			// Server-side commands hint
+			if(!FoundClientCmd && !m_vServerCommands.empty())
+			{
+				for(const auto &Command : m_vServerCommands)
+				{
+					if(str_startswith_nocase(Command.m_aName, m_Input.GetString() + 1))
+					{
+						InputCursor.m_X = InputCursor.m_X + TextRender()->TextWidth(InputCursor.m_FontSize, m_Input.GetString(), -1, InputCursor.m_LineWidth);
+						InputCursor.m_Y = m_Input.GetCaretPosition().y;
+						TextRender()->TextColor(1.0f, 1.0f, 1.0f, 0.5f);
+						TextRender()->TextEx(&InputCursor, Command.m_aName + str_length(m_Input.GetString() + 1));
+						TextRender()->TextColor(TextRender()->DefaultTextColor());
+						break;
+					}
 				}
 			}
 		}

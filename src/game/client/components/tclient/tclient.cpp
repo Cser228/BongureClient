@@ -313,6 +313,74 @@ bool CTClient::ChatDoSpecId(const char *pInput)
 	return true;
 }
 
+bool CTClient::ChatDoUnfinishSay(const char *pInput)
+{
+	if(str_comp_nocase(pInput, "/unfinishsay") != 0 &&
+	   str_comp_nocase(pInput, ".unfinishsay") != 0)
+		return false;
+		
+	const int Length = str_length(pInput);
+	CChat::CHistoryEntry *pEntry = GameClient()->m_Chat.m_History.Allocate(sizeof(CChat::CHistoryEntry) + Length);
+	pEntry->m_Team = 0;
+	str_copy(pEntry->m_aText, pInput, Length + 1);
+
+	const char *pSuffix = " КОМУ ФИНИШ | WHOS FINISH";
+	const int SuffixLen = str_length(pSuffix);
+
+	char aMessage[MAX_LINE_LENGTH];
+	aMessage[0] = '\0';
+	int UnfinishedCount = 0;
+
+	for(int i = 0; i < MAX_CLIENTS; i++)
+	{
+		const CNetObj_PlayerInfo *pInfo = GameClient()->m_Snap.m_apPlayerInfos[i];
+		if(!pInfo)
+			continue;
+
+		if(pInfo->m_Score != -9999)
+			continue;
+
+		const char *pName = GameClient()->m_aClients[i].m_aName;
+		if(pName[0] == '\0')
+			continue;
+
+		if(GameClient()->m_aClients[i].m_Team == TEAM_SPECTATORS)
+			continue;
+
+		char aTemp[MAX_LINE_LENGTH];
+		if(UnfinishedCount > 0)
+			str_format(aTemp, sizeof(aTemp), "%s, %s", aMessage, pName);
+		else
+			str_format(aTemp, sizeof(aTemp), "%s", pName);
+
+		if(str_length(aTemp) + SuffixLen >= MAX_LINE_LENGTH - 1)
+		{
+			char aBuf[MAX_LINE_LENGTH];
+			str_format(aBuf, sizeof(aBuf), "%s%s", aMessage, pSuffix);
+			GameClient()->m_Chat.SendChat(0, aBuf);
+
+			str_copy(aMessage, pName, sizeof(aMessage));
+			UnfinishedCount = 1;
+			continue;
+		}
+
+		str_copy(aMessage, aTemp, sizeof(aMessage));
+		UnfinishedCount++;
+	}
+
+	if(UnfinishedCount == 0 && aMessage[0] == '\0')
+	{
+		GameClient()->Echo("All players finished / Все игроки финишировали");
+		return true;
+	}
+
+	char aBuf[MAX_LINE_LENGTH];
+	str_format(aBuf, sizeof(aBuf), "%s%s", aMessage, pSuffix);
+	GameClient()->m_Chat.SendChat(0, aBuf);
+
+	return true;
+}
+
 void CTClient::SpecId(int ClientId)
 {
 	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
