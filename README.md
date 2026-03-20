@@ -4,15 +4,20 @@
 
 ## Installation
 
+For installation **Bongure Client** download a release folder from **(https://github.com/Cser228/BongureClient/Releases)**
+
 ## Build
+
+For build download Visual Studio, open src folder and visual studio will find CMakeLists.txt and you will need press button run for build
 
 ## Features
 
+*Rushie Client* full
+*My functions* chat command /unfinishsay
+
 ## Community & Links
 
-* **Discord(write if u need me):** 1Voix1
-* **Discord server:** https://discord.gg/wUFTVAGVGa
-* **Website:** https://rushie-client.ru/
+* **Discord(write if u need me):** cser228or
+* **Discord server:** i'll create
 * **Tater Client:** https://github.com/sjrc6/TaterClient-ddnet
-* **Entity Client:** https://github.com/qxdFox/Entity-Client-DDNet
-* **Pulse Client:** https://github.com/PulseClient-ddnet/DDNetPulse
+* **Rushie Client:** https://github.com/RushieClient/RushieClient-ddnet
