@@ -27,17 +27,31 @@ CVoiceAssistant::~CVoiceAssistant()
 
 // ── Console ──
 
-void CVoiceAssistant::ConToggle(IConsole::IResult *pResult, void *pUserData)
+void CVoiceAssistant::ConBongaVoice(IConsole::IResult *pResult, void *pUserData)
 {
-	((CVoiceAssistant *)pUserData)->Toggle();
+	CVoiceAssistant *pSelf = (CVoiceAssistant *)pUserData;
+
+	if(pResult->NumArguments() == 0)
+	{
+		char aBuf[64];
+		str_format(aBuf, sizeof(aBuf), "bonga_voice %d", pSelf->IsActive() ? 1 : 0);
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure", aBuf);
+		return;
+	}
+
+	int Value = pResult->GetInteger(0);
+	if(Value == 1 && !pSelf->IsActive())
+		pSelf->Toggle();
+	else if(Value == 0 && pSelf->IsActive())
+		pSelf->Toggle();
 }
 
 void CVoiceAssistant::OnConsoleInit()
 {
 	Console()->Register(
-		"toggle_voice_assistant", "", CFGFLAG_CLIENT,
-		ConToggle, this,
-		"Toggle Bongure voice assistant on/off");
+		"bonga_voice", "?i[enabled]", CFGFLAG_CLIENT,
+		ConBongaVoice, this,
+		"Enable/disable Bongure voice assistant (1/0)");
 }
 
 // ── Init ──
@@ -46,7 +60,6 @@ void CVoiceAssistant::OnInit()
 {
 	vosk_set_log_level(-1);
 
-	// Ищем модель
 	const char *apPaths[] = {
 		"vosk-model-ru",
 		"data/vosk-model-ru",
@@ -58,36 +71,20 @@ void CVoiceAssistant::OnInit()
 	{
 		m_pModel = vosk_model_new(pPath);
 		if(m_pModel)
-		{
-			char aBuf[256];
-			str_format(aBuf, sizeof(aBuf), "[Bongure] Vosk model loaded from: %s", pPath);
-			Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure", aBuf);
 			break;
-		}
 	}
 
 	if(!m_pModel)
-	{
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			"[Bongure] ERROR: vosk-model-ru not found!");
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			"[Bongure] Download vosk-model-small-ru-0.22, rename folder to vosk-model-ru");
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			"[Bongure] Place it next to the .exe file");
 		return;
-	}
 
 	m_pRecognizer = vosk_recognizer_new(m_pModel, 16000.0f);
 	if(!m_pRecognizer)
 	{
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			"[Bongure] Failed to create recognizer");
 		vosk_model_free(m_pModel);
 		m_pModel = nullptr;
 		return;
 	}
 
-	// Открываем микрофон
 	if(SDL_WasInit(SDL_INIT_AUDIO) == 0)
 		SDL_InitSubSystem(SDL_INIT_AUDIO);
 
@@ -102,9 +99,6 @@ void CVoiceAssistant::OnInit()
 	m_AudioDevice = SDL_OpenAudioDevice(nullptr, 1, &Desired, nullptr, 0);
 	if(m_AudioDevice == 0)
 	{
-		char aBuf[256];
-		str_format(aBuf, sizeof(aBuf), "[Bongure] Microphone error: %s", SDL_GetError());
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure", aBuf);
 		vosk_recognizer_free(m_pRecognizer);
 		vosk_model_free(m_pModel);
 		m_pRecognizer = nullptr;
@@ -113,8 +107,6 @@ void CVoiceAssistant::OnInit()
 	}
 
 	m_Initialized = true;
-	Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-		"[Bongure] Voice assistant ready! Use: toggle_voice_assistant");
 }
 
 // ── Toggle ──
@@ -122,11 +114,7 @@ void CVoiceAssistant::OnInit()
 void CVoiceAssistant::Toggle()
 {
 	if(!m_Initialized)
-	{
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			"[Bongure] Not initialized (model missing?)");
 		return;
-	}
 
 	if(m_Active.load())
 	{
@@ -136,8 +124,6 @@ void CVoiceAssistant::Toggle()
 		SDL_PauseAudioDevice(m_AudioDevice, 1);
 		m_Active = false;
 		m_State = STATE_IDLE;
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			"[Bongure] Voice assistant OFF");
 	}
 	else
 	{
@@ -152,9 +138,6 @@ void CVoiceAssistant::Toggle()
 		SDL_PauseAudioDevice(m_AudioDevice, 0);
 
 		m_Thread = std::thread(&CVoiceAssistant::Run, this);
-
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			"[Bongure] Voice assistant ON - say 'Bonga, skazhi ...'");
 	}
 }
 
@@ -166,13 +149,6 @@ void CVoiceAssistant::OnRender()
 		return;
 
 	std::lock_guard<std::mutex> Lock(m_Mutex);
-
-	while(!m_vPendingLogs.empty())
-	{
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure",
-			m_vPendingLogs.front().c_str());
-		m_vPendingLogs.pop();
-	}
 
 	while(!m_vPendingChat.empty())
 	{
@@ -232,10 +208,7 @@ void CVoiceAssistant::Run()
 					const char *pJson = vosk_recognizer_result(m_pRecognizer);
 					std::string Text = ParseJsonText(pJson);
 					if(!Text.empty())
-					{
-						QueueLog(std::string("[Heard] ") + Text);
 						ProcessText(Text);
-					}
 				}
 			}
 		}
@@ -248,10 +221,7 @@ void CVoiceAssistant::Run()
 	const char *pFinal = vosk_recognizer_final_result(m_pRecognizer);
 	std::string Last = ParseJsonText(pFinal);
 	if(!Last.empty())
-	{
-		QueueLog(std::string("[Heard-final] ") + Last);
 		ProcessText(Last);
-	}
 }
 
 // ── Parse Vosk JSON: {"text" : "слова"} ──
@@ -300,6 +270,12 @@ size_t CVoiceAssistant::FindTrigger(const std::string &Text) const
 		"\xd1\x85\xd0\xb5\xd0\xb9 \xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd0\xbe",   // "хей бонго"
 		"\xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd0\xbe",                           // "бонго"
 		"\xd1\x85\xd0\xb5\xd0\xb9 \xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd1\x83\xd1\x80\xd0\xb0", // "хей бонгура"
+		"\xd0\xbc\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xbe",                                 // манго
+		"\xd0\xb2\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xb0",                                 // ванга
+		"\xd1\x85\xd0\xb5\xd0\xb9 \xd0\xbc\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xbe",       // хей манго
+		"\xd1\x85\xd0\xb5\xd0\xb9 \xd0\xb2\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xb0",       // хей ванга
+		"\xd1\x8d\xd0\xb9 \xd0\xbc\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xbe",               // эй манго
+		"\xd1\x8d\xd0\xb9 \xd0\xb2\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xb0",               // эй ванга
 	};
 
 	for(const char *pTrigger : apTriggers)
@@ -366,7 +342,6 @@ void CVoiceAssistant::ProcessText(const std::string &Text)
 		if(Elapsed > 8)
 		{
 			m_State = STATE_IDLE;
-			QueueLog("[Bongure] Timeout, trigger cancelled");
 		}
 		else
 		{
@@ -374,7 +349,6 @@ void CVoiceAssistant::ProcessText(const std::string &Text)
 			if(!Message.empty())
 			{
 				QueueChat(Message);
-				QueueLog(std::string("[Bongure] Sending to chat: ") + Message);
 				m_State = STATE_IDLE;
 				return;
 			}
@@ -382,12 +356,10 @@ void CVoiceAssistant::ProcessText(const std::string &Text)
 		}
 	}
 
-	// STATE_IDLE — ищем триггер
 	size_t TriggerEnd = FindTrigger(Text);
 	if(TriggerEnd == std::string::npos)
 		return;
 
-	// Триггер найден — есть ли команда в той же фразе?
 	if(TriggerEnd < Text.length())
 	{
 		std::string After = Text.substr(TriggerEnd);
@@ -395,15 +367,12 @@ void CVoiceAssistant::ProcessText(const std::string &Text)
 		if(!Message.empty())
 		{
 			QueueChat(Message);
-			QueueLog(std::string("[Bongure] Sending to chat: ") + Message);
 			return;
 		}
 	}
 
-	// Триггер есть, команды нет — ждём
 	m_State = STATE_WAITING_COMMAND;
 	m_TriggerTime = Now;
-	QueueLog("[Bongure] Heard trigger! Waiting for command...");
 }
 
 void CVoiceAssistant::QueueChat(const std::string &Msg)

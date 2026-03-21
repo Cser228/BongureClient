@@ -59,7 +59,7 @@ private:
 	void QueueChat(const std::string &Msg);
 	void QueueLog(const std::string &Msg);
 
-	static void ConToggle(IConsole::IResult *pResult, void *pUserData);
+	static void ConBongaVoice(IConsole::IResult *pResult, void *pUserData);
 };
 
 #endif
