@@ -66,6 +66,9 @@
 #include "components/spectator.h"
 #include "components/statboard.h"
 
+//Bongur Client
+#include "components/voice_assistant.h"
+
 //Rclient
 #include "components/rclient/adminpanel.h"
 #include "components/rclient/bindwheel.h"
@@ -255,6 +258,9 @@ public:
 	CEdgeHelper m_EdgeHelper;
 	CRClientIndicator m_RClientIndicator;
 	CPlayerMenu m_RiPlayerMenu;
+	
+	//Bongur Components
+	CVoiceAssistant m_VoiceAssistant;
 
 private:
 	std::vector<class CComponent *> m_vpAll;

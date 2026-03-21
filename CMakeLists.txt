@@ -2558,6 +2558,8 @@ if(CLIENT)
     components/censor.cpp
     components/censor.h
     components/chat.cpp
+	components/voice_assistant.cpp
+	components/voice_assistant.h
     components/chat.h
     components/community_icons.cpp
     components/community_icons.h
@@ -4084,4 +4086,39 @@ if(TARGET_OS STREQUAL "windows" AND STEAM AND NOT CMAKE_BUILD_TYPE STREQUAL Debu
       "${CMAKE_SOURCE_DIR}/steam_appid.txt"
       "$<TARGET_FILE_DIR:game-client>"
   )
+endif()
+
+# ── Vosk ──
+set(VOSK_DIR "${PROJECT_SOURCE_DIR}/libs/vosk")
+set(VOSK_MODEL_DIR "${PROJECT_SOURCE_DIR}/vosk-model-ru")
+
+if(EXISTS "${VOSK_DIR}/vosk_api.h")
+    message(STATUS "Found Vosk in ${VOSK_DIR}")
+    target_include_directories(game-client PRIVATE "${VOSK_DIR}")
+    target_link_libraries(game-client "${VOSK_DIR}/libvosk.lib")
+
+    # Копируем ВСЕ DLL из папки vosk рядом с exe
+    file(GLOB VOSK_DLLS "${VOSK_DIR}/*.dll")
+    foreach(DLL_FILE ${VOSK_DLLS})
+        add_custom_command(TARGET game-client POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${DLL_FILE}"
+                "$<TARGET_FILE_DIR:game-client>"
+            COMMENT "Copying ${DLL_FILE}..."
+        )
+    endforeach()
+
+    # Копируем модель
+    if(EXISTS "${VOSK_MODEL_DIR}")
+        add_custom_command(TARGET game-client POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${VOSK_MODEL_DIR}"
+                "$<TARGET_FILE_DIR:game-client>/vosk-model-ru"
+            COMMENT "Copying vosk-model-ru..."
+        )
+    else()
+        message(WARNING "Vosk model not found at ${VOSK_MODEL_DIR}")
+    endif()
+else()
+    message(WARNING "Vosk not found in libs/vosk/")
 endif()

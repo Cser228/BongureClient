@@ -120,6 +120,7 @@ void CGameClient::OnConsoleInit()
 					      &m_Skins7,
 					      &m_CountryFlags,
 					      &m_MapImages,
+						  &m_VoiceAssistant,
 					      &m_Effects, // doesn't render anything, just updates effects
 					      &m_SkinProfiles, // TClient
 					      &m_Binds,
