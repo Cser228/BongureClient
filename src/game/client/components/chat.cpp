@@ -87,6 +87,95 @@ CChat::CChat()
 	});
 }
 
+void CChat::ResetAutoMuteTrackers()
+{
+	for(int i = 0; i < MAX_CLIENTS; i++)
+		m_aAutoMuteTrackers[i].Reset();
+}
+
+void CChat::CheckAutoMute(int ClientId, const char *pMessage)
+{
+	if(!g_Config.m_ClAutoMute)
+		return;
+
+	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
+		return;
+
+	// Не мьютим себя и дамми
+	if(ClientId == GameClient()->m_aLocalIds[0] || ClientId == GameClient()->m_aLocalIds[1])
+		return;
+
+	// Проверяем длину сообщения
+	int MsgLen = str_length(pMessage);
+	if(MsgLen < g_Config.m_ClAutoMuteMinLen)
+		return;
+
+	const char *pName = GameClient()->m_aClients[ClientId].m_aName;
+	CAutoMuteTracker *pTracker = &m_aAutoMuteTrackers[ClientId];
+
+	// Если на этом слоте другой игрок — сброс
+	if(str_comp(pTracker->m_aName, pName) != 0)
+	{
+		pTracker->Reset();
+		str_copy(pTracker->m_aName, pName, sizeof(pTracker->m_aName));
+	}
+
+	// Уже замьючен
+	if(pTracker->m_Muted)
+		return;
+
+	// Записываем таймстемп
+	int64_t Now = time_get();
+	int Slot = pTracker->m_WriteIndex % 20;
+	pTracker->m_aTimestamps[Slot] = Now;
+	pTracker->m_WriteIndex++;
+	if(pTracker->m_Count < 20)
+		pTracker->m_Count++;
+
+	// Считаем сообщения в окне
+	int64_t Window = (int64_t)g_Config.m_ClAutoMuteTime * time_freq();
+	int RecentCount = 0;
+	for(int i = 0; i < pTracker->m_Count; i++)
+	{
+		if(Now - pTracker->m_aTimestamps[i] <= Window)
+			RecentCount++;
+	}
+
+	// Порог — мьютим
+	if(RecentCount >= g_Config.m_ClAutoMuteCount)
+	{
+		pTracker->m_Muted = true;
+
+		// 1) Клиентский мьют
+		GameClient()->m_aClients[ClientId].m_ChatIgnore = true;
+
+		// 3) Лог в консоль
+		char aLog[512];
+		str_format(aLog, sizeof(aLog),
+			"[AutoMute] '%s' auto-muted: %d long msgs (%d+ bytes) in %ds",
+			pName, RecentCount, g_Config.m_ClAutoMuteMinLen, g_Config.m_ClAutoMuteTime);
+		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "automute", aLog);
+
+		// 4) Локальное уведомление в чат
+		char aChatNotif[256];
+		str_format(aChatNotif, sizeof(aChatNotif),
+			"*** [AutoMute] '%s' замьючен за спам", pName);
+		AddLine(-1, 0, aChatNotif);
+	}
+}
+
+void CChat::ConAutoMuteReset(IConsole::IResult *pResult, void *pUserData)
+{
+	CChat *pChat = (CChat *)pUserData;
+	for(int i = 0; i < MAX_CLIENTS; i++)
+	{
+		if(pChat->m_aAutoMuteTrackers[i].m_Muted)
+			pChat->GameClient()->m_aClients[i].m_ChatIgnore = false;
+	}
+	pChat->ResetAutoMuteTrackers();
+	pChat->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "automute", "All auto-mute trackers reset");
+}
+
 void CChat::RegisterCommand(const char *pName, const char *pParams, const char *pHelpText)
 {
 	// Don't allow duplicate commands.
@@ -151,6 +240,7 @@ void CChat::Reset()
 	m_aCurrentInputText[0] = '\0';
 	DisableMode();
 	m_vServerCommands.clear();
+	ResetAutoMuteTrackers();
 
 	for(int64_t &LastSoundPlayed : m_aLastSoundPlayed)
 		LastSoundPlayed = 0;
@@ -241,6 +331,8 @@ void CChat::OnConsoleInit()
 	Console()->Register("+show_chat", "", CFGFLAG_CLIENT, ConShowChat, this, "Show chat");
 	Console()->Register("echo", "r[message]", CFGFLAG_CLIENT | CFGFLAG_STORE, ConEcho, this, "Echo the text in chat window");
 	Console()->Register("clear_chat", "", CFGFLAG_CLIENT | CFGFLAG_STORE, ConClearChat, this, "Clear chat messages");
+	Console()->Register("cl_auto_mute_reset", "", CFGFLAG_CLIENT,
+		ConAutoMuteReset, this, "Reset all auto-mute trackers and unmute players");
 }
 
 void CChat::OnInit()
@@ -589,6 +681,11 @@ void CChat::OnMessage(int MsgType, void *pRawMsg)
 	if(MsgType == NETMSGTYPE_SV_CHAT)
 	{
 		CNetMsg_Sv_Chat *pMsg = (CNetMsg_Sv_Chat *)pRawMsg;
+		
+		if(pMsg->m_ClientId >= 0 && pMsg->m_ClientId < MAX_CLIENTS)
+		{
+			CheckAutoMute(pMsg->m_ClientId, pMsg->m_pMessage);
+		}
 
 		if(g_Config.m_TcRegexChatIgnore[0] && g_Config.m_RiEnableCensorList)
 		{

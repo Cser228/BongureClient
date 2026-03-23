@@ -1,8 +1,8 @@
 #ifndef GAME_CLIENT_COMPONENTS_VOICE_ASSISTANT_H
 #define GAME_CLIENT_COMPONENTS_VOICE_ASSISTANT_H
 
+#include <engine/console.h>
 #include <game/client/component.h>
-#include <engine/shared/config.h>
 
 #include <atomic>
 #include <chrono>
@@ -40,7 +40,6 @@ private:
 
 	std::mutex m_Mutex;
 	std::queue<std::string> m_vPendingChat;
-	std::queue<std::string> m_vPendingLogs;
 
 	enum EState
 	{
@@ -54,10 +53,10 @@ private:
 	void Run();
 	void ProcessText(const std::string &Text);
 	size_t FindTrigger(const std::string &Text) const;
-	std::string ExtractCommand(const std::string &Text) const;
 	std::string ParseJsonText(const char *pJson) const;
+	std::string ExtractCommand(const std::string &Text, bool *pCaps = nullptr) const;
+	std::string ToUpperCase(const std::string &Text) const;
 	void QueueChat(const std::string &Msg);
-	void QueueLog(const std::string &Msg);
 
 	static void ConBongaVoice(IConsole::IResult *pResult, void *pUserData);
 };

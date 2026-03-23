@@ -238,5 +238,31 @@ public:
 
 	//Rcleint
 	bool LineHighlighted(int ClientId, const char *pLine);
+private:
+	struct CAutoMuteTracker
+	{
+		char m_aName[MAX_NAME_LENGTH];
+		int64_t m_aTimestamps[20]; // кольцевой буфер таймстемпов
+		int m_WriteIndex;
+		int m_Count;
+		bool m_Muted;
+
+		void Reset()
+		{
+			m_aName[0] = '\0';
+			m_WriteIndex = 0;
+			m_Count = 0;
+			m_Muted = false;
+			for(int i = 0; i < 20; i++)
+				m_aTimestamps[i] = 0;
+		}
+	};
+
+	CAutoMuteTracker m_aAutoMuteTrackers[MAX_CLIENTS];
+
+	void CheckAutoMute(int ClientId, const char *pMessage);
+	void ResetAutoMuteTrackers();
+
+	static void ConAutoMuteReset(IConsole::IResult *pResult, void *pUserData);
 };
 #endif
