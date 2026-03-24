@@ -42,10 +42,8 @@ MACRO_CONFIG_INT(ClNamePlatesIds, cl_nameplates_ids, 0, 0, 1, CFGFLAG_CLIENT | C
 MACRO_CONFIG_INT(ClNamePlatesIdsSize, cl_nameplates_ids_size, 50, -50, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Size of the client IDs in name plates")
 MACRO_CONFIG_INT(ClNamePlatesIdsSeparateLine, cl_nameplates_ids_seperate_line, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show client IDs on a separate line in name plates")
 // Auto-mute system
-MACRO_CONFIG_INT(ClAutoMute, cl_auto_mute, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players spamming max-length messages")
-MACRO_CONFIG_INT(ClAutoMuteMinLen, cl_auto_mute_min_len, 200, 10, 512, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Minimum message length (bytes) to count toward auto-mute")
-MACRO_CONFIG_INT(ClAutoMuteCount, cl_auto_mute_count, 3, 2, 20, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Number of long messages to trigger auto-mute")
-MACRO_CONFIG_INT(ClAutoMuteTime, cl_auto_mute_time, 10, 1, 120, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Time window in seconds for auto-mute detection")
+MACRO_CONFIG_INT(ClAutoMute, cl_auto_mute, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players repeating the same message")
+MACRO_CONFIG_INT(ClAutoMuteTimes, cl_auto_mute_times, 3, 2, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "How many repeated messages before auto-mute")
 
 //Rclient changed from 50 to 100
 MACRO_CONFIG_INT(ClNamePlatesOffset, cl_nameplates_offset, 30, 10, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "The size of the gap between the tee and the name plate")

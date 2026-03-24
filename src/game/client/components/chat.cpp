@@ -105,44 +105,35 @@ void CChat::CheckAutoMute(int ClientId, const char *pMessage)
 	if(ClientId == GameClient()->m_aLocalIds[0] || ClientId == GameClient()->m_aLocalIds[1])
 		return;
 
-	// Проверяем длину сообщения
-	int MsgLen = str_length(pMessage);
-	if(MsgLen < g_Config.m_ClAutoMuteMinLen)
-		return;
-
 	const char *pName = GameClient()->m_aClients[ClientId].m_aName;
 	CAutoMuteTracker *pTracker = &m_aAutoMuteTrackers[ClientId];
 
-	// Если на этом слоте другой игрок — сброс
+	// Если на этом слоте теперь другой игрок — сброс
 	if(str_comp(pTracker->m_aName, pName) != 0)
 	{
 		pTracker->Reset();
 		str_copy(pTracker->m_aName, pName, sizeof(pTracker->m_aName));
 	}
 
-	// Уже замьючен
+	// Уже замьючен — пропускаем
 	if(pTracker->m_Muted)
 		return;
 
-	// Записываем таймстемп
-	int64_t Now = time_get();
-	int Slot = pTracker->m_WriteIndex % 20;
-	pTracker->m_aTimestamps[Slot] = Now;
-	pTracker->m_WriteIndex++;
-	if(pTracker->m_Count < 20)
-		pTracker->m_Count++;
-
-	// Считаем сообщения в окне
-	int64_t Window = (int64_t)g_Config.m_ClAutoMuteTime * time_freq();
-	int RecentCount = 0;
-	for(int i = 0; i < pTracker->m_Count; i++)
+	// Сравниваем с предыдущим сообщением
+	if(str_comp(pTracker->m_aLastMessage, pMessage) == 0)
 	{
-		if(Now - pTracker->m_aTimestamps[i] <= Window)
-			RecentCount++;
+		// Одно и то же — увеличиваем счётчик
+		pTracker->m_RepeatCount++;
+	}
+	else
+	{
+		// Новое сообщение — сбрасываем счётчик
+		str_copy(pTracker->m_aLastMessage, pMessage, sizeof(pTracker->m_aLastMessage));
+		pTracker->m_RepeatCount = 1;
 	}
 
-	// Порог — мьютим
-	if(RecentCount >= g_Config.m_ClAutoMuteCount)
+	// Проверяем порог
+	if(pTracker->m_RepeatCount >= g_Config.m_ClAutoMuteTimes)
 	{
 		pTracker->m_Muted = true;
 
@@ -152,8 +143,8 @@ void CChat::CheckAutoMute(int ClientId, const char *pMessage)
 		// 3) Лог в консоль
 		char aLog[512];
 		str_format(aLog, sizeof(aLog),
-			"[AutoMute] '%s' auto-muted: %d long msgs (%d+ bytes) in %ds",
-			pName, RecentCount, g_Config.m_ClAutoMuteMinLen, g_Config.m_ClAutoMuteTime);
+			"[AutoMute] '%s' замьючен: повторил одно сообщение %d раз",
+			pName, pTracker->m_RepeatCount);
 		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "automute", aLog);
 
 		// 4) Локальное уведомление в чат
@@ -331,7 +322,7 @@ void CChat::OnConsoleInit()
 	Console()->Register("+show_chat", "", CFGFLAG_CLIENT, ConShowChat, this, "Show chat");
 	Console()->Register("echo", "r[message]", CFGFLAG_CLIENT | CFGFLAG_STORE, ConEcho, this, "Echo the text in chat window");
 	Console()->Register("clear_chat", "", CFGFLAG_CLIENT | CFGFLAG_STORE, ConClearChat, this, "Clear chat messages");
-	Console()->Register("cl_auto_mute_reset", "", CFGFLAG_CLIENT,
+	Console()->Register("cl_auto_mute_reset", "", CFGFLAG_CLIENT, 
 		ConAutoMuteReset, this, "Reset all auto-mute trackers and unmute players");
 }
 
