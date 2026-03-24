@@ -47,6 +47,12 @@ class CMenus : public CComponent
 	static ColorRGBA ms_ColorTabbarHover;
 
 public:
+	const char *GetTerminalInput() const { return m_aTerminalInput; }
+	void TerminalAddLine(const char *pLine);
+	void TerminalExecuteCommand();
+	void RenderTerminal(CUIRect Screen);
+	void TerminalAddCommandToHistory(const char *pCommand);
+
 	int DoButton_Toggle(const void *pId, int Checked, const CUIRect *pRect, bool Active, unsigned Flags = BUTTONFLAG_LEFT);
 	int DoButton_Menu(CButtonContainer *pButtonContainer, const char *pText, int Checked, const CUIRect *pRect, unsigned Flags = BUTTONFLAG_LEFT, const char *pImageName = nullptr, int Corners = IGraphics::CORNER_ALL, float Rounding = 5.0f, float FontFactor = 0.0f, ColorRGBA Color = ColorRGBA(1.0f, 1.0f, 1.0f, 0.5f));
 	int DoButton_MenuTab(CButtonContainer *pButtonContainer, const char *pText, int Checked, const CUIRect *pRect, int Corners, SUIAnimator *pAnimator = nullptr, const ColorRGBA *pDefaultColor = nullptr, const ColorRGBA *pActiveColor = nullptr, const ColorRGBA *pHoverColor = nullptr, float EdgeRounding = 10.0f, const CCommunityIcon *pCommunityIcon = nullptr);
@@ -64,6 +70,17 @@ public:
 	bool DoFloatScrollBar(const void *pId, int *pOption, const CUIRect *pRect, const char *pStr, int Min, int Max, int DivideBy, const IScrollbarScale *pScale, unsigned Flags, const char *pSuffix);
 
 private:
+	char m_aTerminalInput[256];
+	static constexpr int TERMINAL_HISTORY_LINES = 64;
+	static constexpr int TERMINAL_LINE_LENGTH = 512;
+	char m_aaTerminalHistory[TERMINAL_HISTORY_LINES][TERMINAL_LINE_LENGTH];
+	int m_TerminalHistoryCount;
+	static constexpr int TERMINAL_COMMAND_HISTORY = 64;
+	char m_aaTerminalCommandHistory[TERMINAL_COMMAND_HISTORY][256];
+	int m_TerminalCommandHistoryCount;
+	int m_TerminalCommandHistoryIndex;
+	bool m_BongureSettingsOpen;
+
 	CUi::SColorPickerPopupContext m_ColorPickerPopupContext;
 	ColorHSLA DoLine_ColorPicker(CButtonContainer *pResetId, float LineSize, float LabelSize, float BottomMargin, CUIRect *pMainRect, const char *pText, unsigned int *pColorValue, ColorRGBA DefaultColor, bool CheckBoxSpacing = true, int *pCheckBoxValue = nullptr, bool Alpha = false);
 	ColorHSLA DoButton_ColorPicker(const CUIRect *pRect, unsigned int *pHslaColor, bool Alpha);
@@ -816,6 +833,7 @@ public:
 		POPUP_RESTART,
 		POPUP_WARNING,
 		POPUP_SAVE_SKIN,
+		POPUP_BONGURE_SETTINGS
 	};
 
 	enum

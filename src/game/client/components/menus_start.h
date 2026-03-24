@@ -13,6 +13,8 @@ public:
 
 private:
 	bool CheckHotKey(int Key) const;
+
+	char m_aTerminalInput[256] = {0};
 };
 
 #endif

@@ -62,6 +62,16 @@ CMenus::CMenus()
 	m_Popup = POPUP_NONE;
 	m_MenuPage = 0;
 	m_GamePage = PAGE_GAME;
+	
+	m_aTerminalInput[0] = '\0';
+	m_TerminalHistoryCount = 0;
+
+	m_TerminalCommandHistoryCount = 0;
+	m_TerminalCommandHistoryIndex = -1;
+	m_BongureSettingsOpen = false;
+
+	TerminalAddLine("BongureClient terminal");
+	TerminalAddLine("Type help to list commands.");
 
 	m_NeedRestartGraphics = false;
 	m_NeedRestartSound = false;
@@ -98,6 +108,257 @@ CMenus::CMenus()
 
 	m_PasswordInput.SetBuffer(g_Config.m_Password, sizeof(g_Config.m_Password));
 	m_PasswordInput.SetHidden(true);
+}
+
+void CMenus::TerminalAddCommandToHistory(const char *pCommand)
+{
+	if(!pCommand || !pCommand[0])
+		return;
+
+	if(m_TerminalCommandHistoryCount < TERMINAL_COMMAND_HISTORY)
+	{
+		str_copy(m_aaTerminalCommandHistory[m_TerminalCommandHistoryCount], pCommand, sizeof(m_aaTerminalCommandHistory[0]));
+		m_TerminalCommandHistoryCount++;
+	}
+	else
+	{
+		for(int i = 1; i < TERMINAL_COMMAND_HISTORY; i++)
+		{
+			str_copy(m_aaTerminalCommandHistory[i - 1], m_aaTerminalCommandHistory[i], sizeof(m_aaTerminalCommandHistory[0]));
+		}
+		str_copy(m_aaTerminalCommandHistory[TERMINAL_COMMAND_HISTORY - 1], pCommand, sizeof(m_aaTerminalCommandHistory[0]));
+	}
+
+	m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
+}
+
+void CMenus::TerminalAddLine(const char *pLine)
+{
+	if(!pLine)
+		return;
+
+	if(m_TerminalHistoryCount < TERMINAL_HISTORY_LINES)
+	{
+		str_copy(m_aaTerminalHistory[m_TerminalHistoryCount], pLine, sizeof(m_aaTerminalHistory[0]));
+		m_TerminalHistoryCount++;
+	}
+	else
+	{
+		for(int i = 1; i < TERMINAL_HISTORY_LINES; i++)
+		{
+			str_copy(m_aaTerminalHistory[i - 1], m_aaTerminalHistory[i], sizeof(m_aaTerminalHistory[0]));
+		}
+		str_copy(m_aaTerminalHistory[TERMINAL_HISTORY_LINES - 1], pLine, sizeof(m_aaTerminalHistory[0]));
+	}
+}
+
+void CMenus::TerminalExecuteCommand()
+{
+	char aCommand[256];
+	str_copy(aCommand, m_aTerminalInput, sizeof(aCommand));
+
+	// trim left
+	const char *pStart = aCommand;
+	while(*pStart == ' ' || *pStart == '\t')
+		pStart++;
+
+	char aTrimmed[256];
+	str_copy(aTrimmed, pStart, sizeof(aTrimmed));
+
+	// trim right
+	int Len = str_length(aTrimmed);
+	while(Len > 0 && (aTrimmed[Len - 1] == ' ' || aTrimmed[Len - 1] == '\t'))
+	{
+		aTrimmed[Len - 1] = '\0';
+		Len--;
+	}
+
+	if(aTrimmed[0] == '\0')
+	{
+		TerminalAddLine(">");
+		m_aTerminalInput[0] = '\0';
+		return;
+	}
+
+	TerminalAddCommandToHistory(aTrimmed);
+
+	char aEcho[320];
+	str_format(aEcho, sizeof(aEcho), "> %s", aTrimmed);
+	TerminalAddLine(aEcho);
+
+	if(str_comp_nocase(aTrimmed, "help") == 0 ||
+		str_comp_nocase(aTrimmed, "man") == 0 ||
+		str_comp_nocase(aTrimmed, "commands") == 0)
+	{
+		TerminalAddLine("Available commands:");
+		TerminalAddLine("play/browser/start = open browser");
+		TerminalAddLine("start_server = start sever");
+		TerminalAddLine("demo = open demo windows");
+		TerminalAddLine("settings = open settings");
+		TerminalAddLine("map_redactor = open map redactor");
+		TerminalAddLine("help/man/commands = print all commands");
+		TerminalAddLine("clear/cls = clear history commands");
+		TerminalAddLine("quit/exit = exit ddnet");
+		TerminalAddLine("stop_server = stop server");
+		TerminalAddLine("bongure_settings = open bongure settings");
+	}
+	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
+		str_comp_nocase(aTrimmed, "browser") == 0 ||
+		str_comp_nocase(aTrimmed, "start") == 0)
+	{
+		SetShowStart(false);
+		SetMenuPage(PAGE_INTERNET);
+		TerminalAddLine("Opening server browser...");
+	}
+	else if(str_comp_nocase(aTrimmed, "start_server") == 0)
+	{
+		if(GameClient()->m_LocalServer.IsServerRunning())
+		{
+			TerminalAddLine("Local server already running.");
+		}
+		else
+		{
+			GameClient()->m_LocalServer.RunServer({});
+			TerminalAddLine("Starting local server...");
+		}
+	}
+	else if(str_comp_nocase(aTrimmed, "demo") == 0)
+	{
+		SetShowStart(false);
+		SetMenuPage(PAGE_DEMOS);
+		TerminalAddLine("Opening demos...");
+	}
+	else if(str_comp_nocase(aTrimmed, "settings") == 0)
+	{
+		SetShowStart(false);
+		SetMenuPage(PAGE_SETTINGS);
+		TerminalAddLine("Opening settings...");
+	}
+	else if(str_comp_nocase(aTrimmed, "map_redactor") == 0)
+	{
+		g_Config.m_ClEditor = 1;
+		Input()->MouseModeRelative();
+		TerminalAddLine("Opening map editor...");
+	}
+	else if (str_comp_nocase(aTrimmed, "clear") == 0 || 
+		str_comp_nocase(aTrimmed, "cls") == 0) 
+	{
+		m_TerminalHistoryCount = 0;
+	}
+	else if (str_comp_nocase(aTrimmed, "quit") == 0 || 
+		str_comp_nocase(aTrimmed, "exit") == 0) 
+	{
+		Client()->Quit();
+	}
+	else if (str_comp_nocase(aTrimmed, "stop_server") == 0) 
+	{
+		if(!GameClient()->m_LocalServer.IsServerRunning())
+		{
+			TerminalAddLine("Local server is not running.");
+		}
+		else
+		{
+			GameClient()->m_LocalServer.KillServer();
+			TerminalAddLine("Local server stopped.");
+		}
+	}
+	else if(str_comp_nocase_num(aTrimmed, "connect ", 8) == 0)
+	{
+		const char *pAddr = aTrimmed + 8;
+		
+		// Trim пробелы
+		while(*pAddr == ' ')
+			pAddr++;
+
+		if(*pAddr == '\0')
+		{
+			TerminalAddLine("Usage: connect <ip:port>");
+		}
+		else
+		{
+			char aMsg[256];
+			str_format(aMsg, sizeof(aMsg), "Connecting to %s...", pAddr);
+			TerminalAddLine(aMsg);
+			Client()->Connect(pAddr);
+		}
+	}
+	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) 
+	{
+		m_Popup = POPUP_BONGURE_SETTINGS;
+		m_BongureSettingsOpen = true;
+	}
+	else
+	{
+		char aBuf[320];
+		str_format(aBuf, sizeof(aBuf), "Unknown command: %s", aTrimmed);
+		TerminalAddLine(aBuf);
+	}
+
+	m_aTerminalInput[0] = '\0';
+}
+
+void CMenus::RenderTerminal(CUIRect Screen)
+{
+	CUIRect FullScreen = *Ui()->Screen();
+
+	Graphics()->TextureClear();
+	Graphics()->QuadsBegin();
+	Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+	IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
+	Graphics()->QuadsDrawTL(&Quad, 1);
+	Graphics()->QuadsEnd();
+
+	Input()->StartTextInput();
+
+	TextRender()->TextColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+	if(m_BongureSettingsOpen)
+	{
+		CUIRect Box = FullScreen;
+		Box.VMargin(120.0f, &Box);
+		Box.HMargin(80.0f, &Box);
+
+		Box.Draw(ColorRGBA(0.2f, 0.2f, 0.2f, 1.0f), IGraphics::CORNER_ALL, 10.0f);
+
+		CUIRect Title, Content;
+		Box.Margin(20.0f, &Box);
+		Box.HSplitTop(40.0f, &Title, &Content);
+
+		Ui()->DoLabel(&Title, "Bongure Settings", 24.0f, TEXTALIGN_MC);
+		Ui()->DoLabel(&Content, "Empty for now", 18.0f, TEXTALIGN_MC);
+
+		TextRender()->TextColor(TextRender()->DefaultTextColor());
+		return;
+	}
+
+	const bool ShowCursor = ((time_get() / (time_freq() / 2)) % 2) == 0;
+
+	char aInputLine[320];
+	if(ShowCursor)
+		str_format(aInputLine, sizeof(aInputLine), "> %s_", m_aTerminalInput);
+	else
+		str_format(aInputLine, sizeof(aInputLine), "> %s", m_aTerminalInput);
+
+	const float X = 8.0f;
+	const float Y = 4.0f;
+	const float FontSize = 20.0f;
+	const float LineStep = 22.0f;
+
+	float CurY = Y;
+
+	const int MaxVisibleLines = (int)((FullScreen.h - 10.0f) / LineStep) - 1;
+	int StartLine = 0;
+	if(m_TerminalHistoryCount > MaxVisibleLines)
+		StartLine = m_TerminalHistoryCount - MaxVisibleLines;
+
+	for(int i = StartLine; i < m_TerminalHistoryCount; i++)
+	{
+		TextRender()->Text(X, CurY, FontSize, m_aaTerminalHistory[i], -1.0f);
+		CurY += LineStep;
+	}
+
+	TextRender()->Text(X, CurY, FontSize, aInputLine, -1.0f);
+	TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
 
 int CMenus::DoButton_Toggle(const void *pId, int Checked, const CUIRect *pRect, bool Active, const unsigned Flags)
@@ -1068,20 +1329,41 @@ void CMenus::Render()
 	}
 	else
 	{
-		if(g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render())
+		const bool UseTerminalBackground =
+			(ClientState == IClient::STATE_OFFLINE && m_ShowStart) ||
+			ClientState == IClient::STATE_CONNECTING ||
+			ClientState == IClient::STATE_LOADING;
+	
+		if(UseTerminalBackground)
 		{
-			RenderBackground();
+			CUIRect FullScreen = *Ui()->Screen();
+			Graphics()->TextureClear();
+			Graphics()->QuadsBegin();
+			Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+			IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
+			Graphics()->QuadsDrawTL(&Quad, 1);
+			Graphics()->QuadsEnd();
 		}
+		else
+		{
+			if(g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render())
+			{
+				RenderBackground();
+			}
+		}
+
 		ms_ColorTabbarInactive = ms_ColorTabbarInactiveOutgame;
 		ms_ColorTabbarActive = ms_ColorTabbarActiveOutgame;
 		ms_ColorTabbarHover = ms_ColorTabbarHoverOutgame;
 	}
 
 	CUIRect Screen = *Ui()->Screen();
+	/*
 	if(Client()->State() != IClient::STATE_DEMOPLAYBACK || m_Popup != POPUP_NONE)
 	{
 		Screen.Margin(10.0f, &Screen);
 	}
+	*/
 
 	switch(ClientState)
 	{
@@ -1091,25 +1373,41 @@ void CMenus::Render()
 		return;
 
 	case IClient::STATE_CONNECTING:
+	{
+		CUIRect FullScreen = *Ui()->Screen();
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+		IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
+		Graphics()->QuadsDrawTL(&Quad, 1);
+		Graphics()->QuadsEnd();
+
 		RenderPopupConnecting(Screen);
 		break;
+	}
 
 	case IClient::STATE_LOADING:
+	{
+		CUIRect FullScreen = *Ui()->Screen();
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+		IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
+		Graphics()->QuadsDrawTL(&Quad, 1);
+		Graphics()->QuadsEnd();
+	
 		RenderPopupLoading(Screen);
 		break;
+	}
 
 	case IClient::STATE_OFFLINE:
 		if(m_Popup != POPUP_NONE)
 		{
-			RenderPopupFullscreen(Screen);
+			m_Popup = POPUP_NONE;
 		}
 		else if(m_ShowStart)
 		{
-			if(!g_Config.m_RiUiNewMenu)
-				m_MenusStart.RenderStartMenu(Screen);
-			else
-				m_MenusStartRClient.RenderStartMenu(Screen);
-
+			RenderTerminal(Screen);
 		}
 		else
 		{
@@ -1320,6 +1618,34 @@ void CMenus::RenderPopupFullscreen(CUIRect Screen)
 	{
 		pTitle = Localize("Save skin");
 		pExtraText = Localize("Are you sure you want to save your skin? If a skin with this name already exists, it will be replaced.");
+	}
+	else if(m_Popup == POPUP_BONGURE_SETTINGS) 
+	{
+		CUIRect Box, Title, Content, ButtonBar, Button;
+
+		Screen.Draw(ColorRGBA(0.0f, 0.0f, 0.0f, 0.85f), IGraphics::CORNER_ALL, 0.0f);
+
+		Box = Screen;
+		Box.VMargin(200.0f, &Box);
+		Box.HMargin(120.0f, &Box);
+		Box.Draw(ColorRGBA(0.05f, 0.05f, 0.05f, 1.0f), IGraphics::CORNER_ALL, 10.0f);
+
+		Box.Margin(20.0f, &Box);
+
+		Box.HSplitTop(40.0f, &Title, &Content);
+		Ui()->DoLabel(&Title, "Bongure Settings", 24.0f, TEXTALIGN_MC);
+
+		Content.HSplitBottom(50.0f, &Content, &ButtonBar);
+
+		Ui()->DoLabel(&Content, "Empty for now", 18.0f, TEXTALIGN_MC);
+
+		ButtonBar.VSplitMid(&Button, nullptr);
+
+		static CButtonContainer s_CloseButton;
+		if(DoButton_Menu(&s_CloseButton, "Close", 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.1f, 0.1f, 0.1f, 1.0f)))
+		{
+			m_Popup = POPUP_NONE;
+		}
 	}
 
 	CUIRect Box, Part;
@@ -2442,6 +2768,77 @@ bool CMenus::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
 
 bool CMenus::OnInput(const IInput::CEvent &Event)
 {
+	if(m_BongureSettingsOpen)
+	{
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE)
+		{
+			m_BongureSettingsOpen = false;
+			return true;
+		}
+		return true;
+	}
+
+	if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
+	{
+		if(Event.m_Flags & IInput::FLAG_TEXT)
+		{
+			const int Len = str_length(m_aTerminalInput);
+			if(Len < (int)sizeof(m_aTerminalInput) - 1)
+			{
+				str_append(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_UP)
+		{
+			if(m_TerminalCommandHistoryCount > 0)
+			{
+				if(m_TerminalCommandHistoryIndex < 0)
+					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount - 1;
+				else if(m_TerminalCommandHistoryIndex > 0)
+					m_TerminalCommandHistoryIndex--;
+
+				str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_DOWN)
+		{
+			if(m_TerminalCommandHistoryCount > 0)
+			{
+				if(m_TerminalCommandHistoryIndex >= 0 && m_TerminalCommandHistoryIndex < m_TerminalCommandHistoryCount - 1)
+				{
+					m_TerminalCommandHistoryIndex++;
+					str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+				}
+				else
+				{
+					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
+					m_aTerminalInput[0] = '\0';
+				}
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE)
+		{
+			const int Len = str_length(m_aTerminalInput);
+			if(Len > 0)
+				m_aTerminalInput[Len - 1] = '\0';
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RETURN)
+		{
+			TerminalExecuteCommand();
+			return true;
+		}
+
+		return true;
+	}
+	
 	// Escape key is always handled to activate/deactivate menu
 	if((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive())
 	{
