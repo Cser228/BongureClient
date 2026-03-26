@@ -45,6 +45,15 @@ MACRO_CONFIG_INT(ClNamePlatesIdsSeparateLine, cl_nameplates_ids_seperate_line, 0
 MACRO_CONFIG_INT(ClAutoMute, cl_auto_mute, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players repeating the same message")
 MACRO_CONFIG_INT(ClAutoMuteTimes, cl_auto_mute_times, 3, 2, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "How many repeated messages before auto-mute")
 
+// Bongure Client
+MACRO_CONFIG_INT(ClBongureMenuBgR, cl_bongure_menu_bg_r, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu background red")
+MACRO_CONFIG_INT(ClBongureMenuBgG, cl_bongure_menu_bg_g, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu background green")
+MACRO_CONFIG_INT(ClBongureMenuBgB, cl_bongure_menu_bg_b, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu background blue")
+
+MACRO_CONFIG_INT(ClBongureMenuTextR, cl_bongure_menu_text_r, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text red")
+MACRO_CONFIG_INT(ClBongureMenuTextG, cl_bongure_menu_text_g, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text green")
+MACRO_CONFIG_INT(ClBongureMenuTextB, cl_bongure_menu_text_b, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text blue")
+
 //Rclient changed from 50 to 100
 MACRO_CONFIG_INT(ClNamePlatesOffset, cl_nameplates_offset, 30, 10, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "The size of the gap between the tee and the name plate")
 

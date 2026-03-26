@@ -65,10 +65,10 @@ CMenus::CMenus()
 	
 	m_aTerminalInput[0] = '\0';
 	m_TerminalHistoryCount = 0;
-
 	m_TerminalCommandHistoryCount = 0;
 	m_TerminalCommandHistoryIndex = -1;
-	m_BongureSettingsOpen = false;
+	m_TerminalCursorPos = 0;
+	m_TerminalSelectAll = false;
 
 	TerminalAddLine("BongureClient terminal");
 	TerminalAddLine("Type help to list commands.");
@@ -200,7 +200,7 @@ void CMenus::TerminalExecuteCommand()
 		TerminalAddLine("clear/cls = clear history commands");
 		TerminalAddLine("quit/exit = exit ddnet");
 		TerminalAddLine("stop_server = stop server");
-		TerminalAddLine("bongure_settings = open bongure settings");
+		TerminalAddLine("bongure_settings = print all bongure settings");
 	}
 	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
 		str_comp_nocase(aTrimmed, "browser") == 0 ||
@@ -284,8 +284,61 @@ void CMenus::TerminalExecuteCommand()
 	}
 	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) 
 	{
-		m_Popup = POPUP_BONGURE_SETTINGS;
-		m_BongureSettingsOpen = true;
+		TerminalAddLine("Linux commands:");
+		TerminalAddLine("background_color");
+		TerminalAddLine("font_color");
+		TerminalAddLine("================");
+		TerminalAddLine("F1 commands:");
+		TerminalAddLine("bonga_voice");
+		TerminalAddLine("cl_auto_mute");
+		TerminalAddLine("cl_auto_mute_times");
+		TerminalAddLine("cl_auto_mute_reset");
+	}
+	else if(str_startswith_nocase(aTrimmed, "background_color "))
+	{
+		int R, G, B;
+		if(sscanf(aTrimmed, "background_color %d %d %d", &R, &G, &B) == 3)
+		{
+			if(R < 0) R = 0;
+			if(R > 255) R = 255;
+			if(G < 0) G = 0;
+			if(G > 255) G = 255;
+			if(B < 0) B = 0;
+			if(B > 255) B = 255;
+
+			g_Config.m_ClBongureMenuBgR = R;
+			g_Config.m_ClBongureMenuBgG = G;
+			g_Config.m_ClBongureMenuBgB = B;
+
+			TerminalAddLine("Menu background color updated.");
+		}
+		else
+		{
+			TerminalAddLine("Usage: background_color R G B");
+		}
+	}
+	else if(str_startswith_nocase(aTrimmed, "font_color "))
+	{
+		int R, G, B;
+		if(sscanf(aTrimmed, "font_color %d %d %d", &R, &G, &B) == 3)
+		{
+			if(R < 0) R = 0;
+			if(R > 255) R = 255;
+			if(G < 0) G = 0;
+			if(G > 255) G = 255;
+			if(B < 0) B = 0;
+			if(B > 255) B = 255;
+
+			g_Config.m_ClBongureMenuTextR = R;
+			g_Config.m_ClBongureMenuTextG = G;
+			g_Config.m_ClBongureMenuTextB = B;
+
+			TerminalAddLine("Menu text color updated.");
+		}
+		else
+		{
+			TerminalAddLine("Usage: font_color R G B");
+		}
 	}
 	else
 	{
@@ -295,6 +348,8 @@ void CMenus::TerminalExecuteCommand()
 	}
 
 	m_aTerminalInput[0] = '\0';
+	m_TerminalCursorPos = 0;
+	m_TerminalSelectAll = false;
 }
 
 void CMenus::RenderTerminal(CUIRect Screen)
@@ -303,41 +358,48 @@ void CMenus::RenderTerminal(CUIRect Screen)
 
 	Graphics()->TextureClear();
 	Graphics()->QuadsBegin();
-	Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+	Graphics()->SetColor(
+	g_Config.m_ClBongureMenuBgR / 255.0f,
+	g_Config.m_ClBongureMenuBgG / 255.0f,
+	g_Config.m_ClBongureMenuBgB / 255.0f,
+	1.0f);
 	IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
 	Graphics()->QuadsDrawTL(&Quad, 1);
 	Graphics()->QuadsEnd();
 
 	Input()->StartTextInput();
 
-	TextRender()->TextColor(0.0f, 1.0f, 0.0f, 1.0f);
-
-	if(m_BongureSettingsOpen)
-	{
-		CUIRect Box = FullScreen;
-		Box.VMargin(120.0f, &Box);
-		Box.HMargin(80.0f, &Box);
-
-		Box.Draw(ColorRGBA(0.2f, 0.2f, 0.2f, 1.0f), IGraphics::CORNER_ALL, 10.0f);
-
-		CUIRect Title, Content;
-		Box.Margin(20.0f, &Box);
-		Box.HSplitTop(40.0f, &Title, &Content);
-
-		Ui()->DoLabel(&Title, "Bongure Settings", 24.0f, TEXTALIGN_MC);
-		Ui()->DoLabel(&Content, "Empty for now", 18.0f, TEXTALIGN_MC);
-
-		TextRender()->TextColor(TextRender()->DefaultTextColor());
-		return;
-	}
+	TextRender()->TextColor(
+	g_Config.m_ClBongureMenuTextR / 255.0f,
+	g_Config.m_ClBongureMenuTextG / 255.0f,
+	g_Config.m_ClBongureMenuTextB / 255.0f,
+	1.0f);
 
 	const bool ShowCursor = ((time_get() / (time_freq() / 2)) % 2) == 0;
 
-	char aInputLine[320];
-	if(ShowCursor)
-		str_format(aInputLine, sizeof(aInputLine), "> %s_", m_aTerminalInput);
+	char aLeft[256];
+	char aRight[256];
+	char aInputLine[512];
+
+	if(m_TerminalSelectAll)
+	{
+		if(ShowCursor)
+			str_format(aInputLine, sizeof(aInputLine), "> [%s]_", m_aTerminalInput);
+		else
+			str_format(aInputLine, sizeof(aInputLine), "> [%s]", m_aTerminalInput);
+	}
 	else
-		str_format(aInputLine, sizeof(aInputLine), "> %s", m_aTerminalInput);
+	{
+		str_copy(aLeft, m_aTerminalInput, sizeof(aLeft));
+		aLeft[m_TerminalCursorPos] = '\0';
+
+		str_copy(aRight, m_aTerminalInput + m_TerminalCursorPos, sizeof(aRight));
+
+		if(ShowCursor)
+			str_format(aInputLine, sizeof(aInputLine), "> %s_%s", aLeft, aRight);
+		else
+			str_format(aInputLine, sizeof(aInputLine), "> %s%s", aLeft, aRight);
+	}
 
 	const float X = 8.0f;
 	const float Y = 4.0f;
@@ -2768,24 +2830,78 @@ bool CMenus::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
 
 bool CMenus::OnInput(const IInput::CEvent &Event)
 {
-	if(m_BongureSettingsOpen)
-	{
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE)
-		{
-			m_BongureSettingsOpen = false;
-			return true;
-		}
-		return true;
-	}
-
 	if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
 	{
 		if(Event.m_Flags & IInput::FLAG_TEXT)
 		{
-			const int Len = str_length(m_aTerminalInput);
-			if(Len < (int)sizeof(m_aTerminalInput) - 1)
+			if(m_TerminalSelectAll)
 			{
-				str_append(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
+				str_copy(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
+				m_TerminalCursorPos = str_length(m_aTerminalInput);
+				m_TerminalSelectAll = false;
+				return true;
+			}
+
+			const int Len = str_length(m_aTerminalInput);
+			const int InsertLen = str_length(Event.m_aText);
+
+			if(Len + InsertLen < (int)sizeof(m_aTerminalInput))
+			{
+				mem_move(
+					m_aTerminalInput + m_TerminalCursorPos + InsertLen,
+					m_aTerminalInput + m_TerminalCursorPos,
+					Len - m_TerminalCursorPos + 1);
+
+				mem_copy(
+					m_aTerminalInput + m_TerminalCursorPos,
+					Event.m_aText,
+					InsertLen);
+
+				m_TerminalCursorPos += InsertLen;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE)
+		{
+			if(m_TerminalSelectAll)
+			{
+				m_aTerminalInput[0] = '\0';
+				m_TerminalCursorPos = 0;
+				m_TerminalSelectAll = false;
+				return true;
+			}
+
+			if(m_TerminalCursorPos > 0)
+			{
+				const int Len = str_length(m_aTerminalInput);
+				mem_move(
+					m_aTerminalInput + m_TerminalCursorPos - 1,
+					m_aTerminalInput + m_TerminalCursorPos,
+					Len - m_TerminalCursorPos + 1);
+
+				m_TerminalCursorPos--;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_LEFT)
+		{
+			if(m_TerminalCursorPos > 0)
+			{
+				m_TerminalCursorPos--;
+				m_TerminalSelectAll = false;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RIGHT)
+		{
+			const int Len = str_length(m_aTerminalInput);
+			if(m_TerminalCursorPos < Len)
+			{
+				m_TerminalCursorPos++;
+				m_TerminalSelectAll = false;
 			}
 			return true;
 		}
@@ -2800,6 +2916,8 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 					m_TerminalCommandHistoryIndex--;
 
 				str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+				m_TerminalCursorPos = str_length(m_aTerminalInput);
+				m_TerminalSelectAll = false;
 			}
 			return true;
 		}
@@ -2812,21 +2930,89 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 				{
 					m_TerminalCommandHistoryIndex++;
 					str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+					m_TerminalCursorPos = str_length(m_aTerminalInput);
+					m_TerminalSelectAll = false;
 				}
 				else
 				{
 					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
 					m_aTerminalInput[0] = '\0';
+					m_TerminalCursorPos = 0;
+					m_TerminalSelectAll = false;
 				}
 			}
 			return true;
 		}
 
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE)
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_A)
 		{
-			const int Len = str_length(m_aTerminalInput);
-			if(Len > 0)
-				m_aTerminalInput[Len - 1] = '\0';
+			m_TerminalSelectAll = true;
+			m_TerminalCursorPos = str_length(m_aTerminalInput);
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_HOME)
+		{
+			m_TerminalSelectAll = false;
+			m_TerminalCursorPos = 0;
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_END)
+		{
+			m_TerminalSelectAll = false;
+			m_TerminalCursorPos = str_length(m_aTerminalInput);
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_C)
+		{
+			if(m_TerminalSelectAll)
+				Input()->SetClipboardText(m_aTerminalInput);
+			else
+				Input()->SetClipboardText(m_aTerminalInput);
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_V)
+		{
+			std::string pClipboardString = Input()->GetClipboardText();
+			char* pClipboardNotConst = (char*)malloc(pClipboardString.length()+1);
+			for (size_t i = 0; i < pClipboardString.length(); i++) {
+				pClipboardNotConst[i] = pClipboardString[i];
+			}
+			pClipboardNotConst[pClipboardString.length()] = '\0';
+
+			const char *pClipboard = pClipboardNotConst;
+
+			if(pClipboard)
+			{
+				if(m_TerminalSelectAll)
+				{
+					str_copy(m_aTerminalInput, pClipboard, sizeof(m_aTerminalInput));
+					m_TerminalCursorPos = str_length(m_aTerminalInput);
+					m_TerminalSelectAll = false;
+					return true;
+				}
+
+				const int Len = str_length(m_aTerminalInput);
+				const int PasteLen = str_length(pClipboard);
+
+				if(Len + PasteLen < (int)sizeof(m_aTerminalInput))
+				{
+					mem_move(
+						m_aTerminalInput + m_TerminalCursorPos + PasteLen,
+						m_aTerminalInput + m_TerminalCursorPos,
+						Len - m_TerminalCursorPos + 1);
+
+					mem_copy(
+						m_aTerminalInput + m_TerminalCursorPos,
+						pClipboard,
+						PasteLen);
+
+					m_TerminalCursorPos += PasteLen;
+				}
+			}
 			return true;
 		}
 

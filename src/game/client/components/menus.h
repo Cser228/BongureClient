@@ -79,7 +79,8 @@ private:
 	char m_aaTerminalCommandHistory[TERMINAL_COMMAND_HISTORY][256];
 	int m_TerminalCommandHistoryCount;
 	int m_TerminalCommandHistoryIndex;
-	bool m_BongureSettingsOpen;
+	int m_TerminalCursorPos;
+	bool m_TerminalSelectAll;
 
 	CUi::SColorPickerPopupContext m_ColorPickerPopupContext;
 	ColorHSLA DoLine_ColorPicker(CButtonContainer *pResetId, float LineSize, float LabelSize, float BottomMargin, CUIRect *pMainRect, const char *pText, unsigned int *pColorValue, ColorRGBA DefaultColor, bool CheckBoxSpacing = true, int *pCheckBoxValue = nullptr, bool Alpha = false);
