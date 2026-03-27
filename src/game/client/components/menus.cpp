@@ -285,14 +285,20 @@ void CMenus::TerminalExecuteCommand()
 	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) 
 	{
 		TerminalAddLine("Linux commands:");
+		TerminalAddLine("================");
 		TerminalAddLine("background_color");
 		TerminalAddLine("font_color");
 		TerminalAddLine("================");
 		TerminalAddLine("F1 commands:");
+		TerminalAddLine("================");
 		TerminalAddLine("bonga_voice");
+		TerminalAddLine("================");
 		TerminalAddLine("cl_auto_mute");
 		TerminalAddLine("cl_auto_mute_times");
 		TerminalAddLine("cl_auto_mute_reset");
+		TerminalAddLine("================");
+		TerminalAddLine("cl_auto_translate");
+
 	}
 	else if(str_startswith_nocase(aTrimmed, "background_color "))
 	{

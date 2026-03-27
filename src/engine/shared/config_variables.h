@@ -54,6 +54,8 @@ MACRO_CONFIG_INT(ClBongureMenuTextR, cl_bongure_menu_text_r, 0, 0, 255, CFGFLAG_
 MACRO_CONFIG_INT(ClBongureMenuTextG, cl_bongure_menu_text_g, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text green")
 MACRO_CONFIG_INT(ClBongureMenuTextB, cl_bongure_menu_text_b, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text blue")
 
+MACRO_CONFIG_INT(ClAutoTranslate, cl_auto_translate, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-translate all message in dont russian")
+
 //Rclient changed from 50 to 100
 MACRO_CONFIG_INT(ClNamePlatesOffset, cl_nameplates_offset, 30, 10, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "The size of the gap between the tee and the name plate")
 
