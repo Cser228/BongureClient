@@ -403,8 +403,7 @@ protected:
 	bool UpdateNeeded(CGameClient &This, const CNamePlateData &Data) override
 	{
 		m_Visible = Data.m_ShowClan;
-		if(!m_Visible && Data.m_aClan[0] != '\0')
-			return false;
+		if(!m_Visible && Data.m_aClan[0] == '\0') return false;
 		m_Color = Data.m_Color;
 		// TClient
 		if(This.m_WarList.GetWarData(Data.m_ClientId).m_WarClan)

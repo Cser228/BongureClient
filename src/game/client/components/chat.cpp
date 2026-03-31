@@ -1665,7 +1665,7 @@ void CChat::OnPrepareLines(float y)
 		if(!IsScoreBoardOpen && !g_Config.m_ClChatOld)
 		{
 			AppendCursor.m_StartX = LineCursor.m_X;
-			AppendCursor.m_LineWidth -= LineCursor.m_LongestLineWidth;
+			AppendCursor.m_LineWidth = maximum(0.0f, AppendCursor.m_LineWidth - LineCursor.m_LongestLineWidth);
 		}
 
 		if(pTranslatedText)
