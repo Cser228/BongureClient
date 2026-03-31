@@ -25,6 +25,7 @@ MACRO_CONFIG_INT(RiScoreboardAlwaysShowQuickActions, ri_scoreboard_always_show_q
 MACRO_CONFIG_INT(RiScoreboardSortById, ri_scoreboard_sort_by_id, 0, 0, 2, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Sort scoreboard by id instead nickname")
 MACRO_CONFIG_INT(RiScoreboardRclientIndicatorSize, ri_scoreboard_rclient_indicator_size, 30, -50, 100, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Size of rclient indicator icons in scoreboard")
 MACRO_CONFIG_INT(RiScoreboardShowRclientIndicator, ri_scoreboard_show_rclient_indicator, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show rclient mark in scoreboard")
+MACRO_CONFIG_INT(RiScoreboardFreezeInputs, ri_scoreboard_freeze_inputs, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Freeze inputs when unlock mouse")
 
 
 //Lasers
@@ -43,7 +44,7 @@ MACRO_CONFIG_INT(RiRClientSettingsTabs, ri_rclient_settings_tabs, 0, 0, 65536, C
 MACRO_CONFIG_INT(RiVoiceEnable, ri_voice_enable, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Enable external voice chat")
 MACRO_CONFIG_INT(RiVoiceProtocolVersion, ri_voice_protocol_version, 3, 1, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice protocol version for relay compatibility")
 MACRO_CONFIG_STR(RiVoiceServer, ri_voice_server, 128, "server.rushie-client.ru:9987", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice server address host:port")
-MACRO_CONFIG_STR(RiVoiceAudioBackend, ri_voice_audio_backend, 64, "", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice audio backend (SDL audio driver name, empty = auto)")
+MACRO_CONFIG_STR(RiVoiceAudioBackend, ri_voice_audio_backend, 64, "", CFGFLAG_CLIENT | CFGFLAG_SAVE, "SDL audio backend for all client audio (voice + game sound, empty = auto)")
 MACRO_CONFIG_STR(RiVoiceInputDevice, ri_voice_input_device, 128, "", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice input device name (empty = default)")
 MACRO_CONFIG_STR(RiVoiceOutputDevice, ri_voice_output_device, 128, "", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice output device name (empty = default)")
 MACRO_CONFIG_INT(RiVoiceStereo, ri_voice_stereo, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice output stereo (0=mono, 1=stereo)")
@@ -78,7 +79,7 @@ MACRO_CONFIG_INT(RiVoiceHearVad, ri_voice_hear_vad, 1, 0, 1, CFGFLAG_CLIENT | CF
 MACRO_CONFIG_STR(RiVoiceVadAllow, ri_voice_vad_allow, 512, "", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice activation allow list (comma-separated names)")
 MACRO_CONFIG_STR(RiVoiceNameVolumes, ri_voice_name_volumes, 512, "", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Voice per-name volume list (name=percent)")
 MACRO_CONFIG_INT(RiVoiceShowIndicator, ri_voice_show_indicator, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show voice activity icon in nameplates")
-MACRO_CONFIG_INT(RiVoiceIndicatorAboveSelf, ri_voice_indicator_above_self, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show voice activity icon above yourself")
+MACRO_CONFIG_INT(RiVoiceIndicatorAboveSelf, ri_voice_indicator_above_self, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show voice activity icon above yourself")
 MACRO_CONFIG_INT(RiVoiceShowPing, ri_voice_show_ping, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show voice ping near HUD indicator")
 MACRO_CONFIG_INT(RiVoiceDebug, ri_voice_debug, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Log voice chat debug info to console")
 MACRO_CONFIG_INT(RiVoiceShowWhenActive, ri_voice_show_when_active, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show voice chat indicator when active")
@@ -163,8 +164,7 @@ MACRO_CONFIG_COL(RiMenusSettingsColor, ri_menus_settings_color, 1073742079, CFGF
 
 //RClient Nameplates
 MACRO_CONFIG_INT(RiShowRclientIndicator, ri_show_rclient_indicator, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Rclient player indicator in nameplates")
-MACRO_CONFIG_STR(RiRclientIndicatorUsersUrl, ri_rclient_indicator_users_url, 256, "https://server.rushie-client.ru/users.json", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Rclient indicator users URL")
-MACRO_CONFIG_STR(RiRclientIndicatorTokenUrl, ri_rclient_indicator_token_url, 256, "https://server.rushie-client.ru/token", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Rclient indicator token URL")
+MACRO_CONFIG_INT(RiRclientIndicatorIgnoreErrors, ri_rclient_indicator_ignore_errors, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Ignore Rclient indicator network errors")
 
 //Config tab
 MACRO_CONFIG_INT(RiUiShowRClient, ri_ui_show_rclient, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show RClient domain in Configs tab")
@@ -187,3 +187,6 @@ MACRO_CONFIG_INT(RiSoundOnMoveNonInactive, ri_sound_on_move_nonactive, 0, 0, 2, 
 
 //Fastinput
 MACRO_CONFIG_INT(RiFastInputVersion, ri_fast_input_version, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Choose fastinput version (0-Tater's old, 1-Tater's new)")
+
+// show procent in vote
+MACRO_CONFIG_INT(RiShowProcentInVoteBar, ri_show_procent_in_vote_bar, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shows procent in vote bar")
