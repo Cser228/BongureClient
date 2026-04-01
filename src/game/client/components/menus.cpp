@@ -1,6 +1,8 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 
+#define MAX_LINE_LEN 70
+
 #include "menus.h"
 
 #include <base/color.h>
@@ -174,21 +176,50 @@ void CMenus::TerminalAddCommandToHistory(const char *pCommand)
 
 void CMenus::TerminalAddLine(const char *pLine)
 {
-	if(!pLine)
-		return;
+	if (!pLine || pLine[0] == '\0') return;
+	
+	std::string text(pLine);
 
-	if(m_TerminalHistoryCount < TERMINAL_HISTORY_LINES)
-	{
-		str_copy(m_aaTerminalHistory[m_TerminalHistoryCount], pLine, sizeof(m_aaTerminalHistory[0]));
-		m_TerminalHistoryCount++;
-	}
-	else
-	{
-		for(int i = 1; i < TERMINAL_HISTORY_LINES; i++)
-		{
-			str_copy(m_aaTerminalHistory[i - 1], m_aaTerminalHistory[i], sizeof(m_aaTerminalHistory[0]));
+	// Пока в строке что-то есть, продолжаем её обрабатывать
+	while (!text.empty()) {
+		std::string linePart;
+
+		// Если оставшийся текст больше лимита, ищем пробел
+		if (text.length() > MAX_LINE_LEN) {
+			size_t space_pos = text.rfind(' ', MAX_LINE_LEN);
+
+			if (space_pos != std::string::npos && space_pos > 0) {
+				// Отрезаем до пробела
+				linePart = text.substr(0, space_pos);
+				text = text.substr(space_pos + 1); // +1 чтобы убрать сам пробел
+			}
+			else {
+				// Если пробелов нет (очень длинное слово), жестко рубим по лимиту
+				linePart = text.substr(0, MAX_LINE_LEN);
+				text = text.substr(MAX_LINE_LEN);
+			}
+		} else {
+			// Текст меньше лимита — берем остаток и очищаем text для выхода из цикла
+			linePart = text;
+			text.clear();
 		}
-		str_copy(m_aaTerminalHistory[TERMINAL_HISTORY_LINES - 1], pLine, sizeof(m_aaTerminalHistory[0]));
+
+		// Добавляем ПОЛУЧЕННУЮ ЧАСТЬ (linePart) в историю терминала
+		if(m_TerminalHistoryCount < TERMINAL_HISTORY_LINES)
+		{
+			str_copy(m_aaTerminalHistory[m_TerminalHistoryCount], linePart.c_str(), sizeof(m_aaTerminalHistory[0]));
+			m_TerminalHistoryCount++;
+		}
+		else
+		{
+			// Сдвигаем историю, если она заполнена
+			for(int i = 1; i < TERMINAL_HISTORY_LINES; i++)
+			{
+				str_copy(m_aaTerminalHistory[i - 1], m_aaTerminalHistory[i], sizeof(m_aaTerminalHistory[0]));
+			}
+			// Записываем в самый конец
+			str_copy(m_aaTerminalHistory[TERMINAL_HISTORY_LINES - 1], linePart.c_str(), sizeof(m_aaTerminalHistory[0]));
+		}
 	}
 }
 
