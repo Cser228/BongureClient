@@ -412,6 +412,37 @@ CChat::CChat()
 	});
 }
 
+void CChat::ConTranslate(IConsole::IResult *pResult, void *pUserData)
+{
+    CChat *pChat = (CChat *)pUserData;
+    const char *pText = pResult->GetString(0);
+
+    std::thread([pChat, text = std::string(pText)]() {
+        CURL *curl = curl_easy_init();
+        if (curl) {
+            std::string encodedText = urlEncode(curl, text);
+            std::string encodedLang = urlEncode(curl, "ru|en");
+            std::string url = "https://api.mymemory.translated.net/get?q=" + encodedText + "&langpair=" + encodedLang;
+            
+            std::string response;
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+            curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+            
+            CURLcode res = curl_easy_perform(curl);
+            if (res == CURLE_OK) {
+                std::string translated = extractTranslatedText(response);
+                if (!translated.empty() && translated.find("[translation error]") == std::string::npos) {
+                    // Send the translated text to the game chat
+                    pChat->SendChat(0, translated.c_str());
+                }
+            }
+            curl_easy_cleanup(curl);
+        }
+    }).detach();
+}
+
 void CChat::ResetAutoMuteTrackers()
 {
 	for(int i = 0; i < MAX_CLIENTS; i++)
@@ -671,6 +702,7 @@ void CChat::OnConsoleInit()
 	Console()->Register("clear_chat", "", CFGFLAG_CLIENT | CFGFLAG_STORE, ConClearChat, this, "Clear chat messages");
 	Console()->Register("cl_auto_mute_reset", "", CFGFLAG_CLIENT, 
 		ConAutoMuteReset, this, "Reset all auto-mute trackers and unmute players");
+	Console()->Register("translate", "r[text]", CFGFLAG_CLIENT, ConTranslate, this, "Translate RU to EN and send to chat");
 }
 
 void CChat::OnInit()
@@ -768,7 +800,7 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 		else if(m_aCompletionBuffer[0] == '/')
 		{
 			// Client-side commands tab completion
-			static const char *s_apClientCmds[] = {"unfinishsay"};
+			static const char *s_apClientCmds[] = {"unfinishsay", "translate"};
 			const char *pCmdStart = m_aCompletionBuffer + 1;
 			bool FoundClientCmd = false;
 			for(const auto *pCmd : s_apClientCmds)
@@ -1876,7 +1908,7 @@ void CChat::OnRender()
 		if(m_Input.GetString()[0] == '/' && m_Input.GetString()[1] != '\0')
 		{
 			// Client-side commands hint
-			static const char *s_apClientCommands[] = {"unfinishsay"};
+			static const char *s_apClientCommands[] = {"unfinishsay", "translate"};
 			bool FoundClientCmd = false;
 			for(const auto *pCmd : s_apClientCommands)
 			{
@@ -2071,8 +2103,46 @@ const char *TransliterateCommand(const char *pCommand)
 void CChat::SendChat(int Team, const char *pLine)
 {
 	// don't send empty messages
-	if(*str_utf8_skip_whitespaces(pLine) == '\0')
-		return;
+	if(*str_utf8_skip_whitespaces(pLine) == '\0') return;
+
+	// === НАЧАЛО ПАТЧА ДЛЯ /TRANSLATE ===
+    if(str_startswith(pLine, "/translate "))
+    {
+        std::string text(pLine + 11);
+        if(!text.empty())
+        {
+            CChat *pSelf = this;
+            std::thread([pSelf, text]() {
+                CURL *curl = curl_easy_init();
+                if(curl)
+                {
+                    std::string encodedText = urlEncode(curl, text);
+                    // Языковая пара: с русского на английский
+                    std::string encodedLang = urlEncode(curl, "ru|en"); 
+                    std::string url = "https://api.mymemory.translated.net/get?q=" + encodedText + "&langpair=" + encodedLang;
+
+                    std::string response;
+                    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+                    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+                    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+                    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+
+                    if(curl_easy_perform(curl) == CURLE_OK)
+                    {
+                        std::string translated = extractTranslatedText(response);
+                        if(!translated.empty())
+                        {
+                            // Отправляем переведенный текст в чат
+                            pSelf->SendChat(0, translated.c_str());
+                        }
+                    }
+                    curl_easy_cleanup(curl);
+                }
+            }).detach();
+        }
+        return; // Прерываем оригинальную команду, чтобы сервер не писал "Не найдена"
+    }
+    // === КОНЕЦ ПАТЧА ===
 
 	m_LastChatSend = time();
 

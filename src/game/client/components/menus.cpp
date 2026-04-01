@@ -150,6 +150,9 @@ bool CMenus::CheckUpdate() {
 			}
         }
     }
+	else {
+		return false;
+	}
 }
 
 void CMenus::TerminalAddCommandToHistory(const char *pCommand)

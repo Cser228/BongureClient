@@ -263,5 +263,6 @@ private:
 	void ResetAutoMuteTrackers();
 
 	static void ConAutoMuteReset(IConsole::IResult *pResult, void *pUserData);
+	static void ConTranslate(IConsole::IResult *pResult, void *pUserData);
 };
 #endif
