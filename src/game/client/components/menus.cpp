@@ -35,11 +35,14 @@
 #include <game/client/gameclient.h>
 #include <game/client/ui_listbox.h>
 #include <game/localization.h>
+#include <game/version.h>
 
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <vector>
+#include <curl/curl.h>
+#include <string>
 
 using namespace std::chrono_literals;
 
@@ -56,6 +59,11 @@ ColorRGBA CMenus::ms_ColorTabbarHoverIngame;
 
 float CMenus::ms_ButtonHeight = 25.0f;
 float CMenus::ms_ListheaderHeight = 17.0f;
+
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
 
 CMenus::CMenus()
 {
@@ -108,6 +116,38 @@ CMenus::CMenus()
 
 	m_PasswordInput.SetBuffer(g_Config.m_Password, sizeof(g_Config.m_Password));
 	m_PasswordInput.SetHidden(true);
+}
+
+bool CMenus::CheckUpdate() {
+    CURL* curl;
+    CURLcode res;
+    std::string readBuffer;
+
+    curl = curl_easy_init();
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, "https://raw.githubusercontent.com/Cser228/BongureClient/master/version.txt");
+            
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+            
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "BongureClient-Updater");
+            
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);
+
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        if(res == CURLE_OK && !readBuffer.empty()) {
+            readBuffer.erase(readBuffer.find_last_not_of(" \n\r\t") + 1);
+                
+            if(readBuffer != BONGURE_CLIENT_VERSION) {
+                return true;
+            }
+			else {
+				return false;
+			}
+        }
+    }
 }
 
 void CMenus::TerminalAddCommandToHistory(const char *pCommand)
@@ -201,6 +241,7 @@ void CMenus::TerminalExecuteCommand()
 		TerminalAddLine("quit/exit = exit ddnet");
 		TerminalAddLine("stop_server = stop server");
 		TerminalAddLine("bongure_settings = print all bongure settings");
+		TerminalAddLine("check_update = check there is new version of client");
 	}
 	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
 		str_comp_nocase(aTrimmed, "browser") == 0 ||
@@ -285,20 +326,40 @@ void CMenus::TerminalExecuteCommand()
 	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) 
 	{
 		TerminalAddLine("Linux commands:");
+		TerminalAddLine("");
 		TerminalAddLine("================");
 		TerminalAddLine("background_color");
 		TerminalAddLine("font_color");
 		TerminalAddLine("================");
+		TerminalAddLine("");
+		TerminalAddLine("Chat commands:");
+		TerminalAddLine("");
+		TerminalAddLine("================");
+		TerminalAddLine("/unfinishsay");
+		TerminalAddLine("/translate");
+		TerminalAddLine("");
 		TerminalAddLine("F1 commands:");
+		TerminalAddLine("");
 		TerminalAddLine("================");
 		TerminalAddLine("bonga_voice");
+		TerminalAddLine("");
 		TerminalAddLine("================");
 		TerminalAddLine("cl_auto_mute");
 		TerminalAddLine("cl_auto_mute_times");
+		TerminalAddLine("cl_auto_mute_vremya");
 		TerminalAddLine("cl_auto_mute_reset");
+		TerminalAddLine("");
 		TerminalAddLine("================");
 		TerminalAddLine("cl_auto_translate");
 
+	}
+	else if (str_comp_nocase(aTrimmed, "check_update") == 0) {
+		if (CheckUpdate()) {
+			TerminalAddLine("There is a new update! Enter this link: https://github.com/Cser228/BongureClient/releases to update");
+		}
+		else {
+			TerminalAddLine("Nope! There isn't new update.");
+		}
 	}
 	else if(str_startswith_nocase(aTrimmed, "background_color "))
 	{

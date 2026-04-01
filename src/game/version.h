@@ -32,4 +32,6 @@ extern const char *GIT_SHORTREV_HASH;
 #define CLIENT_NAME "Bongure Client"
 #define CLIENT_RELEASE_VERSION RCLIENT_VERSION
 
+#ifndef BONGURE_CLIENT_VERSION
+#define BONGURE_CLIENT_VERSION "2.4.0"
 #endif

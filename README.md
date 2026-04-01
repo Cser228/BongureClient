@@ -18,6 +18,6 @@ For build download Visual Studio, open src folder and visual studio will find CM
 ## Community & Links
 
 * **Discord(write if u need me):** cser228or
-* **Discord server:** i'll create
+* **Discord server:** https://discord.gg/Sc45tDkJgA
 * **Tater Client:** https://github.com/sjrc6/TaterClient-ddnet
 * **Rushie Client:** https://github.com/RushieClient/RushieClient-ddnet

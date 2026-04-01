@@ -245,6 +245,7 @@ private:
 		char m_aLastMessage[512];
 		int m_RepeatCount;
 		bool m_Muted;
+		int64_t m_FirstMsgTime;
 
 		void Reset()
 		{
@@ -252,6 +253,7 @@ private:
 			m_aLastMessage[0] = '\0';
 			m_RepeatCount = 0;
 			m_Muted = false;
+			m_FirstMsgTime = 0;
 		}
 	};
 

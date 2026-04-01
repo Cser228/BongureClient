@@ -44,6 +44,7 @@ MACRO_CONFIG_INT(ClNamePlatesIdsSeparateLine, cl_nameplates_ids_seperate_line, 0
 // Auto-mute system
 MACRO_CONFIG_INT(ClAutoMute, cl_auto_mute, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players repeating the same message")
 MACRO_CONFIG_INT(ClAutoMuteTimes, cl_auto_mute_times, 3, 2, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "How many repeated messages before auto-mute")
+MACRO_CONFIG_INT(ClAutoMuteVremya, cl_auto_mute_vremya, 0, 0, 3600, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Time window in seconds to track repeated messages for auto-mute (0 = disabled, track forever)")
 
 // Bongure Client
 MACRO_CONFIG_INT(ClBongureMenuBgR, cl_bongure_menu_bg_r, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu background red")

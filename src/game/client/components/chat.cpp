@@ -37,6 +37,7 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <regex>
 
 std::mutex auto_translate_data_mutex;
 std::atomic<bool> auto_translate_update {false};
@@ -48,6 +49,44 @@ std::string message = "";
 
 char CChat::ms_aDisplayText[MAX_LINE_LENGTH] = "";
 
+// Функция для замены английского сленга на полные слова
+std::string replaceSlang(std::string text) {
+    static const std::vector<std::pair<std::regex, std::string>> slangDict = {
+        {std::regex("\\brn\\b", std::regex_constants::icase), "right now"},
+        {std::regex("\\bbtw\\b", std::regex_constants::icase), "by the way"},
+        {std::regex("\\btbh\\b", std::regex_constants::icase), "to be honest"},
+        {std::regex("\\bafaik\\b", std::regex_constants::icase), "as far as I know"},
+        {std::regex("\\bidk\\b", std::regex_constants::icase), "I don't know"},
+        {std::regex("\\bimo\\b", std::regex_constants::icase), "in my opinion"},
+        {std::regex("\\bimho\\b", std::regex_constants::icase), "in my humble opinion"},
+        {std::regex("\\bbrb\\b", std::regex_constants::icase), "be right back"},
+        {std::regex("\\bomg\\b", std::regex_constants::icase), "oh my god"},
+        {std::regex("\\bwtf\\b", std::regex_constants::icase), "what the fuck"},
+        {std::regex("\\bstfu\\b", std::regex_constants::icase), "shut the fuck up"},
+        {std::regex("\\blmao\\b", std::regex_constants::icase), "laughing my ass off"},
+        {std::regex("\\blol\\b", std::regex_constants::icase), "laughing out loud"},
+        {std::regex("\\bsmh\\b", std::regex_constants::icase), "shaking my head"},
+        {std::regex("\\basap\\b", std::regex_constants::icase), "as soon as possible"},
+        {std::regex("\\bfyi\\b", std::regex_constants::icase), "for your information"},
+        {std::regex("\\bnp\\b", std::regex_constants::icase), "no problem"},
+        {std::regex("\\bomw\\b", std::regex_constants::icase), "on my way"},
+        {std::regex("\\birl\\b", std::regex_constants::icase), "in real life"},
+        {std::regex("\\bjk\\b", std::regex_constants::icase), "just kidding"},
+        {std::regex("\\bthx\\b", std::regex_constants::icase), "thanks"},
+        {std::regex("\\bty\\b", std::regex_constants::icase), "thank you"},
+        {std::regex("\\byw\\b", std::regex_constants::icase), "you're welcome"},
+        {std::regex("\\bpls\\b", std::regex_constants::icase), "please"},
+        {std::regex("\\bplz\\b", std::regex_constants::icase), "please"},
+        {std::regex("\\bbc\\b", std::regex_constants::icase), "because"},
+        {std::regex("\\bcuz\\b", std::regex_constants::icase), "because"}
+    };
+
+    for (const auto& pair : slangDict) {
+        text = std::regex_replace(text, pair.first, pair.second);
+    }
+    return text;
+}
+
 std::vector<std::string> split(const std::string& s, char delimiter) {
     std::vector<std::string> tokens;
     std::string token;
@@ -56,31 +95,6 @@ std::vector<std::string> split(const std::string& s, char delimiter) {
         tokens.push_back(token);
     }
     return tokens;
-}
-
-static bool StartsWithRussianLetter(const std::string &Msg)
-{
-	if(Msg.size() < 2)
-		return false;
-
-	const unsigned char c0 = (unsigned char)Msg[0];
-	const unsigned char c1 = (unsigned char)Msg[1];
-
-	// А-Я, а-я, Ё, ё в UTF-8
-	if(c0 == 0xD0)
-	{
-		// А-я без части диапазона
-		if((c1 >= 0x90 && c1 <= 0xBF) || c1 == 0x81)
-			return true;
-	}
-	else if(c0 == 0xD1)
-	{
-		// р-я + ё
-		if((c1 >= 0x80 && c1 <= 0x8F) || c1 == 0x91)
-			return true;
-	}
-
-	return false;
 }
 
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
@@ -264,52 +278,81 @@ std::string translateChunk(CURL* curl, const std::string& text)
     return translated;
 }
 
+static bool russian_letter_(const char &letter)
+{
+    // А-Я, а-я, Ё, ё в UTF-8
+    if(letter == 0xD0)
+    {
+        // А-я без части диапазона
+        if((letter >= 0x90 && letter <= 0xBF) || letter == 0x81)
+            return true;
+    }
+    else if(letter == 0xD1)
+    {
+        // р-я + ё
+        if((letter >= 0x80 && letter <= 0x8F) || letter == 0x91)
+            return true;
+    }
+
+    return false;
+}
+
 void translate_thread(CChat* pChat) {
-	curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl_global_init(CURL_GLOBAL_DEFAULT);
 
-	while (true) {
-		if (auto_translate_update) {
-			auto_translate_update = false;
+    while (true) {
+        if (auto_translate_update) {
+            auto_translate_update = false;
 
-			curl_global_init(CURL_GLOBAL_DEFAULT);
-    		CURL* curl = curl_easy_init();
-   			if (!curl) {
-      			//Не удалось инициализировать libcurl
-        		curl_global_cleanup();
-    		}
+            curl_global_init(CURL_GLOBAL_DEFAULT);
+            CURL* curl = curl_easy_init();
+            if (!curl) {
+                //Не удалось инициализировать libcurl
+                curl_global_cleanup();
+            }
 
-			std::vector<std::string> chunks;
-			{
-				std::lock_guard<std::mutex> lock(auto_translate_data_mutex);
-				chunks = splitText(message, MAX_QUERY_BYTES);
-			}
-			std::string fullTranslation;
+            std::vector<std::string> chunks;
+            {
+                std::lock_guard<std::mutex> lock(auto_translate_data_mutex);
+                // Заменяем сленг перед разбиением на чанки
+                std::string processed_message = replaceSlang(message);
+                chunks = splitText(processed_message, MAX_QUERY_BYTES);
+            }
+            std::string fullTranslation;
 
-			for (size_t i = 0; i < chunks.size(); ++i) {
-				std::string translated = translateChunk(curl, chunks[i]);
+            for (size_t i = 0; i < chunks.size(); ++i) {
+                std::string translated = translateChunk(curl, chunks[i]);
 
-				if (!fullTranslation.empty() && !translated.empty()) {
-					char lastChar = fullTranslation.back();
-					char firstChar = translated.front();
+                if (!fullTranslation.empty() && !translated.empty()) {
+                    char lastChar = fullTranslation.back();
+                    char firstChar = translated.front();
 
-					if (lastChar != ' ' && lastChar != '\n' && firstChar != ' ' && firstChar != '\n') {
-						fullTranslation += ' ';
-					}
-				}
+                    if (lastChar != ' ' && lastChar != '\n' && firstChar != ' ' && firstChar != '\n') {
+                        fullTranslation += ' ';
+                    }
+                }
 
-				fullTranslation += translated;
-			}
+                fullTranslation += translated;
+            }
 
-			curl_easy_cleanup(curl);
+            curl_easy_cleanup(curl);
 
-			const char* c_string = fullTranslation.c_str();
-			pChat->Echo(c_string);
-		}
+            bool mozhno = false;
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
+            for (size_t i = 0; i < fullTranslation.length(); i++) {
+                if (russian_letter_(fullTranslation[i])) mozhno = true;
+            }
 
-	curl_global_cleanup();
+            if (mozhno) {
+                const char* c_string = fullTranslation.c_str();
+                pChat->Echo(c_string);
+            }
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    curl_global_cleanup();
 }
 
 CChat::CLine::CLine()
@@ -375,66 +418,88 @@ void CChat::ResetAutoMuteTrackers()
 		m_aAutoMuteTrackers[i].Reset();
 }
 
+
 void CChat::CheckAutoMute(int ClientId, const char *pMessage)
 {
-	if(!g_Config.m_ClAutoMute)
-		return;
+    if(!g_Config.m_ClAutoMute)
+        return;
+    if(ClientId < 0 || ClientId >= MAX_CLIENTS)
+        return;
+    // Не мьютим себя и дамми
+    if(ClientId == GameClient()->m_aLocalIds[0] || ClientId == GameClient()->m_aLocalIds[1])
+        return;
 
-	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
-		return;
+    const char   *pName    = GameClient()->m_aClients[ClientId].m_aName;
+    CAutoMuteTracker *pTracker = &m_aAutoMuteTrackers[ClientId];
 
-	// Не мьютим себя и дамми
-	if(ClientId == GameClient()->m_aLocalIds[0] || ClientId == GameClient()->m_aLocalIds[1])
-		return;
+    // Если на этом слоте теперь другой игрок — сброс
+    if(str_comp(pTracker->m_aName, pName) != 0)
+    {
+        pTracker->Reset();
+        str_copy(pTracker->m_aName, pName, sizeof(pTracker->m_aName));
+    }
 
-	const char *pName = GameClient()->m_aClients[ClientId].m_aName;
-	CAutoMuteTracker *pTracker = &m_aAutoMuteTrackers[ClientId];
+    // Уже замьючен — пропускаем
+    if(pTracker->m_Muted)
+        return;
 
-	// Если на этом слоте теперь другой игрок — сброс
-	if(str_comp(pTracker->m_aName, pName) != 0)
-	{
-		pTracker->Reset();
-		str_copy(pTracker->m_aName, pName, sizeof(pTracker->m_aName));
-	}
+    const int64_t Now          = time();        // текущее время в тиках
+    const int64_t Freq         = time_freq();   // тиков в секунду
+    const int     VremyaSec    = g_Config.m_ClAutoMuteVremya; // временное окно (0 = без ограничения)
 
-	// Уже замьючен — пропускаем
-	if(pTracker->m_Muted)
-		return;
+    if(str_comp(pTracker->m_aLastMessage, pMessage) == 0)
+    {
+        // Одно и то же сообщение — проверяем временное окно
+        if(VremyaSec > 0)
+        {
+            // Если прошло больше заданного времени — сбрасываем счётчик
+            // и начинаем отсчёт заново с этого сообщения
+            if(pTracker->m_FirstMsgTime > 0 &&
+               (Now - pTracker->m_FirstMsgTime) > (int64_t)VremyaSec * Freq)
+            {
+                // Время вышло — сбрасываем, начинаем новую серию
+                pTracker->m_RepeatCount  = 1;
+                pTracker->m_FirstMsgTime = Now;
+                return; // ещё не достигли порога в новой серии
+            }
+        }
+        pTracker->m_RepeatCount++;
+    }
+    else
+    {
+        // Новое сообщение — сбрасываем счётчик и запоминаем время начала серии
+        str_copy(pTracker->m_aLastMessage, pMessage, sizeof(pTracker->m_aLastMessage));
+        pTracker->m_RepeatCount  = 1;
+        pTracker->m_FirstMsgTime = Now;
+    }
 
-	// Сравниваем с предыдущим сообщением
-	if(str_comp(pTracker->m_aLastMessage, pMessage) == 0)
-	{
-		// Одно и то же — увеличиваем счётчик
-		pTracker->m_RepeatCount++;
-	}
-	else
-	{
-		// Новое сообщение — сбрасываем счётчик
-		str_copy(pTracker->m_aLastMessage, pMessage, sizeof(pTracker->m_aLastMessage));
-		pTracker->m_RepeatCount = 1;
-	}
+    // Проверяем порог
+    if(pTracker->m_RepeatCount >= g_Config.m_ClAutoMuteTimes)
+    {
+        pTracker->m_Muted = true;
+        GameClient()->m_aClients[ClientId].m_ChatIgnore = true;
 
-	// Проверяем порог
-	if(pTracker->m_RepeatCount >= g_Config.m_ClAutoMuteTimes)
-	{
-		pTracker->m_Muted = true;
+        // Лог в консоль с информацией о временном окне
+        char aLog[512];
+        if(VremyaSec > 0)
+        {
+            const int64_t Elapsed = (Now - pTracker->m_FirstMsgTime) / Freq;
+            str_format(aLog, sizeof(aLog),
+                "[AutoMute] '%s' замьючен: повторил '%s' %d раз за %lld сек (окно: %d сек)",
+                pName, pMessage, pTracker->m_RepeatCount, (long long)Elapsed, VremyaSec);
+        }
+        else
+        {
+            str_format(aLog, sizeof(aLog),
+                "[AutoMute] '%s' замьючен: повторил одно сообщение %d раз",
+                pName, pTracker->m_RepeatCount);
+        }
+        Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "automute", aLog);
 
-		// 1) Клиентский мьют
-		GameClient()->m_aClients[ClientId].m_ChatIgnore = true;
-
-		// 3) Лог в консоль
-		char aLog[512];
-		str_format(aLog, sizeof(aLog),
-			"[AutoMute] '%s' замьючен: повторил одно сообщение %d раз",
-			pName, pTracker->m_RepeatCount);
-		Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "automute", aLog);
-
-		// 4) Локальное уведомление в чат
-		char aChatNotif[256];
-		str_format(aChatNotif, sizeof(aChatNotif),
-			"*** [AutoMute] '%s' замьючен за спам", pName);
-		AddLine(-1, 0, aChatNotif);
-	}
+        char aChatNotif[256];
+        str_format(aChatNotif, sizeof(aChatNotif), "*** [AutoMute] '%s' замьючен за спам", pName);
+        AddLine(-1, 0, aChatNotif);
+    }
 }
 
 void CChat::ConAutoMuteReset(IConsole::IResult *pResult, void *pUserData)
@@ -974,21 +1039,10 @@ void CChat::OnMessage(int MsgType, void *pRawMsg)
 
 			bool babah = false;
 
-			if (words.size() == 1) {
-				if (words[0][words[0].length()-1] == ':') {
-					babah = true;
-				}
-			}
+			if (words.size() == 1 && words[0][words[0].length()-1] == ':') babah = true;
+			if (words.size() == 1 && words[0].length() == 1) babah = true;
 
-			if (!babah) {
-				bool vremen = true;
-				for (size_t i = 0; i < words.size(); i++) {
-					if(StartsWithRussianLetter(words[i]) && words[i][words[i].length()-1] != ':') {
-						vremen = false;
-					}
-				}
-				auto_translate_update = vremen;
-			}
+			if (!babah) auto_translate_update = true;
 		}
 		
 		if(pMsg->m_ClientId >= 0 && pMsg->m_ClientId < MAX_CLIENTS)
