@@ -41,21 +41,35 @@ MACRO_CONFIG_INT(ClNamePlatesClanSize, cl_nameplates_clan_size, 30, -50, 100, CF
 MACRO_CONFIG_INT(ClNamePlatesIds, cl_nameplates_ids, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show client IDs in name plates")
 MACRO_CONFIG_INT(ClNamePlatesIdsSize, cl_nameplates_ids_size, 50, -50, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Size of the client IDs in name plates")
 MACRO_CONFIG_INT(ClNamePlatesIdsSeparateLine, cl_nameplates_ids_seperate_line, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show client IDs on a separate line in name plates")
-// Auto-mute system
-MACRO_CONFIG_INT(ClAutoMute, cl_auto_mute, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players repeating the same message")
-MACRO_CONFIG_INT(ClAutoMuteTimes, cl_auto_mute_times, 3, 2, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "How many repeated messages before auto-mute")
-MACRO_CONFIG_INT(ClAutoMuteVremya, cl_auto_mute_vremya, 0, 0, 3600, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Time window in seconds to track repeated messages for auto-mute (0 = disabled, track forever)")
 
 // Bongure Client
+
+//Dummy arrow
+MACRO_CONFIG_INT(ClDummyPointer, cl_dummy_pointer, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show arrow whos point on dummy")
+MACRO_CONFIG_INT(ClDummyPointerColorR, cl_dummy_pointer_color_r, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color red")
+MACRO_CONFIG_INT(ClDummyPointerColorG, cl_dummy_pointer_color_g, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color green")
+MACRO_CONFIG_INT(ClDummyPointerColorB, cl_dummy_pointer_color_b, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color blue")
+//Dummy arrow
+
+// Auto-mute system
+MACRO_CONFIG_INT(ClAutoMute, cl_auto_mute, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players repeating the same message")
+MACRO_CONFIG_INT(ClAutoMuteTimes, cl_auto_mute_times, 3, 2, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "How many repeated messages before auto-mute")
+MACRO_CONFIG_INT(ClAutoMuteVremya, cl_auto_mute_vremya, 0, 0, 3600, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Time window in seconds to track repeated messages for auto-mute (0 = disabled, track forever)")
+// Auto-mute system
+
+//Linux Colors
 MACRO_CONFIG_INT(ClBongureMenuBgR, cl_bongure_menu_bg_r, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu background red")
 MACRO_CONFIG_INT(ClBongureMenuBgG, cl_bongure_menu_bg_g, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu background green")
 MACRO_CONFIG_INT(ClBongureMenuBgB, cl_bongure_menu_bg_b, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu background blue")
-
 MACRO_CONFIG_INT(ClBongureMenuTextR, cl_bongure_menu_text_r, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text red")
 MACRO_CONFIG_INT(ClBongureMenuTextG, cl_bongure_menu_text_g, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text green")
 MACRO_CONFIG_INT(ClBongureMenuTextB, cl_bongure_menu_text_b, 0, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bongure menu text blue")
+//Linux Colors
 
-MACRO_CONFIG_INT(ClAutoTranslate, cl_auto_translate, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-translate all message in dont russian")
+//Auto-translate system
+MACRO_CONFIG_INT(ClAutoTranslate, cl_auto_translate, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-translate all message in dont russian")
+//Auto-translate system
+
 
 //Rclient changed from 50 to 100
 MACRO_CONFIG_INT(ClNamePlatesOffset, cl_nameplates_offset, 30, 10, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "The size of the gap between the tee and the name plate")

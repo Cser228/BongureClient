@@ -47,6 +47,102 @@ CHud::CHud()
 	}
 }
 
+void CHud::RenderDummyIndicator()
+{
+	if (g_Config.m_ClDummyPointer == 0) return;
+
+    if(GameClient()->m_aLocalIds[0] == -1 || GameClient()->m_aLocalIds[1] == -1)
+    {
+        m_HasLastDummyPos = false;
+        return;
+    }
+
+    int LocalId = GameClient()->m_Snap.m_LocalClientId;
+    int DummyId = -1;
+
+    if(LocalId == GameClient()->m_aLocalIds[0])
+        DummyId = GameClient()->m_aLocalIds[1];
+    else if(LocalId == GameClient()->m_aLocalIds[1])
+        DummyId = GameClient()->m_aLocalIds[0];
+
+    if(DummyId == -1 || DummyId == LocalId)
+    {
+        m_HasLastDummyPos = false;
+        return;
+    }
+
+    CCharacter *pDummyChar = GameClient()->m_PredictedWorld.GetCharacterById(DummyId);
+    if(pDummyChar)
+    {
+        m_LastDummyPos = pDummyChar->m_Pos;
+        m_HasLastDummyPos = true;
+    }
+    else
+    {
+        const CGameClient::CSnapState::CCharacterInfo &DummyInfo = GameClient()->m_Snap.m_aCharacters[DummyId];
+        if(DummyInfo.m_Active)
+        {
+            m_LastDummyPos = vec2(DummyInfo.m_Cur.m_X, DummyInfo.m_Cur.m_Y);
+            m_HasLastDummyPos = true;
+        }
+    }
+
+    if(!m_HasLastDummyPos) return;
+
+    // Получаем реальные границы экрана в игровых координатах
+    // точно так же как делает RenderCursor
+    const vec2 Center = GameClient()->m_Camera.m_Center;
+    float aPoints[4];
+    Graphics()->MapScreenToWorld(Center.x, Center.y, 100.0f, 100.0f, 100.0f, 0, 0, Graphics()->ScreenAspect(), GameClient()->m_Camera.m_Zoom, aPoints);
+    // aPoints[0]=Left, aPoints[1]=Top, aPoints[2]=Right, aPoints[3]=Bottom
+
+    float WorldLeft   = aPoints[0];
+    float WorldTop    = aPoints[1];
+    float WorldRight  = aPoints[2];
+    float WorldBottom = aPoints[3];
+
+    // Проверяем — дамми внутри видимой области?
+    if(m_LastDummyPos.x > WorldLeft  && m_LastDummyPos.x < WorldRight &&
+       m_LastDummyPos.y > WorldTop   && m_LastDummyPos.y < WorldBottom)
+        return; // дамми на экране — стрелка не нужна
+
+    vec2 Dir     = m_LastDummyPos - Center;
+    vec2 DirNorm = normalize(Dir);
+
+    // Переходим в HUD-координаты
+    Graphics()->MapScreen(0.0f, 0.0f, m_Width, m_Height);
+
+    vec2 HudCenter = vec2(m_Width / 2.0f, m_Height / 2.0f);
+
+    float Margin = 20.0f;
+
+    float RatioX = (DirNorm.x != 0.0f)
+                       ? (m_Width  / 2.0f - Margin) / std::abs(DirNorm.x)
+                       : FLT_MAX;
+    float RatioY = (DirNorm.y != 0.0f)
+                       ? (m_Height / 2.0f - Margin) / std::abs(DirNorm.y)
+                       : FLT_MAX;
+
+    vec2 TargetEdge = HudCenter + DirNorm * std::min(RatioX, RatioY);
+
+    TargetEdge.x = std::clamp(TargetEdge.x, Margin, m_Width  - Margin);
+    TargetEdge.y = std::clamp(TargetEdge.y, Margin, m_Height - Margin);
+
+    float Angle     = atan2(DirNorm.y, DirNorm.x);
+    float ArrowSize = 16.0f;
+
+    Graphics()->TextureSet(m_DummyArrowTexture);
+    Graphics()->QuadsBegin();
+    Graphics()->QuadsSetRotation(Angle);
+	float color_red = g_Config.m_ClDummyPointerColorR / 255.0f;
+	float color_green = g_Config.m_ClDummyPointerColorG / 255.0f;
+	float color_blue = g_Config.m_ClDummyPointerColorB / 255.0f;
+    Graphics()->SetColor(color_red, color_green, color_blue, 1.0f);
+    IGraphics::CQuadItem QuadItem(TargetEdge.x, TargetEdge.y, ArrowSize, ArrowSize);
+    Graphics()->QuadsDraw(&QuadItem, 1);
+    Graphics()->QuadsEnd();
+}
+
 void CHud::ResetHudContainers()
 {
 	for(auto &ScoreInfo : m_aScoreInfo)
@@ -101,6 +197,12 @@ void CHud::OnReset()
 
 void CHud::OnInit()
 {
+	m_DummyArrowTexture = Graphics()->LoadTexture(
+    	"bongure_images/dummy_arrow.png", IStorage::TYPE_ALL);
+	
+	m_HasLastDummyPos = false;
+	m_LastDummyPos = vec2(0, 0);
+
 	OnReset();
 
 	Graphics()->SetColor(1.0, 1.0, 1.0, 1.0);
@@ -2212,6 +2314,7 @@ void CHud::OnRender()
 		if(g_Config.m_ClShowhudScore)
 			RenderScoreHud();
 		RenderDummyActions();
+		RenderDummyIndicator();
 		RenderWarmupTimer();
 		RenderTextInfo();
 		GameClient()->m_TClient.RenderCenterLines();

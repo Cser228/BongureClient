@@ -131,6 +131,9 @@ public:
 	void OnRender() override;
 	void OnInit() override;
 	void OnNewSnapshot() override;
+	IGraphics::CTextureHandle m_DummyArrowTexture;
+	vec2 m_LastDummyPos;
+	bool m_HasLastDummyPos;
 
 	// DDRace
 
@@ -140,6 +143,7 @@ public:
 private:
 	void RenderRecord();
 	void RenderDDRaceEffects();
+	void RenderDummyIndicator();
 	float m_TimeCpDiff;
 	float m_aPlayerRecord[NUM_DUMMIES];
 	float m_FinishTimeDiff;

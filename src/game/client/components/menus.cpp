@@ -226,6 +226,196 @@ void CMenus::TerminalAddLine(const char *pLine)
 	}
 }
 
+void CMenus::RenderBongureSettings(CUIRect Screen)
+{
+	ColorRGBA BgColor(g_Config.m_ClBongureMenuBgR / 255.0f,
+		g_Config.m_ClBongureMenuBgG / 255.0f,
+		g_Config.m_ClBongureMenuBgB / 255.0f, 1.0f);
+
+	Screen.Draw(BgColor, IGraphics::CORNER_NONE, 0.0f);
+
+	ColorRGBA TextColor(g_Config.m_ClBongureMenuTextR / 255.0f,
+		g_Config.m_ClBongureMenuTextG / 255.0f,
+		g_Config.m_ClBongureMenuTextB / 255.0f, 1.0f);
+
+	CUIRect Main, TitleRow, Row;
+	Screen.VMargin(20.0f, &Main);
+	Screen.HMargin(10.0f, &Main);
+
+	// Заголовок
+	Main.HSplitTop(35.0f, &TitleRow, &Main);
+	TextRender()->TextColor(TextColor);
+	Ui()->DoLabel(&TitleRow, Localize("Настройки Bongure Client"), 22.0f, TEXTALIGN_MC);
+
+	Main.HSplitTop(5.0f, nullptr, &Main);
+
+	// ── Авто мьют ──
+	Main.HSplitTop(20.0f, &Row, &Main);
+	TextRender()->TextColor(TextColor);
+	if(DoButton_CheckBox(&g_Config.m_ClAutoMute, Localize("Авто мьют"), g_Config.m_ClAutoMute, &Row))
+		g_Config.m_ClAutoMute ^= 1;
+
+	if(g_Config.m_ClAutoMute)
+	{
+		const float Indent = 20.0f;
+
+		// Кол-во сообщений до мьюта
+		static CLineInputBuffered<8> s_MuteTimesInput;
+
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		CUIRect IndentedRow = Row;
+		IndentedRow.x += Indent;
+		IndentedRow.w -= Indent;
+
+		CUIRect SliderArea, EditArea;
+		IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+		bool MuteTimesEditActive = Ui()->HotItem() == &s_MuteTimesInput || Ui()->ActiveItem() == &s_MuteTimesInput;
+		if(!MuteTimesEditActive)
+		{
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteTimes);
+			s_MuteTimesInput.Set(aTmp);
+		}
+
+		TextRender()->TextColor(TextColor);
+		Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteTimes, &g_Config.m_ClAutoMuteTimes,
+			&SliderArea, Localize("Кол-во сообщений до мьюта"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
+
+		if(Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f))
+		{
+			const int P = str_toint(s_MuteTimesInput.GetString());
+			if(P >= 1 && P <= 20)
+				g_Config.m_ClAutoMuteTimes = P;
+		}
+
+		// Время мьюта
+		static CLineInputBuffered<8> s_MuteTimeInput;
+
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		IndentedRow = Row;
+		IndentedRow.x += Indent;
+		IndentedRow.w -= Indent;
+
+		CUIRect SliderArea2, EditArea2;
+		IndentedRow.VSplitRight(50.0f, &SliderArea2, &EditArea2);
+
+		bool MuteTimeEditActive = Ui()->HotItem() == &s_MuteTimeInput || Ui()->ActiveItem() == &s_MuteTimeInput;
+		if(!MuteTimeEditActive)
+		{
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteVremya);
+			s_MuteTimeInput.Set(aTmp);
+		}
+
+		TextRender()->TextColor(TextColor);
+		Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteVremya, &g_Config.m_ClAutoMuteVremya,
+			&SliderArea2, Localize("Время за которое выдаётся мьют (сек)"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
+
+		if(Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f))
+		{
+			const int P = str_toint(s_MuteTimeInput.GetString());
+			if(P >= 5 && P <= 300)
+				g_Config.m_ClAutoMuteVremya = P;
+		}
+	}
+
+	Main.HSplitTop(5.0f, nullptr, &Main);
+
+	// ── Авто перевод ──
+	Main.HSplitTop(20.0f, &Row, &Main);
+	TextRender()->TextColor(TextColor);
+	if(DoButton_CheckBox(&g_Config.m_ClAutoTranslate, Localize("Авто перевод"), g_Config.m_ClAutoTranslate, &Row))
+		g_Config.m_ClAutoTranslate ^= 1;
+
+	Main.HSplitTop(5.0f, nullptr, &Main);
+
+	// ── ИИ ассистент ──
+	Main.HSplitTop(20.0f, &Row, &Main);
+	static bool s_VoiceActiveId = false;
+	bool VoiceActive = GameClient()->m_VoiceAssistant.IsActive();
+	TextRender()->TextColor(TextColor);
+	if(DoButton_CheckBox(&s_VoiceActiveId, Localize("ИИ ассистент"), VoiceActive, &Row))
+		GameClient()->m_VoiceAssistant.Toggle();
+
+	Main.HSplitTop(10.0f, nullptr, &Main);
+
+	// ── Показатель дамми ──
+	Main.HSplitTop(20.0f, &Row, &Main);
+	TextRender()->TextColor(TextColor);
+	if(DoButton_CheckBox(&g_Config.m_ClDummyPointer, Localize("Показатель дамми"), g_Config.m_ClDummyPointer, &Row))
+		g_Config.m_ClDummyPointer ^= 1;
+
+	if(g_Config.m_ClDummyPointer)
+	{
+		const float Indent = 20.0f;
+
+		// Вспомогательная лямбда для одного цветового слайдера
+		auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			CUIRect IndentedRow = Row;
+			IndentedRow.x += Indent;
+			IndentedRow.w -= Indent;
+
+			CUIRect SliderArea, EditArea;
+			IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+			bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
+			if(!EditActive)
+			{
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", ConfigVal);
+				Input.Set(aTmp);
+			}
+
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(pId, &ConfigVal,
+				&SliderArea, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
+
+			if(Ui()->DoEditBox(&Input, &EditArea, 14.0f))
+			{
+				const int P = str_toint(Input.GetString());
+				if(P >= 0 && P <= 255)
+					ConfigVal = P;
+			}
+		};
+
+		static CLineInputBuffered<8> s_DummyRInput;
+		static CLineInputBuffered<8> s_DummyGInput;
+		static CLineInputBuffered<8> s_DummyBInput;
+
+		DoColorSlider(Localize("R (красный)"), g_Config.m_ClDummyPointerColorR, &g_Config.m_ClDummyPointerColorR, s_DummyRInput);
+		DoColorSlider(Localize("G (зелёный)"), g_Config.m_ClDummyPointerColorG, &g_Config.m_ClDummyPointerColorG, s_DummyGInput);
+		DoColorSlider(Localize("B (синий)"),   g_Config.m_ClDummyPointerColorB, &g_Config.m_ClDummyPointerColorB, s_DummyBInput);
+
+		// Превью цвета
+		Main.HSplitTop(10.0f, nullptr, &Main);
+		Main.HSplitTop(40.0f, &Row, &Main);
+		CUIRect PreviewRect = Row;
+		PreviewRect.x += Indent;
+		PreviewRect.w = 80.0f;
+
+		ColorRGBA PreviewColor(
+			g_Config.m_ClDummyPointerColorR / 255.0f,
+			g_Config.m_ClDummyPointerColorG / 255.0f,
+			g_Config.m_ClDummyPointerColorB / 255.0f,
+			1.0f);
+		PreviewRect.Draw(PreviewColor, IGraphics::CORNER_ALL, 6.0f);
+
+		// Подпись рядом с квадратом
+		CUIRect LabelRect = Row;
+		LabelRect.x += Indent + 90.0f;
+		LabelRect.w -= Indent + 90.0f;
+		TextRender()->TextColor(TextColor);
+		Ui()->DoLabel(&LabelRect, Localize("Цвет стрелки"), 14.0f, TEXTALIGN_ML);
+	}
+
+	TextRender()->TextColor(TextRender()->DefaultTextColor());
+}
+
 void CMenus::TerminalExecuteCommand()
 {
 	char aCommand[256];
@@ -274,7 +464,7 @@ void CMenus::TerminalExecuteCommand()
 		TerminalAddLine("clear/cls = clear history commands");
 		TerminalAddLine("quit/exit = exit ddnet");
 		TerminalAddLine("stop_server = stop server");
-		TerminalAddLine("bongure_settings = print all bongure settings");
+		TerminalAddLine("bongure_settings = open menu with settings");
 		TerminalAddLine("check_update = check there is new version of client");
 	}
 	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
@@ -359,33 +549,7 @@ void CMenus::TerminalExecuteCommand()
 	}
 	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) 
 	{
-		TerminalAddLine("Linux commands:");
-		TerminalAddLine("");
-		TerminalAddLine("================");
-		TerminalAddLine("background_color");
-		TerminalAddLine("font_color");
-		TerminalAddLine("================");
-		TerminalAddLine("");
-		TerminalAddLine("Chat commands:");
-		TerminalAddLine("");
-		TerminalAddLine("================");
-		TerminalAddLine("/unfinishsay");
-		TerminalAddLine("/translate");
-		TerminalAddLine("");
-		TerminalAddLine("F1 commands:");
-		TerminalAddLine("");
-		TerminalAddLine("================");
-		TerminalAddLine("bonga_voice");
-		TerminalAddLine("");
-		TerminalAddLine("================");
-		TerminalAddLine("cl_auto_mute");
-		TerminalAddLine("cl_auto_mute_times");
-		TerminalAddLine("cl_auto_mute_vremya");
-		TerminalAddLine("cl_auto_mute_reset");
-		TerminalAddLine("");
-		TerminalAddLine("================");
-		TerminalAddLine("cl_auto_translate");
-
+		m_ShowBongureSettings = true;
 	}
 	else if (str_comp_nocase(aTrimmed, "check_update") == 0) {
 		if (CheckUpdate()) {
@@ -2931,6 +3095,12 @@ bool CMenus::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
 
 bool CMenus::OnInput(const IInput::CEvent &Event)
 {
+	if(m_ShowBongureSettings)
+    {
+        Ui()->OnInput(Event);
+        return true;
+    }
+
 	if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
 	{
 		if(Event.m_Flags & IInput::FLAG_TEXT)
@@ -3127,11 +3297,16 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 	}
 	
 	// Escape key is always handled to activate/deactivate menu
-	if((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive())
+	if((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive() || m_ShowBongureSettings)
 	{
-		Ui()->OnInput(Event);
-		return true;
+    	Ui()->OnInput(Event);
+
+    	if(m_ShowBongureSettings && (Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE)
+        	return true;
+
+    	return true;
 	}
+
 	return false;
 }
 
@@ -3211,7 +3386,10 @@ void CMenus::OnRender()
 
 	Ui()->Update();
 
-	Render();
+	if(m_ShowBongureSettings)
+        RenderBongureSettings(*Ui()->Screen());
+    else
+        Render();
 
 	if(IsActive())
 	{
@@ -3222,8 +3400,14 @@ void CMenus::OnRender()
 	if(g_Config.m_Debug)
 		Ui()->DebugRender(2.0f, Ui()->Screen()->h - 12.0f);
 
-	if(Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE))
-		SetActive(false);
+    if(Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE)) {
+		if (m_ShowBongureSettings) {
+			m_ShowBongureSettings = false;
+		}
+        else {
+			SetActive(false);
+		}
+	}
 
 	Ui()->FinishCheck();
 	Ui()->ClearHotkeys();
