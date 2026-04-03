@@ -46,6 +46,7 @@ MACRO_CONFIG_INT(ClNamePlatesIdsSeparateLine, cl_nameplates_ids_seperate_line, 0
 
 //Dummy arrow
 MACRO_CONFIG_INT(ClDummyPointer, cl_dummy_pointer, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show arrow whos point on dummy")
+MACRO_CONFIG_INT(ClDummyPointerSize, cl_dummy_pointer_size, 16, 1, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointer size")
 MACRO_CONFIG_INT(ClDummyPointerColorR, cl_dummy_pointer_color_r, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color red")
 MACRO_CONFIG_INT(ClDummyPointerColorG, cl_dummy_pointer_color_g, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color green")
 MACRO_CONFIG_INT(ClDummyPointerColorB, cl_dummy_pointer_color_b, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color blue")

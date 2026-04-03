@@ -280,72 +280,70 @@ std::string translateChunk(CURL* curl, const std::string& text)
 
 static bool russian_letter_(const char &letter)
 {
-    // А-Я, а-я, Ё, ё в UTF-8
-    if(letter == 0xD0)
-    {
-        // А-я без части диапазона
-        if((letter >= 0x90 && letter <= 0xBF) || letter == 0x81)
-            return true;
-    }
-    else if(letter == 0xD1)
-    {
-        // р-я + ё
-        if((letter >= 0x80 && letter <= 0x8F) || letter == 0x91)
-            return true;
-    }
+    uint8_t b = (uint8_t)letter;
+    return (b == 0xD0 || b == 0xD1);
+}
 
+static bool english_letter_(const char &letter)
+{
+    // A-Z, a-z в UTF-8 (совпадает с ASCII)
+    if((letter >= 0x41 && letter <= 0x5A) ||  // A-Z
+       (letter >= 0x61 && letter <= 0x7A))    // a-z
+    {
+        return true;
+    }
+    
     return false;
 }
 
 void translate_thread(CChat* pChat) {
-    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl_global_init(CURL_GLOBAL_DEFAULT); // ✅ только один раз
 
     while (true) {
         if (auto_translate_update) {
             auto_translate_update = false;
 
-            curl_global_init(CURL_GLOBAL_DEFAULT);
+            // ❌ убрать curl_global_init отсюда
+
             CURL* curl = curl_easy_init();
             if (!curl) {
-                //Не удалось инициализировать libcurl
-                curl_global_cleanup();
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                continue; // ✅ не идём дальше с нулевым curl
             }
 
             std::vector<std::string> chunks;
             {
                 std::lock_guard<std::mutex> lock(auto_translate_data_mutex);
-                // Заменяем сленг перед разбиением на чанки
                 std::string processed_message = replaceSlang(message);
                 chunks = splitText(processed_message, MAX_QUERY_BYTES);
             }
-            std::string fullTranslation;
 
+            std::string fullTranslation;
             for (size_t i = 0; i < chunks.size(); ++i) {
                 std::string translated = translateChunk(curl, chunks[i]);
 
                 if (!fullTranslation.empty() && !translated.empty()) {
                     char lastChar = fullTranslation.back();
                     char firstChar = translated.front();
-
-                    if (lastChar != ' ' && lastChar != '\n' && firstChar != ' ' && firstChar != '\n') {
+                    if (lastChar != ' ' && lastChar != '\n' &&
+                        firstChar != ' ' && firstChar != '\n') {
                         fullTranslation += ' ';
                     }
                 }
-
                 fullTranslation += translated;
             }
 
             curl_easy_cleanup(curl);
 
+            // ✅ проверка кириллицы по варианту 2 (первый байт)
             bool mozhno = false;
-
             for (size_t i = 0; i < fullTranslation.length(); i++) {
-                if (russian_letter_(fullTranslation[i])) mozhno = true;
+                uint8_t b = (uint8_t)fullTranslation[i];
+                if (b == 0xD0 || b == 0xD1) { mozhno = true; break; }
             }
 
             if (mozhno) {
-                const char* c_string = fullTranslation.c_str();
-                pChat->Echo(c_string);
+                pChat->Echo(fullTranslation.c_str());
             }
         }
 
@@ -1071,10 +1069,21 @@ void CChat::OnMessage(int MsgType, void *pRawMsg)
 
 			bool babah = false;
 
-			if (words.size() == 1 && words[0][words[0].length()-1] == ':') babah = true;
+			if (words[0][words[0].length()-1] == ':') babah = true;
 			if (words.size() == 1 && words[0].length() == 1) babah = true;
+			
+			bool mozhno = false;
 
-			if (!babah) auto_translate_update = true;
+			for (size_t i = 0; i < words.size(); ++i) {
+				for (char c : words[i]) {
+        			if (english_letter_(c)) {
+						mozhno = true;
+						break;
+					}
+    			}
+			}
+
+			if (!babah && mozhno) auto_translate_update = true;
 		}
 		
 		if(pMsg->m_ClientId >= 0 && pMsg->m_ClientId < MAX_CLIENTS)

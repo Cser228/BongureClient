@@ -129,7 +129,7 @@ void CHud::RenderDummyIndicator()
     TargetEdge.y = std::clamp(TargetEdge.y, Margin, m_Height - Margin);
 
     float Angle     = atan2(DirNorm.y, DirNorm.x);
-    float ArrowSize = 16.0f;
+    float ArrowSize = g_Config.m_ClDummyPointerSize;
 
     Graphics()->TextureSet(m_DummyArrowTexture);
     Graphics()->QuadsBegin();

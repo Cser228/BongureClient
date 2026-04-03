@@ -54,6 +54,7 @@ public:
 	void TerminalAddCommandToHistory(const char *pCommand);
 	bool CheckUpdate();
 	bool m_ShowBongureSettings = false;
+	IGraphics::CTextureHandle m_BongureSettingsTexture;
 	void RenderBongureSettings(CUIRect Screen);
 
 	int DoButton_Toggle(const void *pId, int Checked, const CUIRect *pRect, bool Active, unsigned Flags = BUTTONFLAG_LEFT);

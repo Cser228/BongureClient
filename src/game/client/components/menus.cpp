@@ -350,67 +350,97 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 
 	if(g_Config.m_ClDummyPointer)
 	{
-		const float Indent = 20.0f;
+	    const float Indent = 20.0f;
 
-		// Вспомогательная лямбда для одного цветового слайдера
-		auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
-			Main.HSplitTop(5.0f, nullptr, &Main);
-			Main.HSplitTop(20.0f, &Row, &Main);
-			CUIRect IndentedRow = Row;
-			IndentedRow.x += Indent;
-			IndentedRow.w -= Indent;
+	    // Размер стрелки
+	    static CLineInputBuffered<8> s_DummySizeInput;
 
-			CUIRect SliderArea, EditArea;
-			IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
+	    Main.HSplitTop(5.0f, nullptr, &Main);
+	    Main.HSplitTop(20.0f, &Row, &Main);
+	    CUIRect IndentedRow = Row;
+	    IndentedRow.x += Indent;
+	    IndentedRow.w -= Indent;
 
-			bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
-			if(!EditActive)
-			{
-				char aTmp[8];
-				str_format(aTmp, 8, "%d", ConfigVal);
-				Input.Set(aTmp);
-			}
+	    CUIRect SliderArea, EditArea;
+	    IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
 
-			TextRender()->TextColor(TextColor);
-			Ui()->DoScrollbarOption(pId, &ConfigVal,
-				&SliderArea, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
+	    bool SizeEditActive = Ui()->HotItem() == &s_DummySizeInput || Ui()->ActiveItem() == &s_DummySizeInput;
+	    if(!SizeEditActive)
+	    {
+	        char aTmp[8];
+	        str_format(aTmp, 8, "%d", g_Config.m_ClDummyPointerSize);
+	        s_DummySizeInput.Set(aTmp);
+	    }
 
-			if(Ui()->DoEditBox(&Input, &EditArea, 14.0f))
-			{
-				const int P = str_toint(Input.GetString());
-				if(P >= 0 && P <= 255)
-					ConfigVal = P;
-			}
-		};
+	    TextRender()->TextColor(TextColor);
+	    Ui()->DoScrollbarOption(&g_Config.m_ClDummyPointerSize, &g_Config.m_ClDummyPointerSize,
+	        &SliderArea, Localize("Размер стрелки"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
 
-		static CLineInputBuffered<8> s_DummyRInput;
-		static CLineInputBuffered<8> s_DummyGInput;
-		static CLineInputBuffered<8> s_DummyBInput;
+	    if(Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f))
+	    {
+	        const int P = str_toint(s_DummySizeInput.GetString());
+	        if(P >= 1 && P <= 50)
+	            g_Config.m_ClDummyPointerSize = P;
+	    }
 
-		DoColorSlider(Localize("R (красный)"), g_Config.m_ClDummyPointerColorR, &g_Config.m_ClDummyPointerColorR, s_DummyRInput);
-		DoColorSlider(Localize("G (зелёный)"), g_Config.m_ClDummyPointerColorG, &g_Config.m_ClDummyPointerColorG, s_DummyGInput);
-		DoColorSlider(Localize("B (синий)"),   g_Config.m_ClDummyPointerColorB, &g_Config.m_ClDummyPointerColorB, s_DummyBInput);
+	    // Лямбда для цветовых слайдеров
+	    auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
+	        Main.HSplitTop(5.0f, nullptr, &Main);
+	        Main.HSplitTop(20.0f, &Row, &Main);
+	        CUIRect IndentedRow = Row;
+	        IndentedRow.x += Indent;
+	        IndentedRow.w -= Indent;
 
-		// Превью цвета
-		Main.HSplitTop(10.0f, nullptr, &Main);
-		Main.HSplitTop(40.0f, &Row, &Main);
-		CUIRect PreviewRect = Row;
-		PreviewRect.x += Indent;
-		PreviewRect.w = 80.0f;
+	        CUIRect SliderArea, EditArea;
+	        IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
 
-		ColorRGBA PreviewColor(
-			g_Config.m_ClDummyPointerColorR / 255.0f,
-			g_Config.m_ClDummyPointerColorG / 255.0f,
-			g_Config.m_ClDummyPointerColorB / 255.0f,
-			1.0f);
-		PreviewRect.Draw(PreviewColor, IGraphics::CORNER_ALL, 6.0f);
+	        bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
+	        if(!EditActive)
+	        {
+	            char aTmp[8];
+	            str_format(aTmp, 8, "%d", ConfigVal);
+	            Input.Set(aTmp);
+	        }
 
-		// Подпись рядом с квадратом
-		CUIRect LabelRect = Row;
-		LabelRect.x += Indent + 90.0f;
-		LabelRect.w -= Indent + 90.0f;
-		TextRender()->TextColor(TextColor);
-		Ui()->DoLabel(&LabelRect, Localize("Цвет стрелки"), 14.0f, TEXTALIGN_ML);
+	        TextRender()->TextColor(TextColor);
+	        Ui()->DoScrollbarOption(pId, &ConfigVal,
+	            &SliderArea, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
+
+	        if(Ui()->DoEditBox(&Input, &EditArea, 14.0f))
+	        {
+	            const int P = str_toint(Input.GetString());
+	            if(P >= 0 && P <= 255)
+	                ConfigVal = P;
+	        }
+	    };
+
+	    static CLineInputBuffered<8> s_DummyRInput;
+	    static CLineInputBuffered<8> s_DummyGInput;
+	    static CLineInputBuffered<8> s_DummyBInput;
+
+	    DoColorSlider(Localize("R (красный)"), g_Config.m_ClDummyPointerColorR, &g_Config.m_ClDummyPointerColorR, s_DummyRInput);
+	    DoColorSlider(Localize("G (зелёный)"), g_Config.m_ClDummyPointerColorG, &g_Config.m_ClDummyPointerColorG, s_DummyGInput);
+	    DoColorSlider(Localize("B (синий)"),   g_Config.m_ClDummyPointerColorB, &g_Config.m_ClDummyPointerColorB, s_DummyBInput);
+
+	    // Превью цвета
+	    Main.HSplitTop(10.0f, nullptr, &Main);
+	    Main.HSplitTop(40.0f, &Row, &Main);
+	    CUIRect PreviewRect = Row;
+	    PreviewRect.x += Indent;
+	    PreviewRect.w = 80.0f;
+
+	    ColorRGBA PreviewColor(
+	        g_Config.m_ClDummyPointerColorR / 255.0f,
+	        g_Config.m_ClDummyPointerColorG / 255.0f,
+	        g_Config.m_ClDummyPointerColorB / 255.0f,
+	        1.0f);
+	    PreviewRect.Draw(PreviewColor, IGraphics::CORNER_ALL, 6.0f);
+
+	    CUIRect LabelRect = Row;
+	    LabelRect.x += Indent + 90.0f;
+	    LabelRect.w -= Indent + 90.0f;
+	    TextRender()->TextColor(TextColor);
+	    Ui()->DoLabel(&LabelRect, Localize("Цвет стрелки"), 14.0f, TEXTALIGN_ML);
 	}
 
 	TextRender()->TextColor(TextRender()->DefaultTextColor());
@@ -1299,6 +1329,51 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 			m_ControlPageOpening = true;
 		}
 
+			// ── [BongureClient] Кнопка настроек в ESC ──────────────────────
+			{
+    			Box.VSplitLeft(0.0f, nullptr, &Box);
+    			Box.VSplitLeft(33.0f, &Button, &Box);
+    			static CButtonContainer s_BongureSettingsButton;
+
+    			// Фон кнопки — аналогично CORNER_T как у кнопки Editor
+    			const bool BongureHot = Ui()->HotItem() == &s_BongureSettingsButton;
+    			{
+    			    ColorRGBA BtnColor = BongureHot
+    			        ? ms_ColorTabbarHoverIngame
+    			        : ms_ColorTabbarInactiveIngame;
+    			    Button.Draw(BtnColor, IGraphics::CORNER_T, 10.0f);
+    			}
+
+    			// PNG-иконка из data/bongure_images/bongure_settings.png
+    			CUIRect IconRect;
+    			Button.Margin(4.0f, &IconRect);
+    			Graphics()->TextureSet(m_BongureSettingsTexture);
+    			Graphics()->WrapClamp();
+    			Graphics()->QuadsBegin();
+    			if(BongureHot)
+    			    Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);   // ярко при hover
+    			else
+    			    Graphics()->SetColor(0.7f, 0.7f, 0.7f, 0.8f);   // тускло в покое
+    			IGraphics::CQuadItem QuadItem(IconRect.x, IconRect.y,
+    			                                IconRect.w, IconRect.h);
+    			Graphics()->QuadsDrawTL(&QuadItem, 1);
+    			Graphics()->QuadsEnd();
+    			Graphics()->WrapNormal();
+
+    			// Тултип как у Editor/Settings
+    			GameClient()->m_Tooltips.DoToolTip(
+        			&s_BongureSettingsButton, &Button,
+        			Localize("Bongure settings"));
+
+    			// Логика нажатия
+    			if(Ui()->DoButtonLogic(&s_BongureSettingsButton, 0, &Button,
+        			BUTTONFLAG_LEFT))
+    			{
+        			m_ShowBongureSettings = true;
+    			}
+			}
+			// ────────────────────────────────────────────────────────────────
+
 		if(Box.w >= 10.0f + 33.0f + 10.0f)
 		{
 			TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
@@ -1441,6 +1516,11 @@ void CMenus::OnInterfacesInit(CGameClient *pClient)
 
 void CMenus::OnInit()
 {
+	// ── [BongureClient] Загрузка иконки Bongure Settings ─────────────
+	m_BongureSettingsTexture = Graphics()->LoadTexture(
+    	"bongure_images/bongure_settings.png", IStorage::TYPE_ALL);
+	// ──────────────────────────────────────────────────────────────────
+	
 	if(g_Config.m_ClShowWelcome)
 	{
 		m_Popup = POPUP_LANGUAGE;
@@ -3386,10 +3466,8 @@ void CMenus::OnRender()
 
 	Ui()->Update();
 
-	if(m_ShowBongureSettings)
-        RenderBongureSettings(*Ui()->Screen());
-    else
-        Render();
+	Render();
+	if(m_ShowBongureSettings) RenderBongureSettings(*Ui()->Screen());
 
 	if(IsActive())
 	{
