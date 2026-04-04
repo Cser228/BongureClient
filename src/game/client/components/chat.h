@@ -17,6 +17,8 @@
 #include <game/client/render.h>
 
 #include <vector>
+#include <string>
+#include <map>
 
 class CTranslateResponse
 {
@@ -178,6 +180,14 @@ class CChat : public CComponent
 	friend class CChatBubbles;
 
 public:
+	void LoadSmilesDB();
+	std::map<std::string, std::string> smile_db;
+	bool smile_window_open;
+	std::string smile_string;
+	float smile_texts_y;
+	std::string smile_show;
+	unsigned short smile_window_offset;
+
 	// Private helper method for filtering text
 	const char *FilterText(const char *pMessage, int ClientId = -2, bool IsChat = false);
 

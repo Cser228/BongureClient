@@ -45,6 +45,8 @@
 #include <vector>
 #include <curl/curl.h>
 #include <string>
+#include <map>
+#include <fstream>
 
 using namespace std::chrono_literals;
 
@@ -228,222 +230,336 @@ void CMenus::TerminalAddLine(const char *pLine)
 
 void CMenus::RenderBongureSettings(CUIRect Screen)
 {
-	ColorRGBA BgColor(g_Config.m_ClBongureMenuBgR / 255.0f,
-		g_Config.m_ClBongureMenuBgG / 255.0f,
-		g_Config.m_ClBongureMenuBgB / 255.0f, 1.0f);
+    ColorRGBA BgColor(g_Config.m_ClBongureMenuBgR / 255.0f,
+        g_Config.m_ClBongureMenuBgG / 255.0f,
+        g_Config.m_ClBongureMenuBgB / 255.0f, 1.0f);
 
-	Screen.Draw(BgColor, IGraphics::CORNER_NONE, 0.0f);
+    Screen.Draw(BgColor, IGraphics::CORNER_NONE, 0.0f);
 
-	ColorRGBA TextColor(g_Config.m_ClBongureMenuTextR / 255.0f,
-		g_Config.m_ClBongureMenuTextG / 255.0f,
-		g_Config.m_ClBongureMenuTextB / 255.0f, 1.0f);
+    ColorRGBA TextColor(g_Config.m_ClBongureMenuTextR / 255.0f,
+        g_Config.m_ClBongureMenuTextG / 255.0f,
+        g_Config.m_ClBongureMenuTextB / 255.0f, 1.0f);
 
-	CUIRect Main, TitleRow, Row;
-	Screen.VMargin(20.0f, &Main);
-	Screen.HMargin(10.0f, &Main);
+    CUIRect Main, TitleRow, Row;
+    Screen.VMargin(20.0f, &Main);
+    Screen.HMargin(10.0f, &Main);
 
-	// Заголовок
-	Main.HSplitTop(35.0f, &TitleRow, &Main);
-	TextRender()->TextColor(TextColor);
-	Ui()->DoLabel(&TitleRow, Localize("Настройки Bongure Client"), 22.0f, TEXTALIGN_MC);
+    // Заголовок
+    Main.HSplitTop(35.0f, &TitleRow, &Main);
+    TextRender()->TextColor(TextColor);
+    Ui()->DoLabel(&TitleRow, Localize("Настройки Bongure Client"), 22.0f, TEXTALIGN_MC);
 
-	Main.HSplitTop(5.0f, nullptr, &Main);
+    Main.HSplitTop(5.0f, nullptr, &Main);
 
-	// ── Авто мьют ──
+    // ── Цвет фона ──
+    static bool fon_vryb = 0;
+
+    Main.HSplitTop(20.0f, &Row, &Main);
+    TextRender()->TextColor(TextColor);
+    if(DoButton_CheckBox(&fon_vryb, Localize("Цвет фона и текста"), fon_vryb, &Row))
+        fon_vryb ^= 1;
+
+    if (fon_vryb) {
+        const float Indent = 20.0f;
+
+        auto DoColorSliderTop = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
+            Main.HSplitTop(5.0f, nullptr, &Main);
+            Main.HSplitTop(20.0f, &Row, &Main);
+
+            CUIRect IndentedRow = Row;
+            IndentedRow.x += Indent;
+            IndentedRow.w -= Indent;
+
+            CUIRect SliderArea, EditArea;
+            IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+            bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
+            if(!EditActive)
+            {
+                char aTmp[8];
+                str_format(aTmp, 8, "%d", ConfigVal);
+                Input.Set(aTmp);
+            }
+            TextRender()->TextColor(TextColor);
+            Ui()->DoScrollbarOption(pId, &ConfigVal,
+                &SliderArea, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
+            if(Ui()->DoEditBox(&Input, &EditArea, 14.0f))
+            {
+                const int P = str_toint(Input.GetString());
+                if(P >= 0 && P <= 255)
+                    ConfigVal = P;
+            }
+        };
+
+        static CLineInputBuffered<8> s_BgRInput, s_BgGInput, s_BgBInput;
+        static CLineInputBuffered<8> s_TextRInput, s_TextGInput, s_TextBInput;
+
+        DoColorSliderTop(Localize("Фон R (красный)"),   g_Config.m_ClBongureMenuBgR, &g_Config.m_ClBongureMenuBgR, s_BgRInput);
+        DoColorSliderTop(Localize("Фон G (зелёный)"),   g_Config.m_ClBongureMenuBgG, &g_Config.m_ClBongureMenuBgG, s_BgGInput);
+        DoColorSliderTop(Localize("Фон B (синий)"),     g_Config.m_ClBongureMenuBgB, &g_Config.m_ClBongureMenuBgB, s_BgBInput);
+        DoColorSliderTop(Localize("Текст R (красный)"), g_Config.m_ClBongureMenuTextR, &g_Config.m_ClBongureMenuTextR, s_TextRInput);
+        DoColorSliderTop(Localize("Текст G (зелёный)"), g_Config.m_ClBongureMenuTextG, &g_Config.m_ClBongureMenuTextG, s_TextGInput);
+        DoColorSliderTop(Localize("Текст B (синий)"),   g_Config.m_ClBongureMenuTextB, &g_Config.m_ClBongureMenuTextB, s_TextBInput);
+
+        Main.HSplitTop(10.0f, nullptr, &Main);
+    }
+
+    // ── Авто мьют ──
+    Main.HSplitTop(20.0f, &Row, &Main);
+    
+    CUIRect AutoMuteLeft, AutoMuteRight;
+    Row.VSplitLeft(200.0f, &AutoMuteLeft, &AutoMuteRight);
+    
+    static bool s_HideAutoMute = true;
+    TextRender()->TextColor(TextColor);
+    
+    if(DoButton_CheckBox(&g_Config.m_ClAutoMute, Localize("Авто мьют"), g_Config.m_ClAutoMute, &AutoMuteLeft))
+        g_Config.m_ClAutoMute ^= 1;
+        
+    if(DoButton_CheckBox(&s_HideAutoMute, Localize("Скрыть здесь"), s_HideAutoMute, &AutoMuteRight))
+        s_HideAutoMute ^= 1;
+
+    if(g_Config.m_ClAutoMute && !s_HideAutoMute)
+    {
+        const float Indent = 20.0f;
+        static CLineInputBuffered<8> s_MuteTimesInput;
+
+        Main.HSplitTop(5.0f, nullptr, &Main);
+        Main.HSplitTop(20.0f, &Row, &Main);
+        CUIRect IndentedRow = Row; IndentedRow.x += Indent; IndentedRow.w -= Indent;
+        CUIRect SliderArea, EditArea; IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+        bool MuteTimesEditActive = Ui()->HotItem() == &s_MuteTimesInput || Ui()->ActiveItem() == &s_MuteTimesInput;
+        if(!MuteTimesEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteTimes); s_MuteTimesInput.Set(aTmp); }
+
+        TextRender()->TextColor(TextColor);
+        Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteTimes, &g_Config.m_ClAutoMuteTimes, &SliderArea, Localize("Кол-во сообщений до мьюта"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
+        if(Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f)) { const int P = str_toint(s_MuteTimesInput.GetString()); if(P >= 1 && P <= 20) g_Config.m_ClAutoMuteTimes = P; }
+
+        static CLineInputBuffered<8> s_MuteTimeInput;
+        Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
+        IndentedRow = Row; IndentedRow.x += Indent; IndentedRow.w -= Indent;
+        CUIRect SliderArea2, EditArea2; IndentedRow.VSplitRight(50.0f, &SliderArea2, &EditArea2);
+
+        bool MuteTimeEditActive = Ui()->HotItem() == &s_MuteTimeInput || Ui()->ActiveItem() == &s_MuteTimeInput;
+        if(!MuteTimeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteVremya); s_MuteTimeInput.Set(aTmp); }
+
+        TextRender()->TextColor(TextColor);
+        Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteVremya, &g_Config.m_ClAutoMuteVremya, &SliderArea2, Localize("Время за которое выдаётся мьют (сек)"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
+        if(Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f)) { const int P = str_toint(s_MuteTimeInput.GetString()); if(P >= 5 && P <= 300) g_Config.m_ClAutoMuteVremya = P; }
+    }
+
+    Main.HSplitTop(5.0f, nullptr, &Main);
+
+    // ── Авто перевод ──
+    Main.HSplitTop(20.0f, &Row, &Main);
+    TextRender()->TextColor(TextColor);
+    if(DoButton_CheckBox(&g_Config.m_ClAutoTranslate, Localize("Авто перевод"), g_Config.m_ClAutoTranslate, &Row))
+        g_Config.m_ClAutoTranslate ^= 1;
+
+    Main.HSplitTop(5.0f, nullptr, &Main);
+
+    // ── ИИ ассистент ──
+    Main.HSplitTop(20.0f, &Row, &Main);
+    static bool s_VoiceActiveId = false;
+    bool VoiceActive = GameClient()->m_VoiceAssistant.IsActive();
+    TextRender()->TextColor(TextColor);
+    if(DoButton_CheckBox(&s_VoiceActiveId, Localize("ИИ ассистент"), VoiceActive, &Row))
+        GameClient()->m_VoiceAssistant.Toggle();
+
+    Main.HSplitTop(10.0f, nullptr, &Main);
+
+    // ── Показатель дамми ──
+    Main.HSplitTop(20.0f, &Row, &Main);
+    
+    CUIRect DummyLeft, DummyRight;
+    Row.VSplitLeft(200.0f, &DummyLeft, &DummyRight);
+    
+    static bool s_HideDummy = true;
+    TextRender()->TextColor(TextColor);
+    
+    if(DoButton_CheckBox(&g_Config.m_ClDummyPointer, Localize("Показатель дамми"), g_Config.m_ClDummyPointer, &DummyLeft))
+        g_Config.m_ClDummyPointer ^= 1;
+        
+    if(DoButton_CheckBox(&s_HideDummy, Localize("Скрыть здесь"), s_HideDummy, &DummyRight))
+        s_HideDummy ^= 1;
+
+    if(g_Config.m_ClDummyPointer && !s_HideDummy)
+    {
+        const float Indent = 20.0f;
+        static CLineInputBuffered<8> s_DummySizeInput;
+
+        Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
+        CUIRect IndentedRow = Row; IndentedRow.x += Indent; IndentedRow.w -= Indent;
+        CUIRect SliderArea, EditArea; IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+        bool SizeEditActive = Ui()->HotItem() == &s_DummySizeInput || Ui()->ActiveItem() == &s_DummySizeInput;
+        if(!SizeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_ClDummyPointerSize); s_DummySizeInput.Set(aTmp); }
+
+        TextRender()->TextColor(TextColor);
+        Ui()->DoScrollbarOption(&g_Config.m_ClDummyPointerSize, &g_Config.m_ClDummyPointerSize, &SliderArea, Localize("Размер стрелки"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
+        if(Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f)) { const int P = str_toint(s_DummySizeInput.GetString()); if(P >= 1 && P <= 50) g_Config.m_ClDummyPointerSize = P; }
+
+        auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
+            Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
+            CUIRect IndentedRow = Row; IndentedRow.x += Indent; IndentedRow.w -= Indent;
+            CUIRect SliderArea, EditArea; IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+            bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
+            if(!EditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", ConfigVal); Input.Set(aTmp); }
+
+            TextRender()->TextColor(TextColor);
+            Ui()->DoScrollbarOption(pId, &ConfigVal, &SliderArea, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
+            if(Ui()->DoEditBox(&Input, &EditArea, 14.0f)) { const int P = str_toint(Input.GetString()); if(P >= 0 && P <= 255) ConfigVal = P; }
+        };
+
+        static CLineInputBuffered<8> s_DummyRInput, s_DummyGInput, s_DummyBInput;
+        DoColorSlider(Localize("R (красный)"), g_Config.m_ClDummyPointerColorR, &g_Config.m_ClDummyPointerColorR, s_DummyRInput);
+        DoColorSlider(Localize("G (зелёный)"), g_Config.m_ClDummyPointerColorG, &g_Config.m_ClDummyPointerColorG, s_DummyGInput);
+        DoColorSlider(Localize("B (синий)"),   g_Config.m_ClDummyPointerColorB, &g_Config.m_ClDummyPointerColorB, s_DummyBInput);
+
+        Main.HSplitTop(10.0f, nullptr, &Main); Main.HSplitTop(40.0f, &Row, &Main);
+        CUIRect PreviewRect = Row; PreviewRect.x += Indent; PreviewRect.w = 80.0f;
+        ColorRGBA PreviewColor(g_Config.m_ClDummyPointerColorR / 255.0f, g_Config.m_ClDummyPointerColorG / 255.0f, g_Config.m_ClDummyPointerColorB / 255.0f, 1.0f);
+        PreviewRect.Draw(PreviewColor, IGraphics::CORNER_ALL, 6.0f);
+
+        CUIRect LabelRect = Row; LabelRect.x += Indent + 90.0f; LabelRect.w -= Indent + 90.0f;
+        TextRender()->TextColor(TextColor);
+        Ui()->DoLabel(&LabelRect, Localize("Цвет стрелки"), 14.0f, TEXTALIGN_ML);
+    }
+
+    Main.HSplitTop(10.0f, nullptr, &Main);
+
+    // ── Настройка эмодзи ──
 	Main.HSplitTop(20.0f, &Row, &Main);
+	static bool s_EmojiSettings = false;
 	TextRender()->TextColor(TextColor);
-	if(DoButton_CheckBox(&g_Config.m_ClAutoMute, Localize("Авто мьют"), g_Config.m_ClAutoMute, &Row))
-		g_Config.m_ClAutoMute ^= 1;
+	if(DoButton_CheckBox(&s_EmojiSettings, Localize("Настройка эмодзи"), s_EmojiSettings, &Row))
+	    s_EmojiSettings ^= 1;
 
-	if(g_Config.m_ClAutoMute)
-	{
-		const float Indent = 20.0f;
-
-		// Кол-во сообщений до мьюта
-		static CLineInputBuffered<8> s_MuteTimesInput;
-
-		Main.HSplitTop(5.0f, nullptr, &Main);
-		Main.HSplitTop(20.0f, &Row, &Main);
-		CUIRect IndentedRow = Row;
-		IndentedRow.x += Indent;
-		IndentedRow.w -= Indent;
-
-		CUIRect SliderArea, EditArea;
-		IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
-
-		bool MuteTimesEditActive = Ui()->HotItem() == &s_MuteTimesInput || Ui()->ActiveItem() == &s_MuteTimesInput;
-		if(!MuteTimesEditActive)
-		{
-			char aTmp[8];
-			str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteTimes);
-			s_MuteTimesInput.Set(aTmp);
-		}
-
-		TextRender()->TextColor(TextColor);
-		Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteTimes, &g_Config.m_ClAutoMuteTimes,
-			&SliderArea, Localize("Кол-во сообщений до мьюта"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
-
-		if(Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f))
-		{
-			const int P = str_toint(s_MuteTimesInput.GetString());
-			if(P >= 1 && P <= 20)
-				g_Config.m_ClAutoMuteTimes = P;
-		}
-
-		// Время мьюта
-		static CLineInputBuffered<8> s_MuteTimeInput;
-
-		Main.HSplitTop(5.0f, nullptr, &Main);
-		Main.HSplitTop(20.0f, &Row, &Main);
-		IndentedRow = Row;
-		IndentedRow.x += Indent;
-		IndentedRow.w -= Indent;
-
-		CUIRect SliderArea2, EditArea2;
-		IndentedRow.VSplitRight(50.0f, &SliderArea2, &EditArea2);
-
-		bool MuteTimeEditActive = Ui()->HotItem() == &s_MuteTimeInput || Ui()->ActiveItem() == &s_MuteTimeInput;
-		if(!MuteTimeEditActive)
-		{
-			char aTmp[8];
-			str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteVremya);
-			s_MuteTimeInput.Set(aTmp);
-		}
-
-		TextRender()->TextColor(TextColor);
-		Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteVremya, &g_Config.m_ClAutoMuteVremya,
-			&SliderArea2, Localize("Время за которое выдаётся мьют (сек)"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
-
-		if(Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f))
-		{
-			const int P = str_toint(s_MuteTimeInput.GetString());
-			if(P >= 5 && P <= 300)
-				g_Config.m_ClAutoMuteVremya = P;
-		}
-	}
-
-	Main.HSplitTop(5.0f, nullptr, &Main);
-
-	// ── Авто перевод ──
-	Main.HSplitTop(20.0f, &Row, &Main);
-	TextRender()->TextColor(TextColor);
-	if(DoButton_CheckBox(&g_Config.m_ClAutoTranslate, Localize("Авто перевод"), g_Config.m_ClAutoTranslate, &Row))
-		g_Config.m_ClAutoTranslate ^= 1;
-
-	Main.HSplitTop(5.0f, nullptr, &Main);
-
-	// ── ИИ ассистент ──
-	Main.HSplitTop(20.0f, &Row, &Main);
-	static bool s_VoiceActiveId = false;
-	bool VoiceActive = GameClient()->m_VoiceAssistant.IsActive();
-	TextRender()->TextColor(TextColor);
-	if(DoButton_CheckBox(&s_VoiceActiveId, Localize("ИИ ассистент"), VoiceActive, &Row))
-		GameClient()->m_VoiceAssistant.Toggle();
-
-	Main.HSplitTop(10.0f, nullptr, &Main);
-
-	// ── Показатель дамми ──
-	Main.HSplitTop(20.0f, &Row, &Main);
-	TextRender()->TextColor(TextColor);
-	if(DoButton_CheckBox(&g_Config.m_ClDummyPointer, Localize("Показатель дамми"), g_Config.m_ClDummyPointer, &Row))
-		g_Config.m_ClDummyPointer ^= 1;
-
-	if(g_Config.m_ClDummyPointer)
+	if(s_EmojiSettings)
 	{
 	    const float Indent = 20.0f;
-
-	    // Размер стрелки
-	    static CLineInputBuffered<8> s_DummySizeInput;
-
 	    Main.HSplitTop(5.0f, nullptr, &Main);
-	    Main.HSplitTop(20.0f, &Row, &Main);
-	    CUIRect IndentedRow = Row;
-	    IndentedRow.x += Indent;
-	    IndentedRow.w -= Indent;
 
-	    CUIRect SliderArea, EditArea;
-	    IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
-
-	    bool SizeEditActive = Ui()->HotItem() == &s_DummySizeInput || Ui()->ActiveItem() == &s_DummySizeInput;
-	    if(!SizeEditActive)
-	    {
-	        char aTmp[8];
-	        str_format(aTmp, 8, "%d", g_Config.m_ClDummyPointerSize);
-	        s_DummySizeInput.Set(aTmp);
+	    // 1. Читаем файл (локальный кэш)
+	    static std::map<std::string, std::string> s_LocalSmilesDB;
+	    static bool s_SmilesLoaded = false;
+	
+	    if (!s_SmilesLoaded) {
+	        std::ifstream infile("data/smiles_db.txt");
+	        std::string line;
+	        while (std::getline(infile, line)) {
+	            size_t eq_pos = line.find('=');
+	            if (eq_pos != std::string::npos) {
+	                s_LocalSmilesDB[line.substr(0, eq_pos)] = line.substr(eq_pos + 1);
+	            }
+	        }
+	        infile.close();
+	        s_SmilesLoaded = true;
 	    }
 
-	    TextRender()->TextColor(TextColor);
-	    Ui()->DoScrollbarOption(&g_Config.m_ClDummyPointerSize, &g_Config.m_ClDummyPointerSize,
-	        &SliderArea, Localize("Размер стрелки"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
+	    // Хранилище кнопок удаления и переменная для отложенного удаления
+	    static std::map<std::string, CButtonContainer> s_DelBtns;
+	    std::string keyToDelete = "";
 
-	    if(Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f))
-	    {
-	        const int P = str_toint(s_DummySizeInput.GetString());
-	        if(P >= 1 && P <= 50)
-	            g_Config.m_ClDummyPointerSize = P;
-	    }
-
-	    // Лямбда для цветовых слайдеров
-	    auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
-	        Main.HSplitTop(5.0f, nullptr, &Main);
+	    // 2. Выводим список текущих смайлов
+	    for (const auto& pair : s_LocalSmilesDB) {
 	        Main.HSplitTop(20.0f, &Row, &Main);
 	        CUIRect IndentedRow = Row;
 	        IndentedRow.x += Indent;
 	        IndentedRow.w -= Indent;
 
-	        CUIRect SliderArea, EditArea;
-	        IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
-
-	        bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
-	        if(!EditActive)
-	        {
-	            char aTmp[8];
-	            str_format(aTmp, 8, "%d", ConfigVal);
-	            Input.Set(aTmp);
-	        }
+	        CUIRect KeyRect, ValRect, DelBtnRect;
+	        IndentedRow.VSplitLeft(100.0f, &KeyRect, &IndentedRow);
+	        IndentedRow.VSplitLeft(10.0f, nullptr, &IndentedRow);
+	        IndentedRow.VSplitLeft(150.0f, &ValRect, &IndentedRow);
+	        IndentedRow.VSplitLeft(10.0f, nullptr, &IndentedRow);
+	        IndentedRow.VSplitLeft(20.0f, &DelBtnRect, &IndentedRow);
 
 	        TextRender()->TextColor(TextColor);
-	        Ui()->DoScrollbarOption(pId, &ConfigVal,
-	            &SliderArea, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
+	        Ui()->DoLabel(&KeyRect, pair.first.c_str(), 14.0f, TEXTALIGN_ML);
+	        Ui()->DoLabel(&ValRect, pair.second.c_str(), 14.0f, TEXTALIGN_ML);
 
-	        if(Ui()->DoEditBox(&Input, &EditArea, 14.0f))
-	        {
-	            const int P = str_toint(Input.GetString());
-	            if(P >= 0 && P <= 255)
-	                ConfigVal = P;
+	        // Невидимая кнопка для логики нажатия
+	        if(DoButton_Menu(&s_DelBtns[pair.first], "", 0, &DelBtnRect)) {
+	            keyToDelete = pair.first;
 	        }
-	    };
+		
+	        // Рисуем иконку корзины
+	        Graphics()->TextureSet(m_SmileKorzina);
+	        Graphics()->QuadsBegin();
+	        Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+	        IGraphics::CQuadItem QuadItemDel(DelBtnRect.x, DelBtnRect.y, DelBtnRect.w, DelBtnRect.h);
+	        Graphics()->QuadsDrawTL(&QuadItemDel, 1);
+	        Graphics()->QuadsEnd();
 
-	    static CLineInputBuffered<8> s_DummyRInput;
-	    static CLineInputBuffered<8> s_DummyGInput;
-	    static CLineInputBuffered<8> s_DummyBInput;
+	        Main.HSplitTop(2.0f, nullptr, &Main);
+	    }
 
-	    DoColorSlider(Localize("R (красный)"), g_Config.m_ClDummyPointerColorR, &g_Config.m_ClDummyPointerColorR, s_DummyRInput);
-	    DoColorSlider(Localize("G (зелёный)"), g_Config.m_ClDummyPointerColorG, &g_Config.m_ClDummyPointerColorG, s_DummyGInput);
-	    DoColorSlider(Localize("B (синий)"),   g_Config.m_ClDummyPointerColorB, &g_Config.m_ClDummyPointerColorB, s_DummyBInput);
+	    // Удаляем элемент, если нажали корзину
+	    if (!keyToDelete.empty()) {
+	        s_LocalSmilesDB.erase(keyToDelete);
+	        std::ofstream outfile("data/smiles_db.txt");
+	        for (const auto& p : s_LocalSmilesDB) {
+	            outfile << p.first << "=" << p.second << "\n";
+	        }
+	        outfile.close();
+	        GameClient()->m_Chat.LoadSmilesDB();
+	    }
 
-	    // Превью цвета
 	    Main.HSplitTop(10.0f, nullptr, &Main);
-	    Main.HSplitTop(40.0f, &Row, &Main);
-	    CUIRect PreviewRect = Row;
-	    PreviewRect.x += Indent;
-	    PreviewRect.w = 80.0f;
 
-	    ColorRGBA PreviewColor(
-	        g_Config.m_ClDummyPointerColorR / 255.0f,
-	        g_Config.m_ClDummyPointerColorG / 255.0f,
-	        g_Config.m_ClDummyPointerColorB / 255.0f,
-	        1.0f);
-	    PreviewRect.Draw(PreviewColor, IGraphics::CORNER_ALL, 6.0f);
+	    // 3. Форма добавления (ключ, значение, кнопка плюс)
+	    Main.HSplitTop(20.0f, &Row, &Main);
+	    CUIRect IndentedRow = Row;
+	    IndentedRow.x += Indent;
+	    IndentedRow.w -= Indent;
 
-	    CUIRect LabelRect = Row;
-	    LabelRect.x += Indent + 90.0f;
-	    LabelRect.w -= Indent + 90.0f;
-	    TextRender()->TextColor(TextColor);
-	    Ui()->DoLabel(&LabelRect, Localize("Цвет стрелки"), 14.0f, TEXTALIGN_ML);
+	    CUIRect InputCodeRect, InputValRect, AddBtnRect;
+	    IndentedRow.VSplitLeft(100.0f, &InputCodeRect, &IndentedRow);
+	    IndentedRow.VSplitLeft(10.0f, nullptr, &IndentedRow);
+	    IndentedRow.VSplitLeft(150.0f, &InputValRect, &IndentedRow);
+	    IndentedRow.VSplitLeft(10.0f, nullptr, &IndentedRow);
+	    IndentedRow.VSplitLeft(20.0f, &AddBtnRect, &IndentedRow);
+
+	    static CLineInputBuffered<32> s_SmileCodeInput; 
+	    static CLineInputBuffered<64> s_SmileValInput;  
+
+	    Ui()->DoEditBox(&s_SmileCodeInput, &InputCodeRect, 14.0f);
+	    Ui()->DoEditBox(&s_SmileValInput, &InputValRect, 14.0f);
+
+	    static CButtonContainer s_AddBtn;
+	    if(DoButton_Menu(&s_AddBtn, "", 0, &AddBtnRect))
+	    {
+	        std::string code = s_SmileCodeInput.GetString();
+	        std::string val = s_SmileValInput.GetString();
+
+	        if(!code.empty() && !val.empty())
+	        {
+	            s_LocalSmilesDB[code] = val;
+	            std::ofstream outfile("data/smiles_db.txt");
+	            for (const auto& p : s_LocalSmilesDB) {
+	                outfile << p.first << "=" << p.second << "\n";
+	            }
+	            outfile.close();
+	            GameClient()->m_Chat.LoadSmilesDB();
+			
+	            s_SmileCodeInput.Clear();
+	            s_SmileValInput.Clear();
+	        }
+	    }
+
+	    // Рисуем иконку плюса
+	    Graphics()->TextureSet(m_SmilePlus);
+	    Graphics()->QuadsBegin();
+	    Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+	    IGraphics::CQuadItem QuadItemAdd(AddBtnRect.x, AddBtnRect.y, AddBtnRect.w, AddBtnRect.h);
+	    Graphics()->QuadsDrawTL(&QuadItemAdd, 1);
+	    Graphics()->QuadsEnd();
 	}
 
-	TextRender()->TextColor(TextRender()->DefaultTextColor());
+    TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
 
 void CMenus::TerminalExecuteCommand()
@@ -1519,6 +1635,12 @@ void CMenus::OnInit()
 	// ── [BongureClient] Загрузка иконки Bongure Settings ─────────────
 	m_BongureSettingsTexture = Graphics()->LoadTexture(
     	"bongure_images/bongure_settings.png", IStorage::TYPE_ALL);
+
+	m_SmileKorzina = Graphics()->LoadTexture(
+		"bongure_images/smile_korzina.png", IStorage::TYPE_ALL);
+
+	m_SmilePlus = Graphics()->LoadTexture(
+		"bongure_images/smile_plus.png", IStorage::TYPE_ALL);
 	// ──────────────────────────────────────────────────────────────────
 	
 	if(g_Config.m_ClShowWelcome)

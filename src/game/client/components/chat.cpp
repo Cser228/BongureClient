@@ -38,6 +38,8 @@
 #include <mutex>
 #include <atomic>
 #include <regex>
+#include <map>
+#include <fstream>
 
 std::mutex auto_translate_data_mutex;
 std::atomic<bool> auto_translate_update {false};
@@ -410,6 +412,30 @@ CChat::CChat()
 	});
 }
 
+void CChat::LoadSmilesDB()
+{
+    // 1. Сначала очищаем старые данные
+    smile_db.clear(); 
+
+    // 2. Читаем файл
+    std::ifstream In("data/smiles_db.txt");
+    if (!In.is_open())
+        return;
+
+    std::string line;
+    while (std::getline(In, line))
+    {
+        size_t pos = line.find("=");
+        if (pos != std::string::npos)
+        {
+            std::string key = line.substr(0, pos);
+            std::string val = line.substr(pos + 1);
+            smile_db[key] = val;
+        }
+    }
+    In.close();
+}
+
 void CChat::ConTranslate(IConsole::IResult *pResult, void *pUserData)
 {
     CChat *pChat = (CChat *)pUserData;
@@ -705,6 +731,13 @@ void CChat::OnConsoleInit()
 
 void CChat::OnInit()
 {
+	LoadSmilesDB();
+	smile_window_open = false;
+	smile_string = "";
+	smile_texts_y = 0.0f;
+	smile_show = "";
+	smile_window_offset = 0;
+
 	std::thread(translate_thread, this).detach();
 	Reset();
 	Console()->Chain("cl_chat_old", ConchainChatOld, this);
@@ -750,6 +783,13 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 	}
 	if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_TAB)
 	{
+		if (smile_window_open) {
+			m_PlaceholderLength = smile_show.length();
+			m_Input.Set(smile_show.c_str());
+			m_Input.SetCursorOffset(m_PlaceholderOffset + m_PlaceholderLength);
+			m_CompletionUsed = true;
+		}
+
 		const bool ShiftPressed = Input()->ShiftIsPressed();
 
 		// fill the completion buffer
@@ -976,6 +1016,22 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 
 	if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_UP)
 	{
+		if (smile_window_open) {
+			std::string smile_string_last = "";
+
+			for (const auto& [key, value] : smile_db) {
+				if (key.starts_with(smile_string)) {
+					if (key == smile_show && smile_string_last != "") {
+						smile_show = smile_string_last;
+						if (smile_window_offset > 0) smile_window_offset--;
+						break;
+					}
+
+					smile_string_last = key;
+				}
+			}
+		}
+
 		if(m_EditingNewLine)
 		{
 			str_copy(m_aCurrentInputText, m_Input.GetString());
@@ -997,6 +1053,26 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 	}
 	else if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_DOWN)
 	{
+		if (smile_window_open) {
+			bool next_ = false;
+			unsigned short i = 0;
+
+			for (const auto& [key, value] : smile_db) {
+				if (key.starts_with(smile_string)) {
+					i++;
+
+					if (next_) {
+						smile_show = key;
+
+						if (i > 7) smile_window_offset++;
+						break;
+					}
+
+					if (key == smile_show) next_ = true;
+				}
+			}
+		}
+
 		if(m_pHistoryEntry)
 			m_pHistoryEntry = m_History.Next(m_pHistoryEntry);
 
@@ -1837,6 +1913,38 @@ void CChat::OnRender()
 	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
 		return;
 
+	const char *pInput = m_Input.GetString();
+    int CursorOffset = m_Input.GetCursorOffset();
+
+	smile_window_open = false;
+
+	if (CursorOffset > 0) {
+		// 1. Ищем начало текущего слова (идем назад до первого пробела или начала строки)
+		int word_start = CursorOffset - 1;
+		while (word_start >= 0 && pInput[word_start] != ' ') {
+			word_start--;
+		}
+		word_start++; // Встаем на первый символ текущего слова
+
+		// 2. Проверяем, начинается ли текущее слово (перед курсором) с двоеточия
+		if (word_start < CursorOffset && pInput[word_start] == ':') {
+			
+			// 3. Считаем количество двоеточий в текущем слове
+			int colon_count = 0;
+			for (int i = word_start; i < CursorOffset; i++) {
+				if (pInput[i] == ':') {
+					colon_count++;
+				}
+			}
+			
+			// Если двоеточие одно (мы только начали вводить смайл), показываем окно
+			// Если их 2 и больше (например, ввели :smile:), скрываем окно
+			if (colon_count == 1) {
+				smile_window_open = true;
+			}
+		}
+	}
+
 	// send pending chat messages
 	if(m_PendingChatCounter > 0 && m_LastChatSend + time_freq() < time())
 	{
@@ -2048,6 +2156,91 @@ void CChat::OnRender()
 			TextRender()->RenderTextContainer(Line.m_TextContainerIndex, TextColor, TextOutlineColor, 0, (y + RealMsgPaddingY / 2.0f + SlideOffset) - Line.m_TextYOffset);
 		}
 	}
+
+	if (smile_window_open)
+	{
+		// 1. Находим позицию двоеточия перед курсором
+		int colon_pos = CursorOffset - 1;
+		while (colon_pos >= 0 && pInput[colon_pos] != ':') {
+			colon_pos--;
+		}
+
+		// 2. Извлекаем строку ОДНИМ вызовом, начиная прямо с двоеточия
+		// Это автоматически включит ':' в начало строки! (например: ":smile")
+		if (colon_pos >= 0) {
+			smile_string = std::string(pInput + colon_pos, CursorOffset - colon_pos);
+		} else {
+			smile_string = ":"; // Запасной вариант
+		}
+
+		// Получаем виртуальные границы экрана чата
+		float x0, y0, x1, y1;
+		Graphics()->GetScreen(&x0, &y0, &x1, &y1);
+
+		float ScreenW = x1 - x0;
+		float ScreenH = y1 - y0;
+
+		float FrameW = 100.0f;
+		float FrameH = 80.0f;
+		float FrameX = 140.0f;
+
+		// Строка ввода в DDNet находится примерно за 90 единиц до низа экрана
+		float InputLineY = ScreenH - 25.0f;
+
+		// Окно — прямо НАД строкой ввода
+		float FrameY = InputLineY - FrameH - 2.0f;
+
+		// Полупрозрачный фон
+		Graphics()->BlendNormal();
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(0.2f, 0.2f, 0.2f, 0.8f);
+		IGraphics::CQuadItem QuadItem(FrameX, FrameY, FrameW, FrameH);
+		Graphics()->QuadsDrawTL(&QuadItem, 1);
+		Graphics()->QuadsEnd();
+
+		// Текст
+		float FontSize = 7.0f;
+
+		smile_texts_y = FrameY + 5.0f;
+		unsigned short howmanynow = 0;
+		unsigned short i = 0;
+
+		for (const auto& [key, value] : smile_db) {
+			if (key.starts_with(smile_string)) {
+				if (i < smile_window_offset) {
+					i++;
+					continue;
+				}
+
+				if (smile_show == "" || !smile_show.starts_with(smile_string)) {
+					smile_show = key;
+				}
+
+				if (howmanynow < 7) {
+					if (smile_show == key) {
+						TextRender()->TextColor(0.0f, 1.0f, 0.0f, 1.0f);
+						TextRender()->Text(FrameX + 5.0f, smile_texts_y, FontSize, key.c_str(), -1.0f);
+						TextRender()->TextColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+						TextRender()->Text(FrameX + FrameW - 10.0f, smile_texts_y, FontSize, value.c_str(), -1.0f);
+						TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+					}
+					else {
+						TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+						TextRender()->Text(FrameX + 5.0f, smile_texts_y, FontSize, key.c_str(), -1.0f);
+						TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+						TextRender()->Text(FrameX + FrameW - 10.0f, smile_texts_y, FontSize, value.c_str(), -1.0f);
+						TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+					}
+
+					smile_texts_y += 10.0f;
+					howmanynow++;
+				}
+			}
+		}
+	}
 }
 
 void CChat::EnsureCoherentFontSize() const
@@ -2203,10 +2396,24 @@ void CChat::SendChat(int Team, const char *pLine)
 		return;
 	}
 
+	std::string res_string;
+	std::string test_string(pLine);
+	std::vector<std::string> test_words = split(test_string, ' ');
+	for (size_t i = 0; i < test_words.size(); i++) {
+		if (smile_db.contains(test_words[i])) {
+			res_string += smile_db[test_words[i]];
+		}
+		else {
+			res_string += test_words[i];
+		}
+		res_string += ' ';
+	}
+	res_string[res_string.length()-1] = '\0';
+
 	// send chat message
 	CNetMsg_Cl_Say Msg;
 	Msg.m_Team = Team;
-	Msg.m_pMessage = pLine;
+	Msg.m_pMessage = res_string.c_str();
 	Client()->SendPackMsgActive(&Msg, MSGFLAG_VITAL);
 }
 

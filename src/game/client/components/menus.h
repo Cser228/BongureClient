@@ -55,6 +55,8 @@ public:
 	bool CheckUpdate();
 	bool m_ShowBongureSettings = false;
 	IGraphics::CTextureHandle m_BongureSettingsTexture;
+	IGraphics::CTextureHandle m_SmileKorzina;
+	IGraphics::CTextureHandle m_SmilePlus;
 	void RenderBongureSettings(CUIRect Screen);
 
 	int DoButton_Toggle(const void *pId, int Checked, const CUIRect *pRect, bool Active, unsigned Flags = BUTTONFLAG_LEFT);
