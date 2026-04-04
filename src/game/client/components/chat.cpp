@@ -747,8 +747,86 @@ void CChat::OnInit()
 
 bool CChat::OnInput(const IInput::CEvent &Event)
 {
-	if(m_Mode == MODE_NONE)
-		return false;
+	if(m_Mode == MODE_NONE) return false;
+
+	if (smile_window_open) {
+		//TAB
+		if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_TAB)
+		{
+			const char *pInput = m_Input.GetString();
+			int CursorOffset = m_Input.GetCursorOffset();
+
+			// 1. Ищем, где началось двоеточие текущего смайлика
+			int colon_pos = CursorOffset - 1;
+			while (colon_pos >= 0 && pInput[colon_pos] != ':') {
+				colon_pos--;
+			}
+
+			if (colon_pos >= 0) {
+				// Разрезаем строку на части
+				std::string before_colon(pInput, colon_pos); // Всё, что было до ':'
+				std::string after_cursor(pInput + CursorOffset); // Всё, что правее курсора
+
+				// Склеиваем: Начало + Смайлик + Пробел + Конец
+				std::string completed_smile = smile_db[smile_show];
+				std::string new_input = before_colon + completed_smile + " " + after_cursor;
+
+				m_Input.Set(new_input.c_str());
+				
+				// Ставим курсор сразу после смайлика и пробела
+				m_Input.SetCursorOffset(before_colon.length() + completed_smile.length() + 1);
+			}
+
+			// Закрываем окно смайлов после успешного автокомплита
+			smile_window_open = false; 
+			m_CompletionUsed = true;
+		}
+		//TAB
+
+		//UP
+		if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_UP)
+		{
+			std::string smile_string_last = "";
+
+			for (const auto& [key, value] : smile_db) {
+				if (key.starts_with(smile_string)) {
+					if (key == smile_show && smile_string_last != "") {
+						smile_show = smile_string_last;
+						if (smile_window_offset > 0) smile_window_offset--;
+						break;
+					}
+
+					smile_string_last = key;
+				}
+			}
+		}
+		//UP
+
+		//DOWN
+		if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_DOWN)
+		{
+			bool next_ = false;
+			unsigned short i = 0;
+
+			for (const auto& [key, value] : smile_db) {
+				if (key.starts_with(smile_string)) {
+					i++;
+
+					if (next_) {
+						smile_show = key;
+
+						if (i > 7) smile_window_offset++;
+						break;
+					}
+
+					if (key == smile_show) next_ = true;
+				}
+			}
+		}
+		//DOWN
+
+		return true;
+	}
 
 	if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE)
 	{
@@ -783,37 +861,6 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 	}
 	if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_TAB)
 	{
-		if (smile_window_open) {
-			const char *pInput = m_Input.GetString();
-			int CursorOffset = m_Input.GetCursorOffset();
-
-			// 1. Ищем, где началось двоеточие текущего смайлика
-			int colon_pos = CursorOffset - 1;
-			while (colon_pos >= 0 && pInput[colon_pos] != ':') {
-				colon_pos--;
-			}
-
-			if (colon_pos >= 0) {
-				// Разрезаем строку на части
-				std::string before_colon(pInput, colon_pos); // Всё, что было до ':'
-				std::string after_cursor(pInput + CursorOffset); // Всё, что правее курсора
-
-				// Склеиваем: Начало + Смайлик + Пробел + Конец
-				std::string completed_smile = smile_db[smile_show];
-				std::string new_input = before_colon + completed_smile + " " + after_cursor;
-
-				m_Input.Set(new_input.c_str());
-				
-				// Ставим курсор сразу после смайлика и пробела
-				m_Input.SetCursorOffset(before_colon.length() + completed_smile.length() + 1);
-			}
-
-			// Закрываем окно смайлов после успешного автокомплита
-			smile_window_open = false; 
-			m_CompletionUsed = true;
-			return true;
-		}
-
 		const bool ShiftPressed = Input()->ShiftIsPressed();
 
 		// fill the completion buffer
@@ -1040,22 +1087,6 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 
 	if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_UP)
 	{
-		if (smile_window_open) {
-			std::string smile_string_last = "";
-
-			for (const auto& [key, value] : smile_db) {
-				if (key.starts_with(smile_string)) {
-					if (key == smile_show && smile_string_last != "") {
-						smile_show = smile_string_last;
-						if (smile_window_offset > 0) smile_window_offset--;
-						break;
-					}
-
-					smile_string_last = key;
-				}
-			}
-		}
-
 		if(m_EditingNewLine)
 		{
 			str_copy(m_aCurrentInputText, m_Input.GetString());
