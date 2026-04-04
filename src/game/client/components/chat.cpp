@@ -763,6 +763,11 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 			}
 
 			if (colon_pos >= 0) {
+				if (smile_show.empty() || smile_db.find(smile_show) == smile_db.end()) {
+					smile_window_open = false;
+					return true;
+				}
+
 				// Разрезаем строку на части
 				std::string before_colon(pInput, colon_pos); // Всё, что было до ':'
 				std::string after_cursor(pInput + CursorOffset); // Всё, что правее курсора
@@ -780,6 +785,8 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 			// Закрываем окно смайлов после успешного автокомплита
 			smile_window_open = false; 
 			m_CompletionUsed = true;
+
+			return true;
 		}
 		//TAB
 
@@ -799,6 +806,8 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 					smile_string_last = key;
 				}
 			}
+
+			return true;
 		}
 		//UP
 
@@ -822,10 +831,10 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 					if (key == smile_show) next_ = true;
 				}
 			}
+
+			return true;
 		}
 		//DOWN
-
-		return true;
 	}
 
 	if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE)
@@ -2263,13 +2272,13 @@ void CChat::OnRender()
 
 		for (const auto& [key, value] : smile_db) {
 			if (key.starts_with(smile_string)) {
+				if (smile_show == "" || !smile_show.starts_with(smile_string)) {
+					smile_show = key;
+				}
+
 				if (i < smile_window_offset) {
 					i++;
 					continue;
-				}
-
-				if (smile_show == "" || !smile_show.starts_with(smile_string)) {
-					smile_show = key;
 				}
 
 				if (howmanynow < 7) {
