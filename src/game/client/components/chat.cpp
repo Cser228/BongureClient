@@ -337,16 +337,7 @@ void translate_thread(CChat* pChat) {
 
             curl_easy_cleanup(curl);
 
-            // ✅ проверка кириллицы по варианту 2 (первый байт)
-            bool mozhno = false;
-            for (size_t i = 0; i < fullTranslation.length(); i++) {
-                uint8_t b = (uint8_t)fullTranslation[i];
-                if (b == 0xD0 || b == 0xD1) { mozhno = true; break; }
-            }
-
-            if (mozhno) {
-                pChat->Echo(fullTranslation.c_str());
-            }
+            pChat->Echo(fullTranslation.c_str());
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -1205,25 +1196,42 @@ void CChat::OnMessage(int MsgType, void *pRawMsg)
     			}).base(), message.end());
 			}
 
-			std::vector<std::string> words = split(message, ' ');
+			std::string test_string_ = message;
 
-			bool babah = false;
+			for (int i = 0; i < MAX_CLIENTS; i++) {
+                if (GameClient()->m_aClients[i].m_Active) {
+                    std::string nick = GameClient()->m_aClients[i].m_aName;
+                    if (!nick.empty()) {
+                        size_t pos;
+                        while ((pos = test_string_.find(nick)) != std::string::npos) {
+                            test_string_.erase(pos, nick.length());
+                        }
+                    }
+                }
+            }
 
-			if (words[0][words[0].length()-1] == ':') babah = true;
-			if (words.size() == 1 && words[0].length() == 1) babah = true;
-			
-			bool mozhno = false;
+            test_string_.erase(std::remove_if(test_string_.begin(), test_string_.end(), [](unsigned char ch) {
+                return std::ispunct(ch);
+            }), test_string_.end());
 
-			for (size_t i = 0; i < words.size(); ++i) {
-				for (char c : words[i]) {
-        			if (english_letter_(c)) {
-						mozhno = true;
-						break;
-					}
-    			}
+			test_string_.erase(test_string_.begin(), std::find_if(test_string_.begin(), test_string_.end(), [](unsigned char ch) {
+                return !std::isspace(ch);
+            }));
+            test_string_.erase(std::find_if(test_string_.rbegin(), test_string_.rend(), [](unsigned char ch) {
+                return !std::isspace(ch);
+            }).base(), test_string_.end());
+
+			bool has_russian = false;
+            bool has_english = false;
+            
+            for (char c : test_string_) {
+                if (russian_letter_(c)) has_russian = true;
+                if (english_letter_(c)) has_english = true;
+            }
+
+			if (!has_russian && has_english) {
+				auto_translate_update = true;
 			}
-
-			if (!babah && mozhno) auto_translate_update = true;
 		}
 		
 		if(pMsg->m_ClientId >= 0 && pMsg->m_ClientId < MAX_CLIENTS)

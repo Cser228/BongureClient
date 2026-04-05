@@ -122,6 +122,8 @@ class CHud : public CComponent
 	static constexpr float MOVEMENT_INFORMATION_LINE_HEIGHT = 8.0f;
 
 public:
+	void RenderBongaDebugWindow();
+
 	CHud();
 	int Sizeof() const override { return sizeof(*this); }
 

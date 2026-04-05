@@ -25,35 +25,10 @@ CVoiceAssistant::~CVoiceAssistant()
 	OnShutdown();
 }
 
-void CVoiceAssistant::ConBongaVoice(IConsole::IResult *pResult, void *pUserData)
-{
-	CVoiceAssistant *pSelf = (CVoiceAssistant *)pUserData;
-
-	if(pResult->NumArguments() == 0)
-	{
-		char aBuf[64];
-		str_format(aBuf, sizeof(aBuf), "bonga_voice %d", pSelf->IsActive() ? 1 : 0);
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "bongure", aBuf);
-		return;
-	}
-
-	int Value = pResult->GetInteger(0);
-	if(Value == 1 && !pSelf->IsActive())
-		pSelf->Toggle();
-	else if(Value == 0 && pSelf->IsActive())
-		pSelf->Toggle();
-}
-
-void CVoiceAssistant::OnConsoleInit()
-{
-	Console()->Register(
-		"bonga_voice", "?i[enabled]", CFGFLAG_CLIENT,
-		ConBongaVoice, this,
-		"Enable/disable Bongure voice assistant (1/0)");
-}
-
 void CVoiceAssistant::OnInit()
 {
+	bonga_string = "";
+
 	vosk_set_log_level(-1);
 
 	const char *apPaths[] = {
@@ -137,6 +112,12 @@ void CVoiceAssistant::Toggle()
 
 void CVoiceAssistant::OnRender()
 {
+	// Синхронизация с конфигом
+	if(g_Config.m_ClBongaVoice && !m_Active.load() && m_Initialized)
+		Toggle();
+	else if(!g_Config.m_ClBongaVoice && m_Active.load())
+		Toggle();
+
 	if(!m_Active.load())
 		return;
 
@@ -177,39 +158,78 @@ void CVoiceAssistant::OnShutdown()
 	m_Initialized = false;
 }
 
+std::string CVoiceAssistant::TruncateUtf8(const std::string &Text, size_t MaxChars) const
+{
+    size_t Chars = 0;
+    size_t i = 0;
+    while(i < Text.size() && Chars < MaxChars)
+    {
+        unsigned char c = (unsigned char)Text[i];
+        if(c < 0x80)        i += 1; // ASCII
+        else if(c < 0xE0)   i += 2; // 2-байтовый (русский)
+        else if(c < 0xF0)   i += 3; // 3-байтовый
+        else                i += 4; // 4-байтовый
+        Chars++;
+    }
+    return Text.substr(0, i);
+}
+
 void CVoiceAssistant::Run()
 {
-	const int BufSize = 8000;
-	char aBuffer[BufSize];
+    const int BufSize = 8000;
+    char aBuffer[BufSize];
 
-	while(m_Running.load())
-	{
-		unsigned int Queued = SDL_GetQueuedAudioSize(m_AudioDevice);
-		if(Queued >= (unsigned int)BufSize)
-		{
-			unsigned int Read = SDL_DequeueAudio(m_AudioDevice, aBuffer, BufSize);
-			if(Read > 0)
-			{
-				int Final = vosk_recognizer_accept_waveform(m_pRecognizer, aBuffer, (int)Read);
-				if(Final)
-				{
-					const char *pJson = vosk_recognizer_result(m_pRecognizer);
-					std::string Text = ParseJsonText(pJson);
-					if(!Text.empty())
-						ProcessText(Text);
-				}
-			}
-		}
-		else
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(30));
-		}
-	}
+    while(m_Running.load())
+    {
+        unsigned int Queued = SDL_GetQueuedAudioSize(m_AudioDevice);
+        if(Queued >= (unsigned int)BufSize)
+        {
+            unsigned int Read = SDL_DequeueAudio(m_AudioDevice, aBuffer, BufSize);
+            if(Read > 0)
+            {
+                int Final = vosk_recognizer_accept_waveform(m_pRecognizer, aBuffer, (int)Read);
 
-	const char *pFinal = vosk_recognizer_final_result(m_pRecognizer);
-	std::string Last = ParseJsonText(pFinal);
-	if(!Last.empty())
-		ProcessText(Last);
+                const char *pJson = nullptr;
+                if(Final)
+                    pJson = vosk_recognizer_result(m_pRecognizer);
+                else
+                    pJson = vosk_recognizer_partial_result(m_pRecognizer);
+
+                std::string Text = ParseJsonText(pJson);
+                if(!Text.empty())
+                {
+                    {
+                        std::lock_guard<std::mutex> Lock(m_Mutex);
+                        if (Text.length() > 27) {
+							bonga_string = TruncateUtf8(Text, 27);
+						}
+						else {
+							bonga_string = Text;
+						}
+                    }
+                    if(Final) ProcessText(Text);
+                }
+            }
+        }
+        else
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(30));
+        }
+    }
+
+    const char *pFinal = vosk_recognizer_final_result(m_pRecognizer);
+    std::string Last = ParseJsonText(pFinal);
+    if(!Last.empty())
+    {
+        std::lock_guard<std::mutex> Lock(m_Mutex);
+        if (Last.length() > 27) {
+			bonga_string = TruncateUtf8(Last, 27);
+		}
+		else {
+			bonga_string = Last;
+		}
+        ProcessText(Last);
+    }
 }
 
 std::string CVoiceAssistant::ParseJsonText(const char *pJson) const

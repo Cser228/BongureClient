@@ -155,6 +155,8 @@ bool CMenus::CheckUpdate() {
 	else {
 		return false;
 	}
+
+	return false;
 }
 
 void CMenus::TerminalAddCommandToHistory(const char *pCommand)
@@ -359,13 +361,11 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 
     Main.HSplitTop(5.0f, nullptr, &Main);
 
-    // ── ИИ ассистент ──
+    // Бонга
     Main.HSplitTop(20.0f, &Row, &Main);
-    static bool s_VoiceActiveId = false;
-    bool VoiceActive = GameClient()->m_VoiceAssistant.IsActive();
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&s_VoiceActiveId, Localize("ИИ ассистент"), VoiceActive, &Row))
-        GameClient()->m_VoiceAssistant.Toggle();
+    if(DoButton_CheckBox(&g_Config.m_ClBongaVoice, Localize("Бонга"), g_Config.m_ClBongaVoice, &Row))
+        g_Config.m_ClBongaVoice ^= 1;
 
     Main.HSplitTop(10.0f, nullptr, &Main);
 
@@ -558,6 +558,14 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 	    Graphics()->QuadsDrawTL(&QuadItemAdd, 1);
 	    Graphics()->QuadsEnd();
 	}
+
+	// Дебаг бонги
+    Main.HSplitTop(20.0f, &Row, &Main);
+    TextRender()->TextColor(TextColor);
+    if(DoButton_CheckBox(&g_Config.m_ClBongaDebug, Localize("Дебаг бонги"), g_Config.m_ClBongaDebug, &Row))
+        g_Config.m_ClBongaDebug ^= 1;
+
+    Main.HSplitTop(10.0f, nullptr, &Main);
 
     TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
@@ -1932,7 +1940,7 @@ void CMenus::Render()
 	case IClient::STATE_OFFLINE:
 		if(m_Popup != POPUP_NONE)
 		{
-			m_Popup = POPUP_NONE;
+			RenderPopupFullscreen(Screen);
 		}
 		else if(m_ShowStart)
 		{

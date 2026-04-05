@@ -2256,6 +2256,33 @@ void CHud::OnNewSnapshot()
 	}
 }
 
+void CHud::RenderBongaDebugWindow() {
+	float x0, y0, x1, y1;
+	Graphics()->GetScreen(&x0, &y0, &x1, &y1);
+	float ScreenW = x1 - x0;
+	float ScreenH = y1 - y0;
+	float FrameW = 110.0f;
+	float FrameH = 15.0f;
+	float FrameX = 40.0f;
+	float FrameY = 5.0f;
+
+	Graphics()->BlendNormal();
+	Graphics()->TextureClear();
+	Graphics()->QuadsBegin();
+	Graphics()->SetColor(0.2f, 0.2f, 0.2f, 0.9f);
+	IGraphics::CQuadItem QuadItem(FrameX, FrameY, FrameW, FrameH);
+	Graphics()->QuadsDrawTL(&QuadItem, 1);
+	Graphics()->QuadsEnd();
+
+	float FontSize = 7.0f;
+
+	if (GameClient()->m_VoiceAssistant.bonga_string != "") {
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+		TextRender()->Text(FrameX + 5.0f, FrameY + 5.0f, FontSize, GameClient()->m_VoiceAssistant.bonga_string.c_str(), -1.0f);
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+}
+
 void CHud::OnRender()
 {
 	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
@@ -2329,6 +2356,11 @@ void CHud::OnRender()
 			RenderRecord();
 	}
 	RenderCursor();
+
+	if (g_Config.m_ClBongaDebug) {
+		Graphics()->MapScreen(0.0f, 0.0f, m_Width, m_Height);
+		RenderBongaDebugWindow();
+	}
 }
 
 void CHud::OnMessage(int MsgType, void *pRawMsg)

@@ -21,13 +21,14 @@ public:
 	virtual ~CVoiceAssistant();
 
 	virtual int Sizeof() const override { return sizeof(*this); }
-	virtual void OnConsoleInit() override;
 	virtual void OnInit() override;
 	virtual void OnRender() override;
 	virtual void OnShutdown() override;
 
 	void Toggle();
 	bool IsActive() const { return m_Active.load(); }
+	std::string bonga_string;
+	std::string TruncateUtf8(const std::string &Text, size_t MaxChars) const;
 
 private:
 	VoskModel *m_pModel;
@@ -57,8 +58,6 @@ private:
 	std::string ExtractCommand(const std::string &Text, bool *pCaps = nullptr) const;
 	std::string ToUpperCase(const std::string &Text) const;
 	void QueueChat(const std::string &Msg);
-
-	static void ConBongaVoice(IConsole::IResult *pResult, void *pUserData);
 };
 
 #endif

@@ -13,7 +13,7 @@ For build download Visual Studio, open src folder and visual studio will find CM
 ## Features
 
 * **Rushie Client**: full
-* **My functions**: chat command /unfinishsay, voice assistent bonga, f1 command bonga_voice
+* **My functions**: chat command /unfinishsay, voice assistent bonga, auto mute function, auto translate function, chat command /translate, dummy pointer, smile system.
 
 ## Community & Links
 
