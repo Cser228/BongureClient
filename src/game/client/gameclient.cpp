@@ -123,6 +123,7 @@ void CGameClient::OnConsoleInit()
 						  &m_VoiceAssistant,
 					      &m_Effects, // doesn't render anything, just updates effects
 					      &m_SkinProfiles, // TClient
+					      &m_RushieSettingsProfiles, // Rushie
 					      &m_Binds,
 					      &m_Binds.m_SpecialBinds,
 					      &m_Controls,
@@ -179,7 +180,9 @@ void CGameClient::OnConsoleInit()
 					      &m_TouchControls,
 					      &m_AdminPanelRi,
 					      &m_RiPlayerMenu,
+					      &m_RClientClickGui,
 					      &m_EdgeHelper,
+					      &m_MusicIsland,
 					      &m_Scoreboard,
 					      &m_Statboard,
 					      &m_Motd,
@@ -197,6 +200,7 @@ void CGameClient::OnConsoleInit()
 						  &m_Chat, // chat has higher prio, due to that you can quit it by pressing esc
 						  &m_AdminPanelRi,
 						  &m_RiPlayerMenu,
+						  &m_RClientClickGui,
 						  &m_Scoreboard,
 						  &m_Motd, // for pressing esc to remove it
 						  &m_Spectator,
@@ -205,6 +209,7 @@ void CGameClient::OnConsoleInit()
 						  &m_Emoticon,
 						  &m_ImportantAlert,
 						  &m_Menus,
+						  &m_MusicIsland,
 						  &m_Controls,
 						  &m_TouchControls,
 						  &m_Binds});

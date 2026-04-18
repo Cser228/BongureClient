@@ -1,6 +1,6 @@
 # Bongure Client
 
-**Bongure Client** is a fork of **Rushie Client (https://github.com/Rushie-Client/RushieClient-ddnet/)** with a my little functions.
+**Bongure Client** is a fork of **Rushie Client (https://github.com/Rushie-Client/RushieClient-ddnet/)** with a my functions.
 
 ## Installation
 
