@@ -4,11 +4,15 @@
 
 ## Installation
 
-For installation **Bongure Client** download a zip from **(https://github.com/Cser228/BongureClient/Releases)** and unzip this.
+For installation **Bongure Client** download a `tar.gz` file from **(https://github.com/Cser228/BongureClient/Releases)** and unarchive his.
 
 ## Build
 
-For build download Visual Studio, open src folder and visual studio will find CMakeLists.txt and you will need press button run for build
+If you on linux, you need to delete folder "build" (if she is exists), and run two commands:
+```bash
+cmake -Bbuild -GNinja
+cmake --build build
+```
 
 ## Features
 
