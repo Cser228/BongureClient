@@ -4152,21 +4152,16 @@ set(VOSK_MODEL_DIR "${PROJECT_SOURCE_DIR}/vosk-model-ru")
 
 if(EXISTS "${VOSK_DIR}/vosk_api.h")
     message(STATUS "Found Vosk in ${VOSK_DIR}")
+    
     target_include_directories(game-client PRIVATE "${VOSK_DIR}")
-    target_link_libraries(game-client "${VOSK_DIR}/libvosk.lib")
-
-    # Копируем ВСЕ DLL из папки vosk рядом с exe
-    file(GLOB VOSK_DLLS "${VOSK_DIR}/*.dll")
-    foreach(DLL_FILE ${VOSK_DLLS})
-        add_custom_command(TARGET game-client POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${DLL_FILE}"
-                "$<TARGET_FILE_DIR:game-client>"
-            COMMENT "Copying ${DLL_FILE}..."
-        )
-    endforeach()
-
-    # Копируем модель
+    target_link_libraries(game-client "${VOSK_DIR}/libvosk.so")
+    add_custom_command(TARGET game-client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${VOSK_DIR}/libvosk.so"
+            "$<TARGET_FILE_DIR:game-client>"
+        COMMENT "Copying libvosk.so to output directory..."
+    )
+    
     if(EXISTS "${VOSK_MODEL_DIR}")
         add_custom_command(TARGET game-client POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -4177,6 +4172,12 @@ if(EXISTS "${VOSK_DIR}/vosk_api.h")
     else()
         message(WARNING "Vosk model not found at ${VOSK_MODEL_DIR}")
     endif()
+    
+    set_target_properties(game-client PROPERTIES
+        INSTALL_RPATH "$ORIGIN"
+        BUILD_RPATH "$ORIGIN"
+    )
+    
 else()
     message(WARNING "Vosk not found in libs/vosk/")
 endif()

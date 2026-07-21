@@ -4741,6 +4741,15 @@ int SDL_main(int argc, char *argv2[])
 int main(int argc, const char **argv)
 #endif
 {
+	#ifdef __linux__
+		#ifdef SDL_HINT_VIDEO_DRIVER
+			SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "x11");
+		#else
+			SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11");
+		#endif
+		printf("INFO: Using X11 video driver (compatibility mode)\n");
+	#endif
+
 	const int64_t MainStart = time_get();
 
 #if defined(CONF_PLATFORM_ANDROID)

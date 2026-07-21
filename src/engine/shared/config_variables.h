@@ -57,6 +57,10 @@ MACRO_CONFIG_INT(ClDummyPointerColorG, bc_dummy_pointer_color_g, 255, 0, 255, CF
 MACRO_CONFIG_INT(ClDummyPointerColorB, bc_dummy_pointer_color_b, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color blue")
 //Dummy arrow
 
+//Edge info by 1 0
+MACRO_CONFIG_INT(ClEdgeInfoBc, bc_edgeinfo, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Rushie edge info only by toggle, its 1 0")
+//Edge info by 1 0
+
 // Auto-mute system
 MACRO_CONFIG_INT(ClAutoMute, bc_auto_mute, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players repeating the same message")
 MACRO_CONFIG_INT(ClAutoMuteTimes, bc_auto_mute_times, 3, 2, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "How many repeated messages before auto-mute")

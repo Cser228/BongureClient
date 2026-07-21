@@ -499,6 +499,14 @@ void CGameClient::OnInit()
 
 void CGameClient::OnUpdate()
 {
+	//Bongure Client BC_EDGEINFO
+	if (g_Config.m_ClEdgeInfoBc == 1 && m_EdgeHelper.IsActive() == false) {
+		m_EdgeHelper.SetActive(true);
+	}
+	else if (g_Config.m_ClEdgeInfoBc == 0 && m_EdgeHelper.IsActive() == true) {
+		m_EdgeHelper.SetActive(false);
+	}
+	
 	HandleLanguageChanged();
 
 	CUIElementBase::Init(Ui()); // update static pointer because game and editor use separate UI
