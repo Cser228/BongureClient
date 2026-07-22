@@ -20,6 +20,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <mutex>
+#include <queue>
 
 class CTranslateResponse
 {
@@ -221,6 +223,9 @@ class CChat : public CComponent
 	friend class CChatBubbles;
 
 public:
+	std::mutex m_TranslateMutex;
+	std::queue<std::string> m_vPendingTranslations;
+
 	void LoadSmilesDB();
 	std::map<std::string, std::string> smile_db;
 	bool smile_window_open;

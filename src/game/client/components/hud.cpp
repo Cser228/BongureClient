@@ -26,6 +26,7 @@
 #include <game/localization.h>
 
 #include <cmath>
+#include <cfloat>
 
 enum EVoiceDisplayState
 {
@@ -2338,8 +2339,6 @@ void CHud::OnNewSnapshot()
 void CHud::RenderBongaDebugWindow() {
 	float x0, y0, x1, y1;
 	Graphics()->GetScreen(&x0, &y0, &x1, &y1);
-	float ScreenW = x1 - x0;
-	float ScreenH = y1 - y0;
 	float FrameW = 110.0f;
 	float FrameH = 15.0f;
 	float FrameX = 40.0f;

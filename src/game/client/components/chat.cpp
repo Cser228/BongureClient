@@ -299,18 +299,16 @@ static bool english_letter_(const char &letter)
 }
 
 void translate_thread(CChat* pChat) {
-    curl_global_init(CURL_GLOBAL_DEFAULT); // ✅ только один раз
+    curl_global_init(CURL_GLOBAL_DEFAULT);
 
     while (true) {
         if (auto_translate_update) {
             auto_translate_update = false;
 
-            // ❌ убрать curl_global_init отсюда
-
             CURL* curl = curl_easy_init();
             if (!curl) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                continue; // ✅ не идём дальше с нулевым curl
+                continue;
             }
 
             std::vector<std::string> chunks;
@@ -337,7 +335,10 @@ void translate_thread(CChat* pChat) {
 
             curl_easy_cleanup(curl);
 
-            pChat->Echo(fullTranslation.c_str());
+			if (!fullTranslation.empty()) {
+				std::lock_guard<std::mutex> lock(pChat->m_TranslateMutex);
+				pChat->m_vPendingTranslations.push(fullTranslation);
+			}
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -2173,21 +2174,26 @@ void CChat::OnRender()
 	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
 		return;
 
+	{
+		std::lock_guard<std::mutex> Lock(m_TranslateMutex);
+		while(!m_vPendingTranslations.empty()) {
+			Echo(m_vPendingTranslations.front().c_str());
+			m_vPendingTranslations.pop();
+		}
+	}
+
 	const char *pInput = m_Input.GetString();
 	int CursorOffset = m_Input.GetCursorOffset();
 
-	// --- Логика определения открытия окна смайлов Bongure ---
 	smile_window_open = false;
 
 	if (CursorOffset > 0) {
-		// 1. Ищем начало текущего слова
 		int word_start = CursorOffset - 1;
 		while (word_start >= 0 && pInput[word_start] != ' ') {
 			word_start--;
 		}
 		word_start++; 
 
-		// 2. Проверяем двоеточие
 		if (word_start < CursorOffset && pInput[word_start] == ':') {
 			int colon_count = 0;
 			for (int i = word_start; i < CursorOffset; i++) {
@@ -2195,14 +2201,12 @@ void CChat::OnRender()
 					colon_count++;
 				}
 			}
-			// Окно открыто, если двоеточие только одно (начало ввода)
 			if (colon_count == 1) {
 				smile_window_open = true;
 			}
 		}
 	}
 
-	// Отправка отложенных сообщений
 	if(m_PendingChatCounter > 0 && m_LastChatSend + time_freq() < time())
 	{
 		CHistoryEntry *pEntry = m_History.Last();
@@ -2227,7 +2231,6 @@ void CChat::OnRender()
 	float ScaledFontSize = FontSize() * (8.0f / 6.0f);
 	if(m_Mode != MODE_NONE)
 	{
-		// Рендер ввода чата
 		CTextCursor InputCursor;
 		InputCursor.SetPosition(vec2(x, y));
 		InputCursor.m_FontSize = ScaledFontSize;
@@ -2277,16 +2280,13 @@ void CChat::OnRender()
 		m_Input.SetScrollOffset(ScrollOffset);
 		m_Input.SetScrollOffsetChange(ScrollOffsetChange);
 
-		// --- Подсказка автокомплита (Объединение Bongure и Rushie 3.0.0) ---
 		if(IsChatCommandPrefix(m_Input.GetString()[0]) && m_Input.GetString()[1] != '\0')
 		{
 			char aCommandStart[MAX_LINE_LENGTH];
-			// Используем транслитерацию из Rushie 3.0.0
 			TransliterateCommand(m_Input.GetString() + 1, aCommandStart, sizeof(aCommandStart));
 
 			bool FoundHint = false;
 
-			// 1. Проверяем клиентские команды Bongure
 			static const char *s_apClientCommands[] = {"unfinishsay", "translate"};
 			for(const auto *pCmd : s_apClientCommands)
 			{
@@ -2302,7 +2302,6 @@ void CChat::OnRender()
 				}
 			}
 
-			// 2. Проверяем серверные команды Rushie, если клиентская не найдена
 			if(!FoundHint && !m_vServerCommands.empty())
 			{
 				for(const auto &Command : m_vServerCommands)
@@ -2337,7 +2336,6 @@ void CChat::OnRender()
 
 	bool IsScoreBoardOpen = GameClient()->m_Scoreboard.IsActive() && (Graphics()->ScreenAspect() > 1.7f);
 
-	// --- Параметры интерактивного чата Rushie ---
 	const bool InteractiveChat = HasMouseCursor();
 	const bool ScrollbarEnabled = InteractiveChat && g_Config.m_RiChatScrollbar;
 	bool PopupOpen = HasMouseCursor() && Ui()->IsPopupOpen(&m_LinePopupContext);
@@ -2373,7 +2371,6 @@ void CChat::OnRender()
 		m_ScrollbarDragOffset = 0.0f;
 	}
 
-	// Подготовка строк к рендеру
 	struct CRenderableLine { int m_LineIndex; float m_Height; };
 	CRenderableLine aRenderableLines[MAX_LINES];
 	int RenderableLineCount = 0;
@@ -2386,7 +2383,6 @@ void CChat::OnRender()
 		aRenderableLines[RenderableLineCount++] = {LineIndex, Line.m_aYOffset[OffsetType]};
 	}
 
-	// Расчет скролла
 	int MaxScrollOffset = 0;
 	if(RenderableLineCount > 0)
 	{
@@ -2402,7 +2398,6 @@ void CChat::OnRender()
 	}
 	m_MessageScrollOffset = std::clamp(m_MessageScrollOffset, 0, MaxScrollOffset);
 
-	// Логика скроллбара
 	auto VisibleLineCount = [&](int ScrollOffset) {
 		float TestY = ChatBottom; int Count = 0;
 		for(int i = ScrollOffset; i < RenderableLineCount; ++i) {
@@ -2454,7 +2449,6 @@ void CChat::OnRender()
 		}
 	}
 
-	// Рендер самих сообщений
 	for(int i = m_MessageScrollOffset; i < RenderableLineCount; i++)
 	{
 		CLine &Line = m_aLines[aRenderableLines[i].m_LineIndex];
@@ -2479,7 +2473,6 @@ void CChat::OnRender()
 
 		if(Hovered && MouseReleased)
 		{
-			// Открытие контекстного меню Rushie
 			m_LinePopupContext.m_pChat = this;
 			m_LinePopupContext.m_LineIndex = aRenderableLines[i].m_LineIndex;
 			m_LinePopupContext.m_LineSerial = Line.m_Serial;
@@ -2487,7 +2480,6 @@ void CChat::OnRender()
 			PopupOpen = true;
 		}
 
-		// Рендер фона и текста (код остается как в твоем исходнике)
 		if(!g_Config.m_ClChatOld && Line.m_QuadContainerIndex != -1)
 		{
 			ColorRGBA BgColor = color_cast<ColorRGBA>(ColorHSLA(g_Config.m_ClChatBackgroundColor, true)).WithMultipliedAlpha(Blend);
@@ -2501,13 +2493,31 @@ void CChat::OnRender()
 
 		if(Line.m_TextContainerIndex.Valid())
 		{
+			if(!g_Config.m_ClChatOld && Line.m_pManagedTeeRenderInfo != nullptr)
+			{
+				CTeeRenderInfo &TeeRenderInfo = Line.m_pManagedTeeRenderInfo->TeeRenderInfo();
+				const int TeeSize = MessageTeeSize();
+				TeeRenderInfo.m_Size = TeeSize;
+				float RowHeight = FontSize() + RealMsgPaddingY;
+				float OffsetTeeY = TeeSize / 2.0f;
+				float FullHeightMinusTee = RowHeight - TeeSize;
+
+				const CAnimState *pIdleState = CAnimState::GetIdle();
+				vec2 OffsetToMid;
+				CRenderTools::GetRenderTeeOffsetToRenderedTee(pIdleState, &TeeRenderInfo, OffsetToMid);
+				vec2 TeeRenderPos(
+					x + (RealMsgPaddingX + TeeSize) / 2.0f,
+					y + OffsetTeeY + FullHeightMinusTee / 2.0f + OffsetToMid.y + SlideOffset
+				);
+				RenderTools()->RenderTee(pIdleState, &TeeRenderInfo, EMOTE_NORMAL, vec2(1, 0.1f), TeeRenderPos, Blend);
+			}
+
 			const ColorRGBA TextColor = TextRender()->DefaultTextColor().WithMultipliedAlpha(Blend);
 			const ColorRGBA TextOutlineColor = TextRender()->DefaultTextOutlineColor().WithMultipliedAlpha(Blend);
 			TextRender()->RenderTextContainer(Line.m_TextContainerIndex, TextColor, TextOutlineColor, 0, (y + RealMsgPaddingY / 2.0f + SlideOffset) - Line.m_TextYOffset);
 		}
 	}
 
-	// --- Рендер окна смайлов Bongure ---
 	if (smile_window_open)
 	{
 		int colon_pos = CursorOffset - 1;
@@ -2550,7 +2560,6 @@ void CChat::OnRender()
 		TextRender()->TextColor(TextRender()->DefaultTextColor());
 	}
 
-	// --- Рендер скроллбара и Попапов Rushie ---
 	if(ShowScrollbar && ScrollbarRail.h > 0.0f)
 	{
 		ScrollbarRail.Draw(ColorRGBA(1.0f, 1.0f, 1.0f, 0.18f), IGraphics::CORNER_ALL, ScrollbarRail.w / 2.0f);

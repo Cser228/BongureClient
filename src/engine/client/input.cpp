@@ -876,6 +876,26 @@ int CInput::Update()
 			break;
 		}
 	}
+	
+	{
+		const SDL_Keymod CurrentMod = SDL_GetModState();
+		if(!(CurrentMod & KMOD_LCTRL) && m_aCurrentKeyStates[KEY_LCTRL])
+			m_aCurrentKeyStates[KEY_LCTRL] = false;
+		if(!(CurrentMod & KMOD_RCTRL) && m_aCurrentKeyStates[KEY_RCTRL])
+			m_aCurrentKeyStates[KEY_RCTRL] = false;
+		if(!(CurrentMod & KMOD_LSHIFT) && m_aCurrentKeyStates[KEY_LSHIFT])
+			m_aCurrentKeyStates[KEY_LSHIFT] = false;
+		if(!(CurrentMod & KMOD_RSHIFT) && m_aCurrentKeyStates[KEY_RSHIFT])
+			m_aCurrentKeyStates[KEY_RSHIFT] = false;
+		if(!(CurrentMod & KMOD_LALT) && m_aCurrentKeyStates[KEY_LALT])
+			m_aCurrentKeyStates[KEY_LALT] = false;
+		if(!(CurrentMod & KMOD_RALT) && m_aCurrentKeyStates[KEY_RALT])
+			m_aCurrentKeyStates[KEY_RALT] = false;
+		if(!(CurrentMod & KMOD_LGUI) && m_aCurrentKeyStates[KEY_LGUI])
+			m_aCurrentKeyStates[KEY_LGUI] = false;
+		if(!(CurrentMod & KMOD_RGUI) && m_aCurrentKeyStates[KEY_RGUI])
+			m_aCurrentKeyStates[KEY_RGUI] = false;
+	}
 
 	return 0;
 }

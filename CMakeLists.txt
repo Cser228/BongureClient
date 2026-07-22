@@ -597,7 +597,11 @@ endif()
 if(NOT(TARGET_OS STREQUAL "android"))
   find_package(GLEW)
 endif()
-find_package(GTest)
+
+if(NOT MINGW AND NOT WIN32)
+	find_package(GTest)
+endif()
+
 if(UPNP)
   find_package(Miniupnpc)
 endif()
@@ -4154,13 +4158,29 @@ if(EXISTS "${VOSK_DIR}/vosk_api.h")
     message(STATUS "Found Vosk in ${VOSK_DIR}")
     
     target_include_directories(game-client PRIVATE "${VOSK_DIR}")
-    target_link_libraries(game-client "${VOSK_DIR}/libvosk.so")
-    add_custom_command(TARGET game-client POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${VOSK_DIR}/libvosk.so"
-            "$<TARGET_FILE_DIR:game-client>"
-        COMMENT "Copying libvosk.so to output directory..."
-    )
+    
+    if(MINGW OR WIN32)
+        # Для Windows используем .dll
+        target_link_libraries(game-client "${VOSK_DIR}/libvosk.dll")
+        add_custom_command(TARGET game-client POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VOSK_DIR}/libvosk.dll"
+                "${VOSK_DIR}/libgcc_s_seh-1.dll"
+                "${VOSK_DIR}/libstdc++-6.dll"
+                "${VOSK_DIR}/libwinpthread-1.dll"
+                "$<TARGET_FILE_DIR:game-client>"
+            COMMENT "Copying Vosk DLLs to output directory..."
+        )
+    else()
+        # Для Linux используем .so
+        target_link_libraries(game-client "${VOSK_DIR}/libvosk.so")
+        add_custom_command(TARGET game-client POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${VOSK_DIR}/libvosk.so"
+                "$<TARGET_FILE_DIR:game-client>"
+            COMMENT "Copying libvosk.so to output directory..."
+        )
+    endif()
     
     if(EXISTS "${VOSK_MODEL_DIR}")
         add_custom_command(TARGET game-client POST_BUILD
