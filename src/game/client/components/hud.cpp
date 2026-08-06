@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include <cfloat>
+#include <string>
 
 enum EVoiceDisplayState
 {
@@ -108,8 +109,6 @@ void CHud::RenderDummyIndicator()
 
     if(!m_HasLastDummyPos) return;
 
-    // Получаем реальные границы экрана в игровых координатах
-    // точно так же как делает RenderCursor
     const vec2 Center = GameClient()->m_Camera.m_Center;
     float aPoints[4];
     Graphics()->MapScreenToWorld(Center.x, Center.y, 100.0f, 100.0f, 100.0f, 0, 0, Graphics()->ScreenAspect(), GameClient()->m_Camera.m_Zoom, aPoints);
@@ -120,15 +119,13 @@ void CHud::RenderDummyIndicator()
     float WorldRight  = aPoints[2];
     float WorldBottom = aPoints[3];
 
-    // Проверяем — дамми внутри видимой области?
     if(m_LastDummyPos.x > WorldLeft  && m_LastDummyPos.x < WorldRight &&
        m_LastDummyPos.y > WorldTop   && m_LastDummyPos.y < WorldBottom)
-        return; // дамми на экране — стрелка не нужна
+        return;
 
     vec2 Dir     = m_LastDummyPos - Center;
     vec2 DirNorm = normalize(Dir);
 
-    // Переходим в HUD-координаты
     Graphics()->MapScreen(0.0f, 0.0f, m_Width, m_Height);
 
     vec2 HudCenter = vec2(m_Width / 2.0f, m_Height / 2.0f);
@@ -216,8 +213,309 @@ void CHud::OnReset()
 	ResetHudContainers();
 }
 
+void CHud::InitAllHudMap() {
+	CHud::all_hud_map["bonga_debug_window"] = {
+		.x = 40.0f,
+		.y = 5.0f,
+		.w = 110.0f,
+		.h = 15.0f,
+		.r = 0.2f,
+		.g = 0.2f,
+		.b = 0.2f,
+		.a = 0.9f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_jumps"] = {
+		.x = CHud::player_stats_jumps_x_standart,
+		.y = CHud::player_stats_jumps_y_standart,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_solo"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_endlessjump"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_endlesshook"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_jetpack"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_telegun"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_telegungrenade"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_telegunlaser"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_collisiondisabled"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_hookhitdisabled"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_hammerhitdisabled"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_grenadehitdisabled"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_shotgunhitdisabled"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_laserhitdisabled"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_lockmode"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_practicemode"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_team0mode"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_deepfrozen"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["player_stats_livefrozen"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = 12.0f,
+		.h = 12.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	CHud::all_hud_map["ninja_bar"] = {
+		.x = CHud::ninja_bar_x_standart,
+		.y = CHud::ninja_bar_y_standart,
+		.w = CHud::ninja_bar_w_standart,
+		.h = CHud::ninja_bar_h_standart,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["any_weapon"] = {
+		.x = CHud::any_weapon_x_standart,
+		.y = CHud::any_weapon_y_standart,
+		.w = CHud::pos_standart_none,
+		.h = CHud::pos_standart_none,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["health"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::health_y_standart,
+		.w = 10.0f,
+		.h = 10.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	//ТОЛЬКО ЦВЕТ | НАДО ПЕРЕСОЗДОВАТЬ КВАДЫ
+	CHud::all_hud_map["armor"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::armor_y_standart,
+		.w = 10.0f,
+		.h = 10.0f,
+		.r = 1.0f,
+		.g = 1.0f,
+		.b = 1.0f,
+		.a = 1.0f
+	};
+
+	CHud::all_hud_map["spectators_count"] = {
+		.x = CHud::pos_standart_none,
+		.y = CHud::pos_standart_none,
+		.w = CHud::pos_standart_none,
+		.h = CHud::spectators_count_h_standart,
+		.r = 0.0f,
+		.g = 0.0f,
+		.b = 0.0f,
+		.a = 0.4f
+	};
+}
+
 void CHud::OnInit()
 {
+	CHud::InitAllHudMap();
+
 	m_DummyArrowTexture = Graphics()->LoadTexture(
     	"bongure_images/dummy_arrow.png", IStorage::TYPE_ALL);
 	
@@ -1103,12 +1401,37 @@ void CHud::RenderAmmoHealthAndArmor(const CNetObj_Character *pCharacter)
 			{
 				const int Max = g_pData->m_Weapons.m_Ninja.m_Duration * Client()->GameTickSpeed() / 1000;
 				float NinjaProgress = std::clamp(pCharacter->m_AmmoCount - Client()->GameTick(g_Config.m_ClDummy), 0, Max) / (float)Max;
-				RenderNinjaBarPos(5 + 10 * 12, 5, 6.f, 24.f, NinjaProgress);
+
+				AnyHud anyhud_ninjabar = CHud::all_hud_map["ninja_bar"];
+
+				Graphics()->SetColor(
+					anyhud_ninjabar.r,
+					anyhud_ninjabar.g,
+					anyhud_ninjabar.b,
+					anyhud_ninjabar.a
+				);
+
+				RenderNinjaBarPos(
+					anyhud_ninjabar.x,
+					anyhud_ninjabar.y,
+					anyhud_ninjabar.w,
+					anyhud_ninjabar.h,
+					NinjaProgress
+				);
 			}
 		}
 		else if(CurWeapon >= 0 && GameClient()->m_GameSkin.m_aSpriteWeaponProjectiles[CurWeapon].IsValid())
 		{
 			Graphics()->TextureSet(GameClient()->m_GameSkin.m_aSpriteWeaponProjectiles[CurWeapon]);
+
+			AnyHud anyhud_anyweapon = CHud::all_hud_map["any_weapon"];
+			Graphics()->SetColor(
+				anyhud_anyweapon.r,
+				anyhud_anyweapon.g,
+				anyhud_anyweapon.b,
+				anyhud_anyweapon.a
+			);
+
 			if(AmmoOffsetY > 0)
 			{
 				Graphics()->RenderQuadContainerEx(m_HudQuadContainerIndex, m_aAmmoOffset[CurWeapon] + QuadOffsetSixup, std::clamp(pCharacter->m_AmmoCount, 0, 10), 0, AmmoOffsetY);
@@ -1117,22 +1440,43 @@ void CHud::RenderAmmoHealthAndArmor(const CNetObj_Character *pCharacter)
 			{
 				Graphics()->RenderQuadContainer(m_HudQuadContainerIndex, m_aAmmoOffset[CurWeapon] + QuadOffsetSixup, std::clamp(pCharacter->m_AmmoCount, 0, 10));
 			}
+
+			Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
 
 	if(GameClient()->m_GameInfo.m_HudHealthArmor)
 	{
+		AnyHud anyhud_health = CHud::all_hud_map["health"];
+		AnyHud anyhud_armor = CHud::all_hud_map["armor"];
+
+		Graphics()->SetColor(
+			anyhud_health.r,
+			anyhud_health.g,
+			anyhud_health.b,
+			anyhud_health.a
+		);
+
 		// health display
 		Graphics()->TextureSet(GameClient()->m_GameSkin.m_SpriteHealthFull);
 		Graphics()->RenderQuadContainer(m_HudQuadContainerIndex, m_HealthOffset + QuadOffsetSixup, minimum(pCharacter->m_Health, 10));
 		Graphics()->TextureSet(GameClient()->m_GameSkin.m_SpriteHealthEmpty);
 		Graphics()->RenderQuadContainer(m_HudQuadContainerIndex, m_EmptyHealthOffset + QuadOffsetSixup + minimum(pCharacter->m_Health, 10), 10 - minimum(pCharacter->m_Health, 10));
 
+		Graphics()->SetColor(
+			anyhud_armor.r,
+			anyhud_armor.g,
+			anyhud_armor.b,
+			anyhud_armor.a
+		);
+
 		// armor display
 		Graphics()->TextureSet(GameClient()->m_GameSkin.m_SpriteArmorFull);
 		Graphics()->RenderQuadContainer(m_HudQuadContainerIndex, m_ArmorOffset + QuadOffsetSixup, minimum(pCharacter->m_Armor, 10));
 		Graphics()->TextureSet(GameClient()->m_GameSkin.m_SpriteArmorEmpty);
 		Graphics()->RenderQuadContainer(m_HudQuadContainerIndex, m_ArmorOffset + QuadOffsetSixup + minimum(pCharacter->m_Armor, 10), 10 - minimum(pCharacter->m_Armor, 10));
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 }
 
@@ -1201,7 +1545,7 @@ void CHud::PreparePlayerStateQuads()
 
 void CHud::RenderPlayerState(const int ClientId)
 {
-	Graphics()->SetColor(1.f, 1.f, 1.f, 1.f);
+	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// pCharacter contains the predicted character for local players or the last snap for players who are spectated
 	CCharacterCore *pCharacter = &GameClient()->m_aClients[ClientId].m_Predicted;
@@ -1262,20 +1606,37 @@ void CHud::RenderPlayerState(const int ClientId)
 		// render available and used jumps
 		int JumpsOffsetY = ((GameClient()->m_GameInfo.m_HudHealthArmor && g_Config.m_ClShowhudHealthAmmo ? 24 : 0) +
 				    (GameClient()->m_GameInfo.m_HudAmmo && g_Config.m_ClShowhudHealthAmmo ? 12 : 0));
+
+	
+		AnyHud anyhud_jump = CHud::all_hud_map["player_stats_jumps"];
+	
+		Graphics()->SetColor(
+			anyhud_jump.r,
+			anyhud_jump.g,
+			anyhud_jump.b,
+			anyhud_jump.a
+		);
+
+		float standart_x_offset_jump = 0;
+
 		if(JumpsOffsetY > 0)
 		{
 			Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudAirjump);
-			Graphics()->RenderQuadContainerEx(m_HudQuadContainerIndex, m_AirjumpOffset, AvailableJumpsToDisplay, 0, JumpsOffsetY);
+			Graphics()->RenderQuadContainerEx(m_HudQuadContainerIndex, m_AirjumpOffset, AvailableJumpsToDisplay, standart_x_offset_jump, JumpsOffsetY);
+
 			Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudAirjumpEmpty);
-			Graphics()->RenderQuadContainerEx(m_HudQuadContainerIndex, m_AirjumpEmptyOffset + AvailableJumpsToDisplay, TotalJumpsToDisplay - AvailableJumpsToDisplay, 0, JumpsOffsetY);
+			Graphics()->RenderQuadContainerEx(m_HudQuadContainerIndex, m_AirjumpEmptyOffset + AvailableJumpsToDisplay, TotalJumpsToDisplay - AvailableJumpsToDisplay, standart_x_offset_jump, JumpsOffsetY);
 		}
 		else
 		{
 			Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudAirjump);
 			Graphics()->RenderQuadContainer(m_HudQuadContainerIndex, m_AirjumpOffset, AvailableJumpsToDisplay);
+
 			Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudAirjumpEmpty);
 			Graphics()->RenderQuadContainer(m_HudQuadContainerIndex, m_AirjumpEmptyOffset + AvailableJumpsToDisplay, TotalJumpsToDisplay - AvailableJumpsToDisplay);
 		}
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	float x = 5 + 12;
@@ -1302,7 +1663,12 @@ void CHud::RenderPlayerState(const int ClientId)
 			Graphics()->TextureSet(GameClient()->m_GameSkin.m_aSpritePickupWeapons[Weapon]);
 			Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_aWeaponOffset[Weapon], x, y);
 			Graphics()->QuadsSetRotation(0);
-			Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+			Graphics()->SetColor(
+				1.0f,
+				1.0f,
+				1.0f,
+				1.0f
+			);
 			x += aWeaponWidth[Weapon];
 		}
 		if(pCharacter->m_aWeapons[WEAPON_NINJA].m_Got)
@@ -1311,7 +1677,28 @@ void CHud::RenderPlayerState(const int ClientId)
 			float NinjaProgress = std::clamp(pCharacter->m_Ninja.m_ActivationTick + g_pData->m_Weapons.m_Ninja.m_Duration * Client()->GameTickSpeed() / 1000 - Client()->GameTick(g_Config.m_ClDummy), 0, Max) / (float)Max;
 			if(NinjaProgress > 0.0f && GameClient()->m_Snap.m_aCharacters[ClientId].m_HasExtendedDisplayInfo)
 			{
-				RenderNinjaBarPos(x, y - 12, 6.f, 24.f, NinjaProgress);
+				AnyHud anyhud_ninjabar = CHud::all_hud_map["ninja_bar"];
+
+				if (anyhud_ninjabar.x == CHud::ninja_bar_x_standart 
+					&& anyhud_ninjabar.y == CHud::ninja_bar_y_standart) {
+
+					RenderNinjaBarPos(
+						x,
+						y - 12,
+						anyhud_ninjabar.w,
+						anyhud_ninjabar.h,
+						NinjaProgress
+					);
+				}
+				else {
+					RenderNinjaBarPos(
+						anyhud_ninjabar.x,
+						anyhud_ninjabar.y,
+						anyhud_ninjabar.w,
+						anyhud_ninjabar.h,
+						NinjaProgress
+					);
+				}
 			}
 		}
 	}
@@ -1326,44 +1713,110 @@ void CHud::RenderPlayerState(const int ClientId)
 	bool HasCapabilities = false;
 	if(pCharacter->m_EndlessJump)
 	{
+		AnyHud anyhud_endlessjump = CHud::all_hud_map["player_stats_endlessjump"];
+
+		Graphics()->SetColor(
+			anyhud_endlessjump.r,
+			anyhud_endlessjump.g,
+			anyhud_endlessjump.b,
+			anyhud_endlessjump.a
+		);
+
 		HasCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudEndlessJump);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_EndlessJumpOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_EndlessHook)
 	{
+		AnyHud anyhud_endlesshook = CHud::all_hud_map["player_stats_endlesshook"];
+
+		Graphics()->SetColor(
+			anyhud_endlesshook.r,
+			anyhud_endlesshook.g,
+			anyhud_endlesshook.b,
+			anyhud_endlesshook.a
+		);
+
 		HasCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudEndlessHook);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_EndlessHookOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_Jetpack)
 	{
+		AnyHud anyhud_jetpack = CHud::all_hud_map["player_stats_jetpack"];
+
+		Graphics()->SetColor(
+			anyhud_jetpack.r,
+			anyhud_jetpack.g,
+			anyhud_jetpack.b,
+			anyhud_jetpack.a
+		);
+
 		HasCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudJetpack);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_JetpackOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_HasTelegunGun && pCharacter->m_aWeapons[WEAPON_GUN].m_Got)
 	{
+		AnyHud anyhud_telegun = CHud::all_hud_map["player_stats_telegun"];
+
+		Graphics()->SetColor(
+			anyhud_telegun.r,
+			anyhud_telegun.g,
+			anyhud_telegun.b,
+			anyhud_telegun.a
+		);
+
 		HasCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudTeleportGun);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_TeleportGunOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_HasTelegunGrenade && pCharacter->m_aWeapons[WEAPON_GRENADE].m_Got)
 	{
+		AnyHud anyhud_telegungrenade = CHud::all_hud_map["player_stats_telegungrenade"];
+
+		Graphics()->SetColor(
+			anyhud_telegungrenade.r,
+			anyhud_telegungrenade.g,
+			anyhud_telegungrenade.b,
+			anyhud_telegungrenade.a
+		);
+
 		HasCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudTeleportGrenade);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_TeleportGrenadeOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_HasTelegunLaser && pCharacter->m_aWeapons[WEAPON_LASER].m_Got)
 	{
+		AnyHud anyhud_telegunlaser = CHud::all_hud_map["player_stats_telegunlaser"];
+
+		Graphics()->SetColor(
+			anyhud_telegunlaser.r,
+			anyhud_telegunlaser.g,
+			anyhud_telegunlaser.b,
+			anyhud_telegunlaser.a
+		);
+
 		HasCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudTeleportLaser);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_TeleportLaserOffset, x, y);
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// render prohibited capabilities
@@ -1375,58 +1828,146 @@ void CHud::RenderPlayerState(const int ClientId)
 	bool HasProhibitedCapabilities = false;
 	if(pCharacter->m_Solo)
 	{
+		AnyHud anyhud_solo = CHud::all_hud_map["player_stats_solo"];
+
+		Graphics()->SetColor(
+			anyhud_solo.r,
+			anyhud_solo.g,
+			anyhud_solo.b,
+			anyhud_solo.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudSolo);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_SoloOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_CollisionDisabled)
 	{
+		AnyHud anyhud_collisiondisabled = CHud::all_hud_map["player_stats_collisiondisabled"];
+
+		Graphics()->SetColor(
+			anyhud_collisiondisabled.r,
+			anyhud_collisiondisabled.g,
+			anyhud_collisiondisabled.b,
+			anyhud_collisiondisabled.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudCollisionDisabled);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_CollisionDisabledOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_HookHitDisabled)
 	{
+		AnyHud anyhud_hookhitdisabled = CHud::all_hud_map["player_stats_hookhitdisabled"];
+
+		Graphics()->SetColor(
+			anyhud_hookhitdisabled.r,
+			anyhud_hookhitdisabled.g,
+			anyhud_hookhitdisabled.b,
+			anyhud_hookhitdisabled.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudHookHitDisabled);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_HookHitDisabledOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_HammerHitDisabled)
 	{
+		AnyHud anyhud_hammerhitdisabled = CHud::all_hud_map["player_stats_hammerhitdisabled"];
+
+		Graphics()->SetColor(
+			anyhud_hammerhitdisabled.r,
+			anyhud_hammerhitdisabled.g,
+			anyhud_hammerhitdisabled.b,
+			anyhud_hammerhitdisabled.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudHammerHitDisabled);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_HammerHitDisabledOffset, x, y);
 		x += 12;
+		
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if((pCharacter->m_GrenadeHitDisabled && pCharacter->m_HasTelegunGun && pCharacter->m_aWeapons[WEAPON_GUN].m_Got))
 	{
+		AnyHud anyhud_grenadehitdisabled = CHud::all_hud_map["player_stats_grenadehitdisabled"];
+
+		Graphics()->SetColor(
+			anyhud_grenadehitdisabled.r,
+			anyhud_grenadehitdisabled.g,
+			anyhud_grenadehitdisabled.b,
+			anyhud_grenadehitdisabled.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudGunHitDisabled);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_LaserHitDisabledOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if((pCharacter->m_ShotgunHitDisabled && pCharacter->m_aWeapons[WEAPON_SHOTGUN].m_Got))
 	{
+		AnyHud anyhud_shotgunhitdisabled = CHud::all_hud_map["player_stats_shotgunhitdisabled"];
+
+		Graphics()->SetColor(
+			anyhud_shotgunhitdisabled.r,
+			anyhud_shotgunhitdisabled.g,
+			anyhud_shotgunhitdisabled.b,
+			anyhud_shotgunhitdisabled.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudShotgunHitDisabled);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_ShotgunHitDisabledOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if((pCharacter->m_GrenadeHitDisabled && pCharacter->m_aWeapons[WEAPON_GRENADE].m_Got))
 	{
+		AnyHud anyhud_grenadehitdisabled = CHud::all_hud_map["player_stats_grenadehitdisabled"];
+
+		Graphics()->SetColor(
+			anyhud_grenadehitdisabled.r,
+			anyhud_grenadehitdisabled.g,
+			anyhud_grenadehitdisabled.b,
+			anyhud_grenadehitdisabled.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudGrenadeHitDisabled);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_GrenadeHitDisabledOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if((pCharacter->m_LaserHitDisabled && pCharacter->m_aWeapons[WEAPON_LASER].m_Got))
 	{
+		AnyHud anyhud_laserhitdisabled = CHud::all_hud_map["player_stats_laserhitdisabled"];
+
+		Graphics()->SetColor(
+			anyhud_laserhitdisabled.r,
+			anyhud_laserhitdisabled.g,
+			anyhud_laserhitdisabled.b,
+			anyhud_laserhitdisabled.a
+		);
+
 		HasProhibitedCapabilities = true;
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudLaserHitDisabled);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_LaserHitDisabledOffset, x, y);
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// render dummy actions and freeze state
@@ -1437,32 +1978,87 @@ void CHud::RenderPlayerState(const int ClientId)
 	}
 	if(GameClient()->m_Snap.m_aCharacters[ClientId].m_HasExtendedDisplayInfo && GameClient()->m_Snap.m_aCharacters[ClientId].m_ExtendedData.m_Flags & CHARACTERFLAG_LOCK_MODE)
 	{
+		AnyHud anyhud_lockmode = CHud::all_hud_map["player_stats_lockmode"];
+
+		Graphics()->SetColor(
+			anyhud_lockmode.r,
+			anyhud_lockmode.g,
+			anyhud_lockmode.b,
+			anyhud_lockmode.a
+		);
+
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudLockMode);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_LockModeOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(GameClient()->m_Snap.m_aCharacters[ClientId].m_HasExtendedDisplayInfo && GameClient()->m_Snap.m_aCharacters[ClientId].m_ExtendedData.m_Flags & CHARACTERFLAG_PRACTICE_MODE)
 	{
+		AnyHud anyhud_practicemode = CHud::all_hud_map["player_stats_practicemode"];
+
+		Graphics()->SetColor(
+			anyhud_practicemode.r,
+			anyhud_practicemode.g,
+			anyhud_practicemode.b,
+			anyhud_practicemode.a
+		);
+
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudPracticeMode);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_PracticeModeOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(GameClient()->m_Snap.m_aCharacters[ClientId].m_HasExtendedDisplayInfo && GameClient()->m_Snap.m_aCharacters[ClientId].m_ExtendedData.m_Flags & CHARACTERFLAG_TEAM0_MODE)
 	{
+		AnyHud anyhud_team0mode = CHud::all_hud_map["player_stats_team0mode"];
+
+		Graphics()->SetColor(
+			anyhud_team0mode.r,
+			anyhud_team0mode.g,
+			anyhud_team0mode.b,
+			anyhud_team0mode.a
+		);
+
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudTeam0Mode);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_Team0ModeOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_DeepFrozen)
 	{
+		AnyHud anyhud_deepfrozen = CHud::all_hud_map["player_stats_deepfrozen"];
+
+		Graphics()->SetColor(
+			anyhud_deepfrozen.r,
+			anyhud_deepfrozen.g,
+			anyhud_deepfrozen.b,
+			anyhud_deepfrozen.a
+		);
+
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudDeepFrozen);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_DeepFrozenOffset, x, y);
 		x += 12;
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	if(pCharacter->m_LiveFrozen)
 	{
+		AnyHud anyhud_livefrozen = CHud::all_hud_map["player_stats_livefrozen"];
+
+		Graphics()->SetColor(
+			anyhud_livefrozen.r,
+			anyhud_livefrozen.g,
+			anyhud_livefrozen.b,
+			anyhud_livefrozen.a
+		);
+
 		Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudLiveFrozen);
 		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_LiveFrozenOffset, x, y);
+
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 }
 
@@ -1663,7 +2259,7 @@ void CHud::RenderSpectatorCount()
 	str_format(aBuf, sizeof(aBuf), "%d", Count);
 
 	const float Fontsize = 6.0f;
-	const float BoxHeight = 14.f;
+	const float BoxHeight = 14.0f;
 	const float BoxWidth = 13.f + TextRender()->TextWidth(Fontsize, aBuf);
 
 	float StartX = m_Width - BoxWidth;
@@ -1684,10 +2280,35 @@ void CHud::RenderSpectatorCount()
 		StartY = StartY - 29.0f - (g_Config.m_RiAdvancedShowhudDummyActions ? 40 : 4); // dummy actions height and padding
 	}
 
-	Graphics()->DrawRect(StartX, StartY, BoxWidth, BoxHeight, ColorRGBA(0.0f, 0.0f, 0.0f, 0.4f), IGraphics::CORNER_L, 5.0f);
 
-	float y = StartY + BoxHeight / 3;
-	float x = StartX + 2;
+	AnyHud anyhud_spectators_count = CHud::all_hud_map["spectators_count"];
+
+	float rect_x = StartX;
+	if (anyhud_spectators_count.x != CHud::pos_standart_none) rect_x = anyhud_spectators_count.x;
+
+	float rect_width = BoxWidth;
+	if (anyhud_spectators_count.w != CHud::pos_standart_none) rect_width = anyhud_spectators_count.w;
+
+	float rect_y = StartY;
+	if (anyhud_spectators_count.y != CHud::pos_standart_none) rect_y = anyhud_spectators_count.y;
+
+	Graphics()->DrawRect(
+		rect_x,
+		rect_y,
+		rect_width,
+		anyhud_spectators_count.h,
+		ColorRGBA(
+			anyhud_spectators_count.r,
+			anyhud_spectators_count.g,
+			anyhud_spectators_count.b,
+			anyhud_spectators_count.a
+		),
+		IGraphics::CORNER_L,
+		5.0f
+	);
+
+	float y = anyhud_spectators_count.y + anyhud_spectators_count.h / 3;
+	float x = rect_x + 2;
 
 	TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
 	TextRender()->Text(x, y, Fontsize, FontIcon::EYE, -1.0f);
@@ -2339,15 +2960,23 @@ void CHud::OnNewSnapshot()
 void CHud::RenderBongaDebugWindow() {
 	float x0, y0, x1, y1;
 	Graphics()->GetScreen(&x0, &y0, &x1, &y1);
-	float FrameW = 110.0f;
-	float FrameH = 15.0f;
-	float FrameX = 40.0f;
-	float FrameY = 5.0f;
+
+	AnyHud anyhud_this = CHud::all_hud_map["bonga_debug_window"];
+	
+	float FrameW = anyhud_this.w;
+	float FrameH = anyhud_this.h;
+	float FrameX = anyhud_this.x;
+	float FrameY = anyhud_this.y;
 
 	Graphics()->BlendNormal();
 	Graphics()->TextureClear();
 	Graphics()->QuadsBegin();
-	Graphics()->SetColor(0.2f, 0.2f, 0.2f, 0.9f);
+	Graphics()->SetColor(
+		anyhud_this.r,
+		anyhud_this.g,
+		anyhud_this.b,
+		anyhud_this.a
+	);
 	IGraphics::CQuadItem QuadItem(FrameX, FrameY, FrameW, FrameH);
 	Graphics()->QuadsDrawTL(&QuadItem, 1);
 	Graphics()->QuadsEnd();
@@ -2383,13 +3012,13 @@ void CHud::OnRender()
 		{
 			if(g_Config.m_ClShowhudHealthAmmo)
 			{
-				RenderAmmoHealthAndArmor(GameClient()->m_Snap.m_pLocalCharacter);
+				RenderAmmoHealthAndArmor(GameClient()->m_Snap.m_pLocalCharacter); //
 			}
 			if(GameClient()->m_Snap.m_aCharacters[GameClient()->m_Snap.m_LocalClientId].m_HasExtendedData && g_Config.m_ClShowhudDDRace && GameClient()->m_GameInfo.m_HudDDRace)
 			{
-				RenderPlayerState(GameClient()->m_Snap.m_LocalClientId);
+				RenderPlayerState(GameClient()->m_Snap.m_LocalClientId); //
 			}
-			RenderSpectatorCount();
+			RenderSpectatorCount(); //
 			RenderMovementInformation();
 			RenderDDRaceEffects();
 		}
@@ -2398,7 +3027,7 @@ void CHud::OnRender()
 			int SpectatorId = GameClient()->m_Snap.m_SpecInfo.m_SpectatorId;
 			if(SpectatorId != SPEC_FREEVIEW && g_Config.m_ClShowhudHealthAmmo)
 			{
-				RenderAmmoHealthAndArmor(&GameClient()->m_Snap.m_aCharacters[SpectatorId].m_Cur);
+				RenderAmmoHealthAndArmor(&GameClient()->m_Snap.m_aCharacters[SpectatorId].m_Cur); //
 			}
 			if(SpectatorId != SPEC_FREEVIEW &&
 				GameClient()->m_Snap.m_aCharacters[SpectatorId].m_HasExtendedData &&
@@ -2406,7 +3035,7 @@ void CHud::OnRender()
 				(!GameClient()->m_MultiViewActivated || GameClient()->m_MultiViewShowHud) &&
 				GameClient()->m_GameInfo.m_HudDDRace)
 			{
-				RenderPlayerState(SpectatorId);
+				RenderPlayerState(SpectatorId); //
 			}
 			RenderMovementInformation();
 			RenderSpectatorHud();
@@ -2438,7 +3067,7 @@ void CHud::OnRender()
 
 	if (g_Config.m_ClBongaDebug) {
 		Graphics()->MapScreen(0.0f, 0.0f, m_Width, m_Height);
-		RenderBongaDebugWindow();
+		RenderBongaDebugWindow(); //
 	}
 }
 

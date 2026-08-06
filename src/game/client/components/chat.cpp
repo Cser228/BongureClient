@@ -862,13 +862,18 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 	if(m_Mode == MODE_NONE) return false;
  
 	if (smile_window_open) {
+		//BACKSPACE
+		if (Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_BACKSPACE) {
+			if (smile_show != "") smile_show = "";
+		}
+		//BACKSPACE
+
 		//TAB
 		if(Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_TAB)
 		{
 			const char *pInput = m_Input.GetString();
 			int CursorOffset = m_Input.GetCursorOffset();
  
-			// 1. Ищем, где началось двоеточие текущего смайлика
 			int colon_pos = CursorOffset - 1;
 			while (colon_pos >= 0 && pInput[colon_pos] != ':') {
 				colon_pos--;
@@ -880,21 +885,17 @@ bool CChat::OnInput(const IInput::CEvent &Event)
 					return true;
 				}
  
-				// Разрезаем строку на части
-				std::string before_colon(pInput, colon_pos); // Всё, что было до ':'
-				std::string after_cursor(pInput + CursorOffset); // Всё, что правее курсора
+				std::string before_colon(pInput, colon_pos);
+				std::string after_cursor(pInput + CursorOffset);
  
-				// Склеиваем: Начало + Смайлик + Пробел + Конец
 				std::string completed_smile = smile_db[smile_show];
 				std::string new_input = before_colon + completed_smile + " " + after_cursor;
  
 				m_Input.Set(new_input.c_str());
 				
-				// Ставим курсор сразу после смайлика и пробела
 				m_Input.SetCursorOffset(before_colon.length() + completed_smile.length() + 1);
 			}
  
-			// Закрываем окно смайлов после успешного автокомплита
 			smile_window_open = false; 
 			m_CompletionUsed = true;
  
@@ -2206,6 +2207,8 @@ void CChat::OnRender()
 			}
 		}
 	}
+
+	if (smile_window_open == false && smile_show != "") smile_show = "";
 
 	if(m_PendingChatCounter > 0 && m_LastChatSend + time_freq() < time())
 	{

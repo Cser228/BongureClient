@@ -10,6 +10,8 @@
 
 #include <game/client/component.h>
 
+#include <map>
+
 struct SScoreInfo
 {
 	SScoreInfo()
@@ -41,6 +43,12 @@ struct SScoreInfo
 
 	bool m_Initialized;
 };
+
+typedef struct {
+	float x, y;
+	float w, h;
+	float r, g, b, a;
+} AnyHud;
 
 class CHud : public CComponent
 {
@@ -127,7 +135,32 @@ class CHud : public CComponent
 	static constexpr float MOVEMENT_INFORMATION_LINE_HEIGHT = 8.0f;
 
 public:
+	//
+	float player_stats_jumps_x_standart = 5.0f;
+	float player_stats_jumps_y_standart = 29.0f;
+
+	float ninja_bar_x_standart = 125.0f;
+	float ninja_bar_y_standart = 5.0f;
+	float ninja_bar_w_standart = 6.0f;
+	float ninja_bar_h_standart = 24.0f;
+
+	float any_weapon_x_standart = 5.0f;
+	float any_weapon_y_standart = 5.0f;
+
+	float health_y_standart = 5.0f;
+	float armor_y_standart = 17.0f;
+
+	float spectators_count_h_standart = 14.0f;
+
+	float pos_standart_none = 90900;
+	//
+
+
+	std::map<std::string, AnyHud> all_hud_map;
+
 	void RenderBongaDebugWindow();
+
+
 
 	CHud();
 	int Sizeof() const override { return sizeof(*this); }
@@ -148,6 +181,8 @@ public:
 	void RenderNinjaBarPos(float x, float y, float Width, float Height, float Progress, float Alpha = 1.0f);
 
 private:
+	void InitAllHudMap();
+
 	void RenderRecord();
 	void RenderDDRaceEffects();
 	void RenderDummyIndicator();
