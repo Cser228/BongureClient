@@ -618,8 +618,9 @@ bool CTClient::ServerCommandExists(const char *pCommand)
 	return false;
 }
 
-void CTClient::OnRender()
-{
+void CTClient::OnRender() {
+	SetForcedAspect();
+	
 	if(m_pTClientInfoTask)
 	{
 		if(m_pTClientInfoTask->State() == EHttpState::DONE)
@@ -721,7 +722,12 @@ void CTClient::SetForcedAspect()
 		Force = false;
 	else if(State == CClient::EClientState::STATE_ONLINE && GameClient()->m_GameInfo.m_AllowZoom && !GameClient()->m_Menus.IsActive())
 		Force = false;
-	Graphics()->SetForcedAspect(Force);
+
+	const bool IsActiveGameplay = State == CClient::EClientState::STATE_ONLINE || State == CClient::EClientState::STATE_DEMOPLAYBACK;
+	const bool AspectBlocked = GameClient()->IsAspectRatioBlockedByFng();
+	const bool ApplyCustomAspect = !AspectBlocked && (g_Config.m_BcCustomAspectRatioApplyMode == 1 || IsActiveGameplay);
+
+	Graphics()->SetForcedAspect(Force, ApplyCustomAspect);
 }
 
 void CTClient::OnStateChange(int OldState, int NewState)

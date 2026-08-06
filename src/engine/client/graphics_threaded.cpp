@@ -2236,15 +2236,47 @@ int CGraphics_Threaded::IssueInit()
 	return Result;
 }
 
+static int GetEffectiveCustomAspect(bool ApplyCustomAspect) {
+	if (!ApplyCustomAspect) return 0;
+
+	const int AspectMode = g_Config.m_BcCustomAspectRatioMode >= 0 ?
+		g_Config.m_BcCustomAspectRatioMode : (g_Config.m_BcCustomAspectRatio > 0 ? 1 : 0);
+
+	if (AspectMode <= 0) return 0;
+
+	return g_Config.m_BcCustomAspectRatio >= 100 ? g_Config.m_BcCustomAspectRatio : 0;
+}
+
 // TClient
 bool g_GraphicsForcedAspect = true;
-void CGraphics_Threaded::SetForcedAspect(bool Force)
+int g_GraphicsCustomAspect = -1;
+
+void CGraphics_Threaded::SetScreenAspectOverrideEnabled(bool Enabled) {
+	m_ScreenAspectOverrideEnabled = Enabled;
+}
+
+void CGraphics_Threaded::SetForcedAspect(bool Force, bool ApplyCustomAspect)
 {
 	if(!IsBackendInitialized())
 		return;
-	if(g_GraphicsForcedAspect == Force)
+	const int CustomAspect = GetEffectiveCustomAspect(ApplyCustomAspect);
+	// Use the exact numerator/denominator the user set for the actual aspect, so the
+	// applied ratio matches their input precisely instead of the x100-rounded value.
+	float CustomAspectF = 0.0f;
+	if(CustomAspect >= 100)
+	{
+		const int AspectMode = g_Config.m_BcCustomAspectRatioMode >= 0 ? g_Config.m_BcCustomAspectRatioMode : (g_Config.m_BcCustomAspectRatio > 0 ? 1 : 0);
+		if(AspectMode == 2 && g_Config.m_BcCustomAspectRatioNum > 0 && g_Config.m_BcCustomAspectRatioDen > 0)
+			CustomAspectF = (float)g_Config.m_BcCustomAspectRatioNum / (float)g_Config.m_BcCustomAspectRatioDen;
+		else
+			CustomAspectF = CustomAspect / 100.0f;
+	}
+	if(g_GraphicsForcedAspect == Force && g_GraphicsCustomAspect == CustomAspect && m_ScreenAspectOverride == CustomAspectF)
 		return;
+
 	g_GraphicsForcedAspect = Force;
+	g_GraphicsCustomAspect = CustomAspect;
+	m_ScreenAspectOverride = CustomAspectF;
 	m_pBackend->GetViewportSize(m_ScreenWidth, m_ScreenHeight);
 	AdjustViewport(false);
 	UpdateViewport(0, 0, m_ScreenWidth, m_ScreenHeight, false);

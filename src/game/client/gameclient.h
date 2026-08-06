@@ -1085,6 +1085,8 @@ public:
 	bool CheckNewInput() override;
 	std::optional<CServerInfo> m_ConnectServerInfo = std::nullopt;
 	void SetConnectInfo(const NETADDR *pAddress) override;
+
+	bool IsAspectRatioBlockedByFng() const;
 };
 
 ColorRGBA CalculateNameColor(ColorHSLA TextColorHSL);

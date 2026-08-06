@@ -1264,6 +1264,11 @@ void CHud::RenderCursor()
 	if(Scale <= 0.0f)
 		return;
 
+	const bool UseGameNoHudAspect = (Client()->State() == IClient::STATE_ONLINE || Client()->State() == IClient::STATE_DEMOPLAYBACK) && !GameClient()->IsAspectRatioBlockedByFng() && g_Config.m_BcCustomAspectRatioApplyMode == 2;
+	if (UseGameNoHudAspect) {
+		Graphics()->SetScreenAspectOverrideEnabled(true);
+	}
+
 	int CurWeapon = 0;
 	vec2 TargetPos;
 	float Alpha = 1.0f;

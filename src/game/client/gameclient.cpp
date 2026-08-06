@@ -894,9 +894,21 @@ void CGameClient::OnRender()
 
 	UpdateSpectatorCursor();
 
+	const bool IsActiveGameplay = Client()->State() == IClient::STATE_ONLINE || Client()->State() == IClient::STATE_DEMOPLAYBACK;
+	const bool UseGameNoHudAspect = IsActiveGameplay && !IsAspectRatioBlockedByFng() && g_Config.m_BcCustomAspectRatioApplyMode == 2;
+	bool HudAspectDisabled = false;
+
 	// render all systems
-	for(auto &pComponent : m_vpAll)
+	for(auto &pComponent : m_vpAll) {
 		pComponent->OnRender();
+	}
+
+	if (UseGameNoHudAspect && HudAspectDisabled) {
+		Graphics()->SetScreenAspectOverrideEnabled(true);
+	}
+	if (UseGameNoHudAspect && HudAspectDisabled) {
+		Graphics()->SetScreenAspectOverrideEnabled(false);
+	}
 
 	// clear all events/input for this frame
 	Input()->Clear();
@@ -5931,6 +5943,49 @@ void CGameClient::StoreSave(const char *pTeamMembers, const char *pGeneratedCode
 	}
 	CsvWrite(File, std::size(SAVES_HEADER), apColumns);
 	io_close(File);
+}
+
+bool CGameClient::IsAspectRatioBlockedByFng() const
+{
+	const int State = Client()->State();
+	if(State != IClient::STATE_ONLINE && State != IClient::STATE_DEMOPLAYBACK)
+		return false;
+
+	auto ContainsFng = [](const char *pText) -> bool {
+		return pText != nullptr && pText[0] != '\0' && str_find_nocase(pText, "fng") != nullptr;
+	};
+
+	CServerInfo ServerInfo;
+	mem_zero(&ServerInfo, sizeof(ServerInfo));
+	Client()->GetServerInfo(&ServerInfo);
+
+	const CServerInfo *apInfos[3] = {&ServerInfo, nullptr, nullptr};
+	int NumInfos = 1;
+	if(m_ConnectServerInfo.has_value())
+		apInfos[NumInfos++] = &*m_ConnectServerInfo;
+	const auto *pEntry = ServerBrowser()->Find(Client()->ServerAddress());
+	if(pEntry)
+		apInfos[NumInfos++] = &pEntry->m_Info;
+
+	for(int i = 0; i < NumInfos; ++i)
+	{
+		const CServerInfo *pInfo = apInfos[i];
+		if(ContainsFng(pInfo->m_aName) || ContainsFng(pInfo->m_aGameType) || ContainsFng(pInfo->m_aCommunityId) ||
+			ContainsFng(pInfo->m_aCommunityCountry) || ContainsFng(pInfo->m_aCommunityType))
+			return true;
+
+		if(pInfo->m_aCommunityId[0] != '\0')
+		{
+			const CCommunity *pCommunity = ServerBrowser()->Community(pInfo->m_aCommunityId);
+			if(pCommunity && ContainsFng(pCommunity->Name()))
+				return true;
+		}
+	}
+
+	if(ContainsFng(m_GameInfo.m_aGameType))
+		return true;
+
+	return m_GameInfo.m_PredictFNG || m_GameInfo.m_EntitiesFNG;
 }
 
 // TClient
