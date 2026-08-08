@@ -938,6 +938,7 @@ if(EXISTS "${RNNOISE_DIR}/src/denoise.c" AND EXISTS "${RNNOISE_DIR}/src/rnnoise_
   )
   add_library(rnnoise STATIC ${RNNOISE_SRC})
   target_include_directories(rnnoise PUBLIC "${RNNOISE_DIR}/include" "${RNNOISE_DIR}/src")
+  target_compile_options(rnnoise PRIVATE -Wno-cpp)
   list(APPEND TARGETS_DEP rnnoise)
   set(RNNOISE_FOUND ON)
 endif()
@@ -2310,6 +2311,7 @@ set_src(ENGINE_SHARED GLOB_RECURSE src/engine/shared
   config_domains.h
   config_includes.h
   config_variables.h
+  config_variables_bongureclient.h
   config_variables_rclient.h
   config_variables_tclient.h
   console.cpp

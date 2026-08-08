@@ -395,14 +395,14 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
             Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
             CUIRect IndentedRow_lambda = Row; IndentedRow_lambda.x += Indent; IndentedRow_lambda.w -= Indent;
-            CUIRect SliderArea_lambda, EditArea; IndentedRow_lambda.VSplitRight(50.0f, &SliderArea_lambda, &EditArea);
+            CUIRect SliderArea_lambda, EditArea_lambda; IndentedRow_lambda.VSplitRight(50.0f, &SliderArea_lambda, &EditArea_lambda);
 
             bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
             if(!EditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", ConfigVal); Input.Set(aTmp); }
 
             TextRender()->TextColor(TextColor);
             Ui()->DoScrollbarOption(pId, &ConfigVal, &SliderArea_lambda, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
-            if(Ui()->DoEditBox(&Input, &EditArea, 14.0f)) { const int P = str_toint(Input.GetString()); if(P >= 0 && P <= 255) ConfigVal = P; }
+            if(Ui()->DoEditBox(&Input, &EditArea_lambda, 14.0f)) { const int P = str_toint(Input.GetString()); if(P >= 0 && P <= 255) ConfigVal = P; }
         };
 
         static CLineInputBuffered<8> s_DummyRInput, s_DummyGInput, s_DummyBInput;
