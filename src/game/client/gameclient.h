@@ -66,7 +66,7 @@
 #include "components/spectator.h"
 #include "components/statboard.h"
 
-//Bongur Client
+//Bongure Client
 #include "components/voice_assistant.h"
 
 //Rclient

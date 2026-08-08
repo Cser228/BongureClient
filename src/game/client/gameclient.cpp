@@ -854,6 +854,8 @@ void CGameClient::OnRender()
 	const ColorRGBA ClearColor = color_cast<ColorRGBA>(ColorHSLA(g_Config.m_ClOverlayEntities ? g_Config.m_ClBackgroundEntitiesColor : g_Config.m_ClBackgroundColor));
 	Graphics()->Clear(ClearColor.r, ClearColor.g, ClearColor.b);
 
+	Graphics()->SetScreenAspectOverrideEnabled(true);
+
 	// check if multi view got activated
 	if(!m_MultiView.m_IsInit && m_MultiViewActivated)
 	{
@@ -894,20 +896,31 @@ void CGameClient::OnRender()
 
 	UpdateSpectatorCursor();
 
-	const bool IsActiveGameplay = Client()->State() == IClient::STATE_ONLINE || Client()->State() == IClient::STATE_DEMOPLAYBACK;
-	const bool UseGameNoHudAspect = IsActiveGameplay && !IsAspectRatioBlockedByFng() && g_Config.m_BcCustomAspectRatioApplyMode == 2;
+	const bool IsActiveGameplay = Client()->State() == IClient::STATE_ONLINE ||
+		Client()->State() == IClient::STATE_DEMOPLAYBACK;
+	const bool AspectBlocked = IsAspectRatioBlockedByFng();
+
+	const bool UseGameNoHudAspect = IsActiveGameplay && !AspectBlocked &&
+		g_Config.m_BcCustomAspectRatioApplyMode == 2;
+	const bool UseGameOnlyAspect = IsActiveGameplay && !AspectBlocked &&
+		g_Config.m_BcCustomAspectRatioApplyMode == 0;
+
 	bool HudAspectDisabled = false;
 
 	// render all systems
 	for(auto &pComponent : m_vpAll) {
-		pComponent->OnRender();
-	}
+		if (!HudAspectDisabled) {
+			if (UseGameNoHudAspect && pComponent == &m_Hud) {
+				Graphics()->SetScreenAspectOverrideEnabled(false);
+				HudAspectDisabled = true;
+			}
+			else if (UseGameOnlyAspect && pComponent == &m_Menus) {
+				Graphics()->SetScreenAspectOverrideEnabled(false);
+				HudAspectDisabled = true;
+			}
+		}
 
-	if (UseGameNoHudAspect && HudAspectDisabled) {
-		Graphics()->SetScreenAspectOverrideEnabled(true);
-	}
-	if (UseGameNoHudAspect && HudAspectDisabled) {
-		Graphics()->SetScreenAspectOverrideEnabled(false);
+		pComponent->OnRender();
 	}
 
 	// clear all events/input for this frame

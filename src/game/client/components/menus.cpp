@@ -715,6 +715,11 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 		if (CurrentApply != NewApply) {
 			g_Config.m_BcCustomAspectRatioApplyMode = NewApply;
 			GameClient()->m_TClient.SetForcedAspect();
+
+			if (NewApply == 1) {
+				Graphics()->SetScreenAspectOverrideEnabled(true);
+				Ui()->SetUseGraphicsScreenAspect(true);
+			}
 		}
 
 	//APPLY
@@ -3867,10 +3872,8 @@ void CMenus::OnRender()
 	Ui()->StartCheck();
 	UpdateColors();
 
-	const bool IngameMenu = IsActive() && (Client()->State() == IClient::STATE_ONLINE ||
-		Client()->State() == IClient::STATE_DEMOPLAYBACK);
-	const bool UseWindowAspectForUi = IngameMenu && (GameClient()->IsAspectRatioBlockedByFng() ||
-		g_Config.m_BcCustomAspectRatioApplyMode != 1);
+	const bool UseWindowAspectForUi = GameClient()->IsAspectRatioBlockedByFng() ||
+		g_Config.m_BcCustomAspectRatioApplyMode != 1;
 	Ui()->SetUseGraphicsScreenAspect(!UseWindowAspectForUi);
 
 	Ui()->Update();
@@ -3901,6 +3904,7 @@ void CMenus::OnRender()
 
 	Ui()->FinishCheck();
 	Ui()->ClearHotkeys();
+	Ui()->SetUseGraphicsScreenAspect(true);
 }
 
 void CMenus::UpdateColors()
