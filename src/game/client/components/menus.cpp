@@ -47,6 +47,7 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include <stdio.h>
 
 using namespace std::chrono_literals;
 
@@ -187,31 +188,25 @@ void CMenus::TerminalAddLine(const char *pLine)
 	
 	std::string text(pLine);
 
-	// Пока в строке что-то есть, продолжаем её обрабатывать
 	while (!text.empty()) {
 		std::string linePart;
 
-		// Если оставшийся текст больше лимита, ищем пробел
 		if (text.length() > MAX_LINE_LEN) {
 			size_t space_pos = text.rfind(' ', MAX_LINE_LEN);
 
 			if (space_pos != std::string::npos && space_pos > 0) {
-				// Отрезаем до пробела
 				linePart = text.substr(0, space_pos);
-				text = text.substr(space_pos + 1); // +1 чтобы убрать сам пробел
+				text = text.substr(space_pos + 1);
 			}
 			else {
-				// Если пробелов нет (очень длинное слово), жестко рубим по лимиту
 				linePart = text.substr(0, MAX_LINE_LEN);
 				text = text.substr(MAX_LINE_LEN);
 			}
 		} else {
-			// Текст меньше лимита — берем остаток и очищаем text для выхода из цикла
 			linePart = text;
 			text.clear();
 		}
 
-		// Добавляем ПОЛУЧЕННУЮ ЧАСТЬ (linePart) в историю терминала
 		if(m_TerminalHistoryCount < TERMINAL_HISTORY_LINES)
 		{
 			str_copy(m_aaTerminalHistory[m_TerminalHistoryCount], linePart.c_str(), sizeof(m_aaTerminalHistory[0]));
@@ -219,41 +214,36 @@ void CMenus::TerminalAddLine(const char *pLine)
 		}
 		else
 		{
-			// Сдвигаем историю, если она заполнена
 			for(int i = 1; i < TERMINAL_HISTORY_LINES; i++)
 			{
 				str_copy(m_aaTerminalHistory[i - 1], m_aaTerminalHistory[i], sizeof(m_aaTerminalHistory[0]));
 			}
-			// Записываем в самый конец
 			str_copy(m_aaTerminalHistory[TERMINAL_HISTORY_LINES - 1], linePart.c_str(), sizeof(m_aaTerminalHistory[0]));
 		}
 	}
 }
 
-void CMenus::RenderBongureSettings(CUIRect Screen)
-{
-    ColorRGBA BgColor(g_Config.m_ClBongureMenuBgR / 255.0f,
-        g_Config.m_ClBongureMenuBgG / 255.0f,
-        g_Config.m_ClBongureMenuBgB / 255.0f, 1.0f);
+void CMenus::RenderBongureSettings(CUIRect Screen) {
+    ColorRGBA BgColor(g_Config.m_BcBongureMenuBgR / 255.0f,
+        g_Config.m_BcBongureMenuBgG / 255.0f,
+        g_Config.m_BcBongureMenuBgB / 255.0f, 1.0f);
 
     Screen.Draw(BgColor, IGraphics::CORNER_NONE, 0.0f);
 
-    ColorRGBA TextColor(g_Config.m_ClBongureMenuTextR / 255.0f,
-        g_Config.m_ClBongureMenuTextG / 255.0f,
-        g_Config.m_ClBongureMenuTextB / 255.0f, 1.0f);
+    ColorRGBA TextColor(g_Config.m_BcBongureMenuTextR / 255.0f,
+        g_Config.m_BcBongureMenuTextG / 255.0f,
+        g_Config.m_BcBongureMenuTextB / 255.0f, 1.0f);
 
     CUIRect Main, TitleRow, Row;
     Screen.VMargin(20.0f, &Main);
     Screen.HMargin(10.0f, &Main);
 
-    // Заголовок
     Main.HSplitTop(35.0f, &TitleRow, &Main);
     TextRender()->TextColor(TextColor);
     Ui()->DoLabel(&TitleRow, Localize("Настройки Bongure Client"), 22.0f, TEXTALIGN_MC);
 
     Main.HSplitTop(5.0f, nullptr, &Main);
 
-    // ── Цвет фона ──
     static bool fon_vryb = 0;
 
     Main.HSplitTop(20.0f, &Row, &Main);
@@ -296,17 +286,19 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
         static CLineInputBuffered<8> s_BgRInput, s_BgGInput, s_BgBInput;
         static CLineInputBuffered<8> s_TextRInput, s_TextGInput, s_TextBInput;
 
-        DoColorSliderTop(Localize("Фон R (красный)"),   g_Config.m_ClBongureMenuBgR, &g_Config.m_ClBongureMenuBgR, s_BgRInput);
-        DoColorSliderTop(Localize("Фон G (зелёный)"),   g_Config.m_ClBongureMenuBgG, &g_Config.m_ClBongureMenuBgG, s_BgGInput);
-        DoColorSliderTop(Localize("Фон B (синий)"),     g_Config.m_ClBongureMenuBgB, &g_Config.m_ClBongureMenuBgB, s_BgBInput);
-        DoColorSliderTop(Localize("Текст R (красный)"), g_Config.m_ClBongureMenuTextR, &g_Config.m_ClBongureMenuTextR, s_TextRInput);
-        DoColorSliderTop(Localize("Текст G (зелёный)"), g_Config.m_ClBongureMenuTextG, &g_Config.m_ClBongureMenuTextG, s_TextGInput);
-        DoColorSliderTop(Localize("Текст B (синий)"),   g_Config.m_ClBongureMenuTextB, &g_Config.m_ClBongureMenuTextB, s_TextBInput);
+        DoColorSliderTop(Localize("Фон R (красный)"),   g_Config.m_BcBongureMenuBgR, &g_Config.m_BcBongureMenuBgR, s_BgRInput);
+        DoColorSliderTop(Localize("Фон G (зелёный)"),   g_Config.m_BcBongureMenuBgG, &g_Config.m_BcBongureMenuBgG, s_BgGInput);
+        DoColorSliderTop(Localize("Фон B (синий)"),     g_Config.m_BcBongureMenuBgB, &g_Config.m_BcBongureMenuBgB, s_BgBInput);
+        DoColorSliderTop(Localize("Текст R (красный)"), g_Config.m_BcBongureMenuTextR, &g_Config.m_BcBongureMenuTextR, s_TextRInput);
+        DoColorSliderTop(Localize("Текст G (зелёный)"), g_Config.m_BcBongureMenuTextG, &g_Config.m_BcBongureMenuTextG, s_TextGInput);
+        DoColorSliderTop(Localize("Текст B (синий)"),   g_Config.m_BcBongureMenuTextB, &g_Config.m_BcBongureMenuTextB, s_TextBInput);
 
         Main.HSplitTop(10.0f, nullptr, &Main);
     }
 
-    // ── Авто мьют ──
+	Main.HSplitTop(5.0f, nullptr, &Main);
+
+    // Auto Mute
     Main.HSplitTop(20.0f, &Row, &Main);
     
     CUIRect AutoMuteLeft, AutoMuteRight;
@@ -315,13 +307,13 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
     static bool s_HideAutoMute = true;
     TextRender()->TextColor(TextColor);
     
-    if(DoButton_CheckBox(&g_Config.m_ClAutoMute, Localize("Авто мьют"), g_Config.m_ClAutoMute, &AutoMuteLeft))
-        g_Config.m_ClAutoMute ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcAutoMute, Localize("Авто мьют"), g_Config.m_BcAutoMute, &AutoMuteLeft))
+        g_Config.m_BcAutoMute ^= 1;
         
     if(DoButton_CheckBox(&s_HideAutoMute, Localize("Скрыть здесь"), s_HideAutoMute, &AutoMuteRight))
         s_HideAutoMute ^= 1;
 
-    if(g_Config.m_ClAutoMute && !s_HideAutoMute)
+    if(!s_HideAutoMute)
     {
         const float Indent = 20.0f;
         static CLineInputBuffered<8> s_MuteTimesInput;
@@ -332,11 +324,11 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
         CUIRect SliderArea, EditArea; IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
 
         bool MuteTimesEditActive = Ui()->HotItem() == &s_MuteTimesInput || Ui()->ActiveItem() == &s_MuteTimesInput;
-        if(!MuteTimesEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteTimes); s_MuteTimesInput.Set(aTmp); }
+        if(!MuteTimesEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteTimes); s_MuteTimesInput.Set(aTmp); }
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteTimes, &g_Config.m_ClAutoMuteTimes, &SliderArea, Localize("Кол-во сообщений до мьюта"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
-        if(Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f)) { const int P = str_toint(s_MuteTimesInput.GetString()); if(P >= 1 && P <= 20) g_Config.m_ClAutoMuteTimes = P; }
+        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteTimes, &g_Config.m_BcAutoMuteTimes, &SliderArea, Localize("Кол-во сообщений до мьюта"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
+        if(Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f)) { const int P = str_toint(s_MuteTimesInput.GetString()); if(P >= 1 && P <= 20) g_Config.m_BcAutoMuteTimes = P; }
 
         static CLineInputBuffered<8> s_MuteTimeInput;
         Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
@@ -344,32 +336,32 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
         CUIRect SliderArea2, EditArea2; IndentedRow.VSplitRight(50.0f, &SliderArea2, &EditArea2);
 
         bool MuteTimeEditActive = Ui()->HotItem() == &s_MuteTimeInput || Ui()->ActiveItem() == &s_MuteTimeInput;
-        if(!MuteTimeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_ClAutoMuteVremya); s_MuteTimeInput.Set(aTmp); }
+        if(!MuteTimeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteVremya); s_MuteTimeInput.Set(aTmp); }
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_ClAutoMuteVremya, &g_Config.m_ClAutoMuteVremya, &SliderArea2, Localize("Время за которое выдаётся мьют (сек)"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
-        if(Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f)) { const int P = str_toint(s_MuteTimeInput.GetString()); if(P >= 5 && P <= 300) g_Config.m_ClAutoMuteVremya = P; }
+        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteVremya, &g_Config.m_BcAutoMuteVremya, &SliderArea2, Localize("Время за которое выдаётся мьют (сек)"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
+        if(Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f)) { const int P = str_toint(s_MuteTimeInput.GetString()); if(P >= 5 && P <= 300) g_Config.m_BcAutoMuteVremya = P; }
     }
 
     Main.HSplitTop(5.0f, nullptr, &Main);
 
-    // ── Авто перевод ──
+    // Auto Translate
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&g_Config.m_ClAutoTranslate, Localize("Авто перевод"), g_Config.m_ClAutoTranslate, &Row))
-        g_Config.m_ClAutoTranslate ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcAutoTranslate, Localize("Авто перевод"), g_Config.m_BcAutoTranslate, &Row))
+        g_Config.m_BcAutoTranslate ^= 1;
 
     Main.HSplitTop(5.0f, nullptr, &Main);
 
-    // Бонга
+    // Bonga
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&g_Config.m_ClBongaVoice, Localize("Бонга"), g_Config.m_ClBongaVoice, &Row))
-        g_Config.m_ClBongaVoice ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcBongaVoice, Localize("Бонга"), g_Config.m_BcBongaVoice, &Row))
+        g_Config.m_BcBongaVoice ^= 1;
 
-    Main.HSplitTop(10.0f, nullptr, &Main);
+    Main.HSplitTop(5.0f, nullptr, &Main);
 
-    // ── Показатель дамми ──
+    // Dummy Pointer
     Main.HSplitTop(20.0f, &Row, &Main);
     
     CUIRect DummyLeft, DummyRight;
@@ -378,13 +370,13 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
     static bool s_HideDummy = true;
     TextRender()->TextColor(TextColor);
     
-    if(DoButton_CheckBox(&g_Config.m_ClDummyPointer, Localize("Показатель дамми"), g_Config.m_ClDummyPointer, &DummyLeft))
-        g_Config.m_ClDummyPointer ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcDummyPointer, Localize("Показатель дамми"), g_Config.m_BcDummyPointer, &DummyLeft))
+        g_Config.m_BcDummyPointer ^= 1;
         
     if(DoButton_CheckBox(&s_HideDummy, Localize("Скрыть здесь"), s_HideDummy, &DummyRight))
         s_HideDummy ^= 1;
 
-    if(g_Config.m_ClDummyPointer && !s_HideDummy)
+    if(g_Config.m_BcDummyPointer && !s_HideDummy)
     {
         const float Indent = 20.0f;
         static CLineInputBuffered<8> s_DummySizeInput;
@@ -394,11 +386,11 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
         CUIRect SliderArea, EditArea; IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
 
         bool SizeEditActive = Ui()->HotItem() == &s_DummySizeInput || Ui()->ActiveItem() == &s_DummySizeInput;
-        if(!SizeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_ClDummyPointerSize); s_DummySizeInput.Set(aTmp); }
+        if(!SizeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcDummyPointerSize); s_DummySizeInput.Set(aTmp); }
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_ClDummyPointerSize, &g_Config.m_ClDummyPointerSize, &SliderArea, Localize("Размер стрелки"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
-        if(Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f)) { const int P = str_toint(s_DummySizeInput.GetString()); if(P >= 1 && P <= 50) g_Config.m_ClDummyPointerSize = P; }
+        Ui()->DoScrollbarOption(&g_Config.m_BcDummyPointerSize, &g_Config.m_BcDummyPointerSize, &SliderArea, Localize("Размер стрелки"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
+        if(Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f)) { const int P = str_toint(s_DummySizeInput.GetString()); if(P >= 1 && P <= 50) g_Config.m_BcDummyPointerSize = P; }
 
         auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
             Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
@@ -414,13 +406,13 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
         };
 
         static CLineInputBuffered<8> s_DummyRInput, s_DummyGInput, s_DummyBInput;
-        DoColorSlider(Localize("R (красный)"), g_Config.m_ClDummyPointerColorR, &g_Config.m_ClDummyPointerColorR, s_DummyRInput);
-        DoColorSlider(Localize("G (зелёный)"), g_Config.m_ClDummyPointerColorG, &g_Config.m_ClDummyPointerColorG, s_DummyGInput);
-        DoColorSlider(Localize("B (синий)"),   g_Config.m_ClDummyPointerColorB, &g_Config.m_ClDummyPointerColorB, s_DummyBInput);
+        DoColorSlider(Localize("R (красный)"), g_Config.m_BcDummyPointerColorR, &g_Config.m_BcDummyPointerColorR, s_DummyRInput);
+        DoColorSlider(Localize("G (зелёный)"), g_Config.m_BcDummyPointerColorG, &g_Config.m_BcDummyPointerColorG, s_DummyGInput);
+        DoColorSlider(Localize("B (синий)"),   g_Config.m_BcDummyPointerColorB, &g_Config.m_BcDummyPointerColorB, s_DummyBInput);
 
         Main.HSplitTop(10.0f, nullptr, &Main); Main.HSplitTop(40.0f, &Row, &Main);
         CUIRect PreviewRect = Row; PreviewRect.x += Indent; PreviewRect.w = 80.0f;
-        ColorRGBA PreviewColor(g_Config.m_ClDummyPointerColorR / 255.0f, g_Config.m_ClDummyPointerColorG / 255.0f, g_Config.m_ClDummyPointerColorB / 255.0f, 1.0f);
+        ColorRGBA PreviewColor(g_Config.m_BcDummyPointerColorR / 255.0f, g_Config.m_BcDummyPointerColorG / 255.0f, g_Config.m_BcDummyPointerColorB / 255.0f, 1.0f);
         PreviewRect.Draw(PreviewColor, IGraphics::CORNER_ALL, 6.0f);
 
         CUIRect LabelRect = Row; LabelRect.x += Indent + 90.0f; LabelRect.w -= Indent + 90.0f;
@@ -428,9 +420,9 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
         Ui()->DoLabel(&LabelRect, Localize("Цвет стрелки"), 14.0f, TEXTALIGN_ML);
     }
 
-    Main.HSplitTop(10.0f, nullptr, &Main);
+    Main.HSplitTop(5.0f, nullptr, &Main);
 
-    // ── Настройка эмодзи ──
+    // Emoji System
 	Main.HSplitTop(20.0f, &Row, &Main);
 	static bool s_EmojiSettings = false;
 	TextRender()->TextColor(TextColor);
@@ -442,7 +434,6 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 	    const float Indent = 20.0f;
 	    Main.HSplitTop(5.0f, nullptr, &Main);
 
-	    // 1. Читаем файл (локальный кэш)
 	    static std::map<std::string, std::string> s_LocalSmilesDB;
 	    static bool s_SmilesLoaded = false;
 	
@@ -459,11 +450,9 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 	        s_SmilesLoaded = true;
 	    }
 
-	    // Хранилище кнопок удаления и переменная для отложенного удаления
 	    static std::map<std::string, CButtonContainer> s_DelBtns;
 	    std::string keyToDelete = "";
 
-	    // 2. Выводим список текущих смайлов
 	    for (const auto& pair : s_LocalSmilesDB) {
 	        Main.HSplitTop(20.0f, &Row, &Main);
 	        CUIRect IndentedRow = Row;
@@ -481,12 +470,10 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 	        Ui()->DoLabel(&KeyRect, pair.first.c_str(), 14.0f, TEXTALIGN_ML);
 	        Ui()->DoLabel(&ValRect, pair.second.c_str(), 14.0f, TEXTALIGN_ML);
 
-	        // Невидимая кнопка для логики нажатия
 	        if(DoButton_Menu(&s_DelBtns[pair.first], "", 0, &DelBtnRect)) {
 	            keyToDelete = pair.first;
 	        }
 		
-	        // Рисуем иконку корзины
 	        Graphics()->TextureSet(m_SmileKorzina);
 	        Graphics()->QuadsBegin();
 	        Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -497,7 +484,6 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 	        Main.HSplitTop(2.0f, nullptr, &Main);
 	    }
 
-	    // Удаляем элемент, если нажали корзину
 	    if (!keyToDelete.empty()) {
 	        s_LocalSmilesDB.erase(keyToDelete);
 	        std::ofstream outfile("data/smiles_db.txt");
@@ -510,7 +496,6 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 
 	    Main.HSplitTop(10.0f, nullptr, &Main);
 
-	    // 3. Форма добавления (ключ, значение, кнопка плюс)
 	    Main.HSplitTop(20.0f, &Row, &Main);
 	    CUIRect IndentedRow = Row;
 	    IndentedRow.x += Indent;
@@ -550,7 +535,6 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 	        }
 	    }
 
-	    // Рисуем иконку плюса
 	    Graphics()->TextureSet(m_SmilePlus);
 	    Graphics()->QuadsBegin();
 	    Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -559,13 +543,280 @@ void CMenus::RenderBongureSettings(CUIRect Screen)
 	    Graphics()->QuadsEnd();
 	}
 
-	// Дебаг бонги
+	Main.HSplitTop(5.0f, nullptr, &Main);
+
+	// Bonga Debug
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&g_Config.m_ClBongaDebug, Localize("Дебаг бонги"), g_Config.m_ClBongaDebug, &Row))
-        g_Config.m_ClBongaDebug ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcBongaDebug, Localize("Дебаг бонги"), g_Config.m_BcBongaDebug, &Row))
+        g_Config.m_BcBongaDebug ^= 1;
 
-    Main.HSplitTop(10.0f, nullptr, &Main);
+    Main.HSplitTop(5.0f, nullptr, &Main);
+
+	// Custom Aspect Ratio
+	Main.HSplitTop(20.0f, &Row, &Main);
+
+	const float UiOffsetGlobal = 20.0f;
+	const float DropDownOffsetGlobal = 250.0f;
+	const float InputWidthGlobal = 250.0f;
+
+	static bool s_AspectRatioEnabled = false;
+	TextRender()->TextColor(TextColor);
+	if(DoButton_CheckBox(&s_AspectRatioEnabled, Localize("Кастомное расширение"), s_AspectRatioEnabled,
+		&Row)) s_AspectRatioEnabled ^= 1;
+
+	if(s_AspectRatioEnabled) {
+	//PRESET
+
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+
+		//Lable
+		CUIRect PresetLabelRect = Row; PresetLabelRect.x += UiOffsetGlobal;
+		//Lable
+
+		//DropDown
+		CUIRect PresetDropDownRect = Row;
+			PresetDropDownRect.x += DropDownOffsetGlobal;
+			PresetDropDownRect.w = InputWidthGlobal;
+
+		//
+
+		static CUi::SDropDownState s_PresetDropDownState;
+		static CScrollRegion s_PresetDropDownScrollRegion;
+		s_PresetDropDownState.m_SelectionPopupContext.m_pScrollRegion = &s_PresetDropDownScrollRegion;
+
+		//
+
+		const char *apPresetDropDownModes[] = {
+			Localize("Выключено (default)"),
+			"5:4",
+			"4:3",
+			"3:2",
+			Localize("Кастомизация")
+		};
+		static const int s_apPresetDropDownModes_len = std::size(apPresetDropDownModes);
+		static const std::array<int, 4> s_aAspectPresetValues = {0, 125, 133, 150};
+
+		//
+
+		const int AspectMode = g_Config.m_BcCustomAspectRatioMode >= 0 ?
+			g_Config.m_BcCustomAspectRatioMode : (g_Config.m_BcCustomAspectRatio > 0 ? 1 : 0);
+
+		const int CustomPresetIndex = s_apPresetDropDownModes_len - 1;
+
+		auto GetAspectPresetIndex = [&]() -> int {
+			if (AspectMode <= 0 || g_Config.m_BcCustomAspectRatio == 0) return 0;
+			if (AspectMode == 2) return CustomPresetIndex;
+
+			for (size_t i = 1; i < s_aAspectPresetValues.size(); ++i) {
+				if (g_Config.m_BcCustomAspectRatio == s_aAspectPresetValues[i]) return (int)i;
+			}
+
+			int BestIndex = 1;
+			int BestDiff = absolute(g_Config.m_BcCustomAspectRatio - s_aAspectPresetValues[BestIndex]);
+			for (size_t i = 2; i < s_aAspectPresetValues.size(); ++i) {
+				const int CurDiff = absolute(g_Config.m_BcCustomAspectRatio - s_aAspectPresetValues[i]);
+				if (CurDiff < BestDiff) {
+					BestDiff = CurDiff;
+					BestIndex = (int)i;
+				}
+			}
+
+			return BestIndex;
+		};
+		const int CurrentPreset = GetAspectPresetIndex();
+		//DropDown
+
+
+		//Render
+
+		TextRender()->TextColor(TextColor);
+		Ui()->DoLabel(&PresetLabelRect, Localize("Пресет: "), 14.0f, TEXTALIGN_ML);
+
+    	TextRender()->TextColor(TextRender()->DefaultTextColor());
+		const int NewPreset = Ui()->DoDropDown(&PresetDropDownRect, CurrentPreset, apPresetDropDownModes,
+			s_apPresetDropDownModes_len, s_PresetDropDownState);
+
+
+		//Logic
+
+		if (CurrentPreset != NewPreset) {
+			if (NewPreset == 0) {
+				g_Config.m_BcCustomAspectRatioMode = 0;
+				g_Config.m_BcCustomAspectRatio = 0;
+			}
+			else if (NewPreset == CustomPresetIndex) {
+				g_Config.m_BcCustomAspectRatioMode = 2;
+				if (g_Config.m_BcCustomAspectRatio < 100) g_Config.m_BcCustomAspectRatio = 178;
+				
+				if (g_Config.m_BcCustomAspectRatioNum <= 0 || g_Config.m_BcCustomAspectRatioDen <= 0) {
+					g_Config.m_BcCustomAspectRatioNum = 16;
+					g_Config.m_BcCustomAspectRatioDen = 9;
+					g_Config.m_BcCustomAspectRatio = 178;
+				}
+			}
+			else {
+				g_Config.m_BcCustomAspectRatioMode = 1;
+				g_Config.m_BcCustomAspectRatio = s_aAspectPresetValues[NewPreset];
+			}
+			GameClient()->m_TClient.SetForcedAspect();
+		}
+
+	//PRESET
+
+	//APPLY
+
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+
+		//Lable
+		CUIRect ApplyLabelRect = Row; ApplyLabelRect.x += UiOffsetGlobal;
+		//Lable
+
+		//DropDown
+		CUIRect ApplyDropDownRect = Row;
+			ApplyDropDownRect.x += DropDownOffsetGlobal;
+			ApplyDropDownRect.w = InputWidthGlobal;
+
+		//
+
+		static CUi::SDropDownState s_ApplyDropDownState;
+		static CScrollRegion s_ApplyDropDownScrollRegion;
+		s_ApplyDropDownState.m_SelectionPopupContext.m_pScrollRegion = &s_ApplyDropDownScrollRegion;
+
+		//
+
+		const char *apApplyDropDownModes[] = {
+			Localize("Только игра"),
+			Localize("Полностью"),
+			Localize("Игра без HUD")
+		};
+		static const int s_apApplyDropDownModes_len = std::size(apApplyDropDownModes);
+
+		//
+
+		const int CurrentApply = g_Config.m_BcCustomAspectRatioApplyMode;
+		//DropDown
+
+
+		//Render
+
+		TextRender()->TextColor(TextColor);	
+		Ui()->DoLabel(&ApplyLabelRect, Localize("Применить: "), 14.0f, TEXTALIGN_ML);
+
+    	TextRender()->TextColor(TextRender()->DefaultTextColor());
+		const int NewApply = Ui()->DoDropDown(&ApplyDropDownRect, CurrentApply, apApplyDropDownModes,
+			s_apApplyDropDownModes_len, s_ApplyDropDownState);
+
+
+		//Logic
+
+		if (CurrentApply != NewApply) {
+			g_Config.m_BcCustomAspectRatioApplyMode = NewApply;
+			GameClient()->m_TClient.SetForcedAspect();
+		}
+
+	//APPLY
+
+	//CUSTOM NUM AND DEN
+
+		const int EffectiveAspectMode = g_Config.m_BcCustomAspectRatioMode >= 0 ?
+			g_Config.m_BcCustomAspectRatioMode : (g_Config.m_BcCustomAspectRatio > 0 ? 1 : 0);
+		static CLineInputNumber s_CustomAspectNumeratorInput;
+		static CLineInputNumber s_CustomAspectDenominatorInput;
+		static bool s_CustomAspectInitialized = false;
+		static int s_LastSyncedNum = -1;
+		static int s_LastSyncedDen = -1;
+
+		if (EffectiveAspectMode == 2) {
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+
+			//EditBox
+			const int CfgNum = g_Config.m_BcCustomAspectRatioNum > 0 ?
+				g_Config.m_BcCustomAspectRatioNum : 16;
+			const int CfgDen = g_Config.m_BcCustomAspectRatioDen > 0 ?
+				g_Config.m_BcCustomAspectRatioDen : 9;
+
+			if (!s_CustomAspectNumeratorInput.IsActive() && !s_CustomAspectDenominatorInput.IsActive() &&
+				(!s_CustomAspectInitialized || s_LastSyncedNum != CfgNum || s_LastSyncedDen != CfgDen)) {
+				s_CustomAspectNumeratorInput.SetInteger(CfgNum);
+				s_CustomAspectDenominatorInput.SetInteger(CfgDen);
+				s_LastSyncedNum = CfgNum;
+				s_LastSyncedDen = CfgDen;
+				s_CustomAspectInitialized = true;
+			}
+
+			CUIRect NumeratorEditBoxRect = Row;
+				NumeratorEditBoxRect.x += DropDownOffsetGlobal;
+				NumeratorEditBoxRect.w = InputWidthGlobal / 2 - 10.0f;
+
+			const float SeparatorLabelX = NumeratorEditBoxRect.x + NumeratorEditBoxRect.w + 10.0f;
+
+			CUIRect DenominatorEditBoxRect = Row;
+				DenominatorEditBoxRect.x = (SeparatorLabelX + 10.0f);
+				DenominatorEditBoxRect.w = InputWidthGlobal / 2 - 10.0f;
+			//EditBox
+
+			//Lable
+			CUIRect CustomNADLabelRect = Row; CustomNADLabelRect.x += UiOffsetGlobal;
+			CUIRect SeparatorLabelRect = Row;
+				SeparatorLabelRect.x = SeparatorLabelX - 3.0f;
+			//Lable
+
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+
+			//Button
+			CUIRect ApplyButton = Row;
+				ApplyButton.x += UiOffsetGlobal;
+				ApplyButton.w = (DenominatorEditBoxRect.x + DenominatorEditBoxRect.w - UiOffsetGlobal);
+			static CButtonContainer s_AspectApplyButton;
+			//Button
+
+			//Render
+
+			TextRender()->TextColor(TextColor);
+			Ui()->DoLabel(&CustomNADLabelRect, Localize("Пользовательский размер: "), 14.0f, TEXTALIGN_ML);
+
+    		TextRender()->TextColor(TextRender()->DefaultTextColor());
+			Ui()->DoEditBox(&s_CustomAspectNumeratorInput, &NumeratorEditBoxRect, 14.0f);
+
+    		TextRender()->TextColor(TextRender()->DefaultTextColor());
+			Ui()->DoLabel(&SeparatorLabelRect, ":", 14.0f, TEXTALIGN_ML);
+
+    		TextRender()->TextColor(TextRender()->DefaultTextColor());
+			Ui()->DoEditBox(&s_CustomAspectDenominatorInput, &DenominatorEditBoxRect, 14.0f);
+
+			//Render
+
+			//Logic
+
+			const int InputNum = maximum(1, s_CustomAspectNumeratorInput.GetInteger());
+			const int InputDen = maximum(1, s_CustomAspectDenominatorInput.GetInteger());
+
+			const bool HasPendingCustomChange = InputNum != g_Config.m_BcCustomAspectRatioNum ||
+				InputDen != g_Config.m_BcCustomAspectRatioDen;
+
+			if (DoButton_Menu(&s_AspectApplyButton, Localize("Применить"), HasPendingCustomChange ?
+				0 : -1, &ApplyButton) && HasPendingCustomChange) {
+				g_Config.m_BcCustomAspectRatioNum = InputNum;
+				g_Config.m_BcCustomAspectRatioDen = InputDen;
+				g_Config.m_BcCustomAspectRatio = std::clamp(
+					(int)std::lround((double)InputNum * 100.0 / (double)InputDen), 100, 1000);
+				s_LastSyncedNum = InputNum;
+				s_LastSyncedDen = InputDen;
+				GameClient()->m_TClient.SetForcedAspect();
+			}
+
+			//Logic
+		}
+
+	//CUSTOM NUM AND DEN
+	}
+
+	Main.HSplitTop(5.0f, nullptr, &Main);
 
     TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
@@ -725,9 +976,9 @@ void CMenus::TerminalExecuteCommand()
 			if(B < 0) B = 0;
 			if(B > 255) B = 255;
 
-			g_Config.m_ClBongureMenuBgR = R;
-			g_Config.m_ClBongureMenuBgG = G;
-			g_Config.m_ClBongureMenuBgB = B;
+			g_Config.m_BcBongureMenuBgR = R;
+			g_Config.m_BcBongureMenuBgG = G;
+			g_Config.m_BcBongureMenuBgB = B;
 
 			TerminalAddLine("Menu background color updated.");
 		}
@@ -748,9 +999,9 @@ void CMenus::TerminalExecuteCommand()
 			if(B < 0) B = 0;
 			if(B > 255) B = 255;
 
-			g_Config.m_ClBongureMenuTextR = R;
-			g_Config.m_ClBongureMenuTextG = G;
-			g_Config.m_ClBongureMenuTextB = B;
+			g_Config.m_BcBongureMenuTextR = R;
+			g_Config.m_BcBongureMenuTextG = G;
+			g_Config.m_BcBongureMenuTextB = B;
 
 			TerminalAddLine("Menu text color updated.");
 		}
@@ -778,9 +1029,9 @@ void CMenus::RenderTerminal(CUIRect Screen)
 	Graphics()->TextureClear();
 	Graphics()->QuadsBegin();
 	Graphics()->SetColor(
-	g_Config.m_ClBongureMenuBgR / 255.0f,
-	g_Config.m_ClBongureMenuBgG / 255.0f,
-	g_Config.m_ClBongureMenuBgB / 255.0f,
+	g_Config.m_BcBongureMenuBgR / 255.0f,
+	g_Config.m_BcBongureMenuBgG / 255.0f,
+	g_Config.m_BcBongureMenuBgB / 255.0f,
 	1.0f);
 	IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
 	Graphics()->QuadsDrawTL(&Quad, 1);
@@ -789,9 +1040,9 @@ void CMenus::RenderTerminal(CUIRect Screen)
 	Input()->StartTextInput();
 
 	TextRender()->TextColor(
-	g_Config.m_ClBongureMenuTextR / 255.0f,
-	g_Config.m_ClBongureMenuTextG / 255.0f,
-	g_Config.m_ClBongureMenuTextB / 255.0f,
+	g_Config.m_BcBongureMenuTextR / 255.0f,
+	g_Config.m_BcBongureMenuTextG / 255.0f,
+	g_Config.m_BcBongureMenuTextB / 255.0f,
 	1.0f);
 
 	const bool ShowCursor = ((time_get() / (time_freq() / 2)) % 2) == 0;
@@ -3616,10 +3867,19 @@ void CMenus::OnRender()
 	Ui()->StartCheck();
 	UpdateColors();
 
+	const bool IngameMenu = IsActive() && (Client()->State() == IClient::STATE_ONLINE ||
+		Client()->State() == IClient::STATE_DEMOPLAYBACK);
+	const bool UseWindowAspectForUi = IngameMenu && (GameClient()->IsAspectRatioBlockedByFng() ||
+		g_Config.m_BcCustomAspectRatioApplyMode != 1);
+	Ui()->SetUseGraphicsScreenAspect(!UseWindowAspectForUi);
+
 	Ui()->Update();
 
 	Render();
-	if(m_ShowBongureSettings) RenderBongureSettings(*Ui()->Screen());
+	if(m_ShowBongureSettings) {
+		RenderBongureSettings(*Ui()->Screen());
+		Ui()->RenderPopupMenus();
+	}
 
 	if(IsActive())
 	{

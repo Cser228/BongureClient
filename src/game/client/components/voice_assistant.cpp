@@ -113,9 +113,9 @@ void CVoiceAssistant::Toggle()
 void CVoiceAssistant::OnRender()
 {
 	// Синхронизация с конфигом
-	if(g_Config.m_ClBongaVoice && !m_Active.load() && m_Initialized)
+	if(g_Config.m_BcBongaVoice && !m_Active.load() && m_Initialized)
 		Toggle();
-	else if(!g_Config.m_ClBongaVoice && m_Active.load())
+	else if(!g_Config.m_BcBongaVoice && m_Active.load())
 		Toggle();
 
 	if(!m_Active.load())

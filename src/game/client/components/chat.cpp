@@ -26,68 +26,9 @@
 #include <game/client/gameclient.h>
 #include <game/localization.h>
 
-//Auto Translate
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <cstring>
-#include <algorithm>
-#include <curl/curl.h>
-#include <thread>
-#include <mutex>
-#include <atomic>
-#include <regex>
-#include <map>
 #include <fstream>
 
-std::mutex auto_translate_data_mutex;
-std::atomic<bool> auto_translate_update {false};
-
-static const char* LANG_PAIR   = "en|ru";
-static const size_t MAX_QUERY_BYTES = 450;
-
-std::string message = "";
-
 char CChat::ms_aDisplayText[MAX_LINE_LENGTH] = "";
-
-// Функция для замены английского сленга на полные слова
-std::string replaceSlang(std::string text) {
-    static const std::vector<std::pair<std::regex, std::string>> slangDict = {
-        {std::regex("\\brn\\b", std::regex_constants::icase), "right now"},
-        {std::regex("\\bbtw\\b", std::regex_constants::icase), "by the way"},
-        {std::regex("\\btbh\\b", std::regex_constants::icase), "to be honest"},
-        {std::regex("\\bafaik\\b", std::regex_constants::icase), "as far as I know"},
-        {std::regex("\\bidk\\b", std::regex_constants::icase), "I don't know"},
-        {std::regex("\\bimo\\b", std::regex_constants::icase), "in my opinion"},
-        {std::regex("\\bimho\\b", std::regex_constants::icase), "in my humble opinion"},
-        {std::regex("\\bbrb\\b", std::regex_constants::icase), "be right back"},
-        {std::regex("\\bomg\\b", std::regex_constants::icase), "oh my god"},
-        {std::regex("\\bwtf\\b", std::regex_constants::icase), "what the fuck"},
-        {std::regex("\\bstfu\\b", std::regex_constants::icase), "shut the fuck up"},
-        {std::regex("\\blmao\\b", std::regex_constants::icase), "laughing my ass off"},
-        {std::regex("\\blol\\b", std::regex_constants::icase), "laughing out loud"},
-        {std::regex("\\bsmh\\b", std::regex_constants::icase), "shaking my head"},
-        {std::regex("\\basap\\b", std::regex_constants::icase), "as soon as possible"},
-        {std::regex("\\bfyi\\b", std::regex_constants::icase), "for your information"},
-        {std::regex("\\bnp\\b", std::regex_constants::icase), "no problem"},
-        {std::regex("\\bomw\\b", std::regex_constants::icase), "on my way"},
-        {std::regex("\\birl\\b", std::regex_constants::icase), "in real life"},
-        {std::regex("\\bjk\\b", std::regex_constants::icase), "just kidding"},
-        {std::regex("\\bthx\\b", std::regex_constants::icase), "thanks"},
-        {std::regex("\\bty\\b", std::regex_constants::icase), "thank you"},
-        {std::regex("\\byw\\b", std::regex_constants::icase), "you're welcome"},
-        {std::regex("\\bpls\\b", std::regex_constants::icase), "please"},
-        {std::regex("\\bplz\\b", std::regex_constants::icase), "please"},
-        {std::regex("\\bbc\\b", std::regex_constants::icase), "because"},
-        {std::regex("\\bcuz\\b", std::regex_constants::icase), "because"}
-    };
-
-    for (const auto& pair : slangDict) {
-        text = std::regex_replace(text, pair.first, pair.second);
-    }
-    return text;
-}
 
 std::vector<std::string> split(const std::string& s, char delimiter) {
     std::vector<std::string> tokens;
@@ -97,254 +38,6 @@ std::vector<std::string> split(const std::string& s, char delimiter) {
         tokens.push_back(token);
     }
     return tokens;
-}
-
-static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
-{
-    size_t totalSize = size * nmemb;
-    static_cast<std::string*>(userp)->append(static_cast<char*>(contents), totalSize);
-    return totalSize;
-}
-
-std::string urlEncode(CURL* curl, const std::string& str)
-{
-    char* encoded = curl_easy_escape(curl, str.c_str(), static_cast<int>(str.size()));
-    std::string result(encoded);
-    curl_free(encoded);
-    return result;
-}
-
-std::string extractTranslatedText(const std::string& json)
-{
-    // Ищем "translatedText":"..."
-    const std::string key = "\"translatedText\":\"";
-    auto pos = json.find(key);
-    if (pos == std::string::npos) {
-        // Попробуем вариант с пробелом после двоеточия
-        const std::string key2 = "\"translatedText\": \"";
-        pos = json.find(key2);
-        if (pos == std::string::npos)
-            return "";
-        pos += key2.size();
-    } else {
-        pos += key.size();
-    }
-
-    std::string result;
-    for (size_t i = pos; i < json.size(); ++i) {
-        if (json[i] == '"' && (i == 0 || json[i - 1] != '\\'))
-            break;
-        if (json[i] == '\\' && i + 1 < json.size()) {
-            char next = json[i + 1];
-            switch (next) {
-                case '"':  result += '"';  ++i; break;
-                case '\\': result += '\\'; ++i; break;
-                case '/':  result += '/';  ++i; break;
-                case 'n':  result += '\n'; ++i; break;
-                case 'r':  result += '\r'; ++i; break;
-                case 't':  result += '\t'; ++i; break;
-                case 'u': {
-                    // Декодирование Unicode escape: \uXXXX
-                    if (i + 5 < json.size()) {
-                        std::string hex = json.substr(i + 2, 4);
-                        unsigned long codepoint = std::stoul(hex, nullptr, 16);
-                        i += 5;
-
-                        // Суррогатная пара?
-                        if (codepoint >= 0xD800 && codepoint <= 0xDBFF &&
-                            i + 1 < json.size() && json[i + 1] == '\\' &&
-                            i + 2 < json.size() && json[i + 2] == 'u') {
-                            std::string hex2 = json.substr(i + 3, 4);
-                            unsigned long low = std::stoul(hex2, nullptr, 16);
-                            codepoint = 0x10000 + ((codepoint - 0xD800) << 10) + (low - 0xDC00);
-                            i += 6;
-                        }
-
-                        // Кодируем в UTF-8
-                        if (codepoint < 0x80) {
-                            result += static_cast<char>(codepoint);
-                        } else if (codepoint < 0x800) {
-                            result += static_cast<char>(0xC0 | (codepoint >> 6));
-                            result += static_cast<char>(0x80 | (codepoint & 0x3F));
-                        } else if (codepoint < 0x10000) {
-                            result += static_cast<char>(0xE0 | (codepoint >> 12));
-                            result += static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F));
-                            result += static_cast<char>(0x80 | (codepoint & 0x3F));
-                        } else {
-                            result += static_cast<char>(0xF0 | (codepoint >> 18));
-                            result += static_cast<char>(0x80 | ((codepoint >> 12) & 0x3F));
-                            result += static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F));
-                            result += static_cast<char>(0x80 | (codepoint & 0x3F));
-                        }
-                    }
-                    break;
-                }
-                default: result += json[i]; break;
-            }
-        } else {
-            result += json[i];
-        }
-    }
-    return result;
-}
-
-std::vector<std::string> splitText(const std::string& text, size_t maxBytes)
-{
-    std::vector<std::string> chunks;
-    if (text.empty()) return chunks;
-
-    // Разбиваем по предложениям (по точкам, ! или ?)
-    std::vector<std::string> sentences;
-    std::string current;
-    for (size_t i = 0; i < text.size(); ++i) {
-        current += text[i];
-        if (text[i] == '.' || text[i] == '!' || text[i] == '?') {
-            // Проверим, есть ли пробел или конец строки после
-            if (i + 1 >= text.size() || text[i + 1] == ' ' || text[i + 1] == '\n') {
-                sentences.push_back(current);
-                current.clear();
-            }
-        }
-    }
-    if (!current.empty())
-        sentences.push_back(current);
-
-    // Собираем предложения в куски
-    std::string chunk;
-    for (auto& s : sentences) {
-        if (s.size() > maxBytes) {
-            // Если одно предложение длиннее лимита — разбиваем по словам
-            if (!chunk.empty()) { chunks.push_back(chunk); chunk.clear(); }
-            std::istringstream iss(s);
-            std::string word;
-            while (iss >> word) {
-                if (chunk.size() + word.size() + 1 > maxBytes) {
-                    chunks.push_back(chunk);
-                    chunk.clear();
-                }
-                if (!chunk.empty()) chunk += ' ';
-                chunk += word;
-            }
-            if (!chunk.empty()) { chunks.push_back(chunk); chunk.clear(); }
-        } else if (chunk.size() + s.size() > maxBytes) {
-            chunks.push_back(chunk);
-            chunk = s;
-        } else {
-            chunk += s;
-        }
-    }
-    if (!chunk.empty())
-        chunks.push_back(chunk);
-
-    return chunks;
-}
-
-std::string translateChunk(CURL* curl, const std::string& text)
-{
-    std::string encodedText = urlEncode(curl, text);
-    std::string encodedLang = urlEncode(curl, LANG_PAIR);
-
-    std::string url = "https://api.mymemory.translated.net/get?q="
-                      + encodedText + "&langpair=" + encodedLang;
-
-    std::string response;
-
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
-
-    CURLcode res = curl_easy_perform(curl);
-    if (res != CURLE_OK) {
-        std::cerr << "  [ОШИБКА curl] " << curl_easy_strerror(res) << std::endl;
-        return "[translation error]";
-    }
-
-    long httpCode = 0;
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
-    if (httpCode != 200) {
-        std::cerr << "  [ОШИБКА HTTP] код " << httpCode << std::endl;
-        std::cerr << "  Ответ: " << response << std::endl;
-        return "[translation error]";
-    }
-
-    std::string translated = extractTranslatedText(response);
-    if (translated.empty()) {
-        std::cerr << "  [ОШИБКА] Не удалось извлечь перевод из ответа:" << std::endl;
-        std::cerr << "  " << response << std::endl;
-        return "[translation error]";
-    }
-
-    return translated;
-}
-
-static bool russian_letter_(const char &letter)
-{
-    uint8_t b = (uint8_t)letter;
-    return (b == 0xD0 || b == 0xD1);
-}
-
-static bool english_letter_(const char &letter)
-{
-    // A-Z, a-z в UTF-8 (совпадает с ASCII)
-    if((letter >= 0x41 && letter <= 0x5A) ||  // A-Z
-       (letter >= 0x61 && letter <= 0x7A))    // a-z
-    {
-        return true;
-    }
-    
-    return false;
-}
-
-void translate_thread(CChat* pChat) {
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-
-    while (true) {
-        if (auto_translate_update) {
-            auto_translate_update = false;
-
-            CURL* curl = curl_easy_init();
-            if (!curl) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                continue;
-            }
-
-            std::vector<std::string> chunks;
-            {
-                std::lock_guard<std::mutex> lock(auto_translate_data_mutex);
-                std::string processed_message = replaceSlang(message);
-                chunks = splitText(processed_message, MAX_QUERY_BYTES);
-            }
-
-            std::string fullTranslation;
-            for (size_t i = 0; i < chunks.size(); ++i) {
-                std::string translated = translateChunk(curl, chunks[i]);
-
-                if (!fullTranslation.empty() && !translated.empty()) {
-                    char lastChar = fullTranslation.back();
-                    char firstChar = translated.front();
-                    if (lastChar != ' ' && lastChar != '\n' &&
-                        firstChar != ' ' && firstChar != '\n') {
-                        fullTranslation += ' ';
-                    }
-                }
-                fullTranslation += translated;
-            }
-
-            curl_easy_cleanup(curl);
-
-			if (!fullTranslation.empty()) {
-				std::lock_guard<std::mutex> lock(pChat->m_TranslateMutex);
-				pChat->m_vPendingTranslations.push(fullTranslation);
-			}
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    curl_global_cleanup();
 }
 
 static vec2 UiMouseToScreen(const CUIRect *pUiScreen, vec2 UiMousePos, float Width, float Height)
@@ -514,105 +207,63 @@ void CChat::LoadSmilesDB()
     In.close();
 }
 
-void CChat::ConTranslate(IConsole::IResult *pResult, void *pUserData)
-{
-    CChat *pChat = (CChat *)pUserData;
-    const char *pText = pResult->GetString(0);
-
-    std::thread([pChat, text = std::string(pText)]() {
-        CURL *curl = curl_easy_init();
-        if (curl) {
-            std::string encodedText = urlEncode(curl, text);
-            std::string encodedLang = urlEncode(curl, "ru|en");
-            std::string url = "https://api.mymemory.translated.net/get?q=" + encodedText + "&langpair=" + encodedLang;
-            
-            std::string response;
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-            curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
-            
-            CURLcode res = curl_easy_perform(curl);
-            if (res == CURLE_OK) {
-                std::string translated = extractTranslatedText(response);
-                if (!translated.empty() && translated.find("[translation error]") == std::string::npos) {
-                    // Send the translated text to the game chat
-                    pChat->SendChat(0, translated.c_str());
-                }
-            }
-            curl_easy_cleanup(curl);
-        }
-    }).detach();
-}
-
 void CChat::ResetAutoMuteTrackers()
 {
 	for(int i = 0; i < MAX_CLIENTS; i++)
 		m_aAutoMuteTrackers[i].Reset();
 }
 
-
 void CChat::CheckAutoMute(int ClientId, const char *pMessage)
 {
-    if(!g_Config.m_ClAutoMute)
+    if(!g_Config.m_BcAutoMute)
         return;
     if(ClientId < 0 || ClientId >= MAX_CLIENTS)
         return;
-    // Не мьютим себя и дамми
     if(ClientId == GameClient()->m_aLocalIds[0] || ClientId == GameClient()->m_aLocalIds[1])
         return;
 
     const char   *pName    = GameClient()->m_aClients[ClientId].m_aName;
     CAutoMuteTracker *pTracker = &m_aAutoMuteTrackers[ClientId];
 
-    // Если на этом слоте теперь другой игрок — сброс
     if(str_comp(pTracker->m_aName, pName) != 0)
     {
         pTracker->Reset();
         str_copy(pTracker->m_aName, pName, sizeof(pTracker->m_aName));
     }
 
-    // Уже замьючен — пропускаем
     if(pTracker->m_Muted)
         return;
 
-    const int64_t Now          = time();        // текущее время в тиках
-    const int64_t Freq         = time_freq();   // тиков в секунду
-    const int     VremyaSec    = g_Config.m_ClAutoMuteVremya; // временное окно (0 = без ограничения)
+    const int64_t Now          = time();
+    const int64_t Freq         = time_freq();
+    const int     VremyaSec    = g_Config.m_BcAutoMuteVremya;
 
     if(str_comp(pTracker->m_aLastMessage, pMessage) == 0)
     {
-        // Одно и то же сообщение — проверяем временное окно
         if(VremyaSec > 0)
         {
-            // Если прошло больше заданного времени — сбрасываем счётчик
-            // и начинаем отсчёт заново с этого сообщения
             if(pTracker->m_FirstMsgTime > 0 &&
                (Now - pTracker->m_FirstMsgTime) > (int64_t)VremyaSec * Freq)
             {
-                // Время вышло — сбрасываем, начинаем новую серию
                 pTracker->m_RepeatCount  = 1;
                 pTracker->m_FirstMsgTime = Now;
-                return; // ещё не достигли порога в новой серии
+                return;
             }
         }
         pTracker->m_RepeatCount++;
     }
     else
     {
-        // Новое сообщение — сбрасываем счётчик и запоминаем время начала серии
         str_copy(pTracker->m_aLastMessage, pMessage, sizeof(pTracker->m_aLastMessage));
         pTracker->m_RepeatCount  = 1;
         pTracker->m_FirstMsgTime = Now;
     }
 
-    // Проверяем порог
-    if(pTracker->m_RepeatCount >= g_Config.m_ClAutoMuteTimes)
+    if(pTracker->m_RepeatCount >= g_Config.m_BcAutoMuteTimes)
     {
         pTracker->m_Muted = true;
         GameClient()->m_aClients[ClientId].m_ChatIgnore = true;
 
-        // Лог в консоль с информацией о временном окне
         char aLog[512];
         if(VremyaSec > 0)
         {
@@ -838,7 +489,6 @@ void CChat::OnConsoleInit()
 	Console()->Register("clear_chat", "", CFGFLAG_CLIENT | CFGFLAG_STORE, ConClearChat, this, "Clear chat messages");
 	Console()->Register("cl_auto_mute_reset", "", CFGFLAG_CLIENT, 
 		ConAutoMuteReset, this, "Reset all auto-mute trackers and unmute players");
-	Console()->Register("translate", "r[text]", CFGFLAG_CLIENT, ConTranslate, this, "Translate RU to EN and send to chat");
 }
 
 void CChat::OnInit()
@@ -850,7 +500,6 @@ void CChat::OnInit()
 	smile_show = "";
 	smile_window_offset = 0;
 
-	std::thread(translate_thread, this).detach();
 	Reset();
 	Console()->Chain("cl_chat_old", ConchainChatOld, this);
 	Console()->Chain("cl_chat_size", ConchainChatFontSize, this);
@@ -1342,58 +991,6 @@ void CChat::OnMessage(int MsgType, void *pRawMsg)
 	{
 		CNetMsg_Sv_Chat *pMsg = (CNetMsg_Sv_Chat *)pRawMsg;
 
-		if (g_Config.m_ClAutoTranslate == 1 && pMsg->m_ClientId != SERVER_MSG) {
-			{
-				std::lock_guard<std::mutex> lock(auto_translate_data_mutex);
-				message = pMsg->m_pMessage;
-
-				message.erase(message.begin(), std::find_if(message.begin(), message.end(), [](unsigned char ch) {
-        			return !std::isspace(ch);
-    			}));
-
-				message.erase(std::find_if(message.rbegin(), message.rend(), [](unsigned char ch) {
-        			return !std::isspace(ch);
-    			}).base(), message.end());
-			}
-
-			std::string test_string_ = message;
-
-			for (int i = 0; i < MAX_CLIENTS; i++) {
-                if (GameClient()->m_aClients[i].m_Active) {
-                    std::string nick = GameClient()->m_aClients[i].m_aName;
-                    if (!nick.empty()) {
-                        size_t pos;
-                        while ((pos = test_string_.find(nick)) != std::string::npos) {
-                            test_string_.erase(pos, nick.length());
-                        }
-                    }
-                }
-            }
-
-            test_string_.erase(std::remove_if(test_string_.begin(), test_string_.end(), [](unsigned char ch) {
-                return std::ispunct(ch);
-            }), test_string_.end());
-
-			test_string_.erase(test_string_.begin(), std::find_if(test_string_.begin(), test_string_.end(), [](unsigned char ch) {
-                return !std::isspace(ch);
-            }));
-            test_string_.erase(std::find_if(test_string_.rbegin(), test_string_.rend(), [](unsigned char ch) {
-                return !std::isspace(ch);
-            }).base(), test_string_.end());
-
-			bool has_russian = false;
-            bool has_english = false;
-            
-            for (char c : test_string_) {
-                if (russian_letter_(c)) has_russian = true;
-                if (english_letter_(c)) has_english = true;
-            }
-
-			if (!has_russian && has_english) {
-				auto_translate_update = true;
-			}
-		}
-		
 		if(pMsg->m_ClientId >= 0 && pMsg->m_ClientId < MAX_CLIENTS)
 		{
 			CheckAutoMute(pMsg->m_ClientId, pMsg->m_pMessage);
@@ -2648,45 +2245,6 @@ void CChat::SendChat(int Team, const char *pLine)
 {
 	// don't send empty messages
 	if(*str_utf8_skip_whitespaces(pLine) == '\0') return;
-
-	// === НАЧАЛО ПАТЧА ДЛЯ /TRANSLATE ===
-    if(str_startswith(pLine, "/translate "))
-    {
-        std::string text(pLine + 11);
-        if(!text.empty())
-        {
-            CChat *pSelf = this;
-            std::thread([pSelf, text]() {
-                CURL *curl = curl_easy_init();
-                if(curl)
-                {
-                    std::string encodedText = urlEncode(curl, text);
-                    // Языковая пара: с русского на английский
-                    std::string encodedLang = urlEncode(curl, "ru|en"); 
-                    std::string url = "https://api.mymemory.translated.net/get?q=" + encodedText + "&langpair=" + encodedLang;
-
-                    std::string response;
-                    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-                    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-                    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-                    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
-
-                    if(curl_easy_perform(curl) == CURLE_OK)
-                    {
-                        std::string translated = extractTranslatedText(response);
-                        if(!translated.empty())
-                        {
-                            // Отправляем переведенный текст в чат
-                            pSelf->SendChat(0, translated.c_str());
-                        }
-                    }
-                    curl_easy_cleanup(curl);
-                }
-            }).detach();
-        }
-        return; // Прерываем оригинальную команду, чтобы сервер не писал "Не найдена"
-    }
-    // === КОНЕЦ ПАТЧА ===
 
 	m_LastChatSend = time();
 

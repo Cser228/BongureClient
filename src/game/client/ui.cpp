@@ -104,6 +104,15 @@ IGraphics *CUIElementBase::Graphics() const { return ms_pUi->Graphics(); }
 IInput *CUIElementBase::Input() const { return ms_pUi->Input(); }
 ITextRender *CUIElementBase::TextRender() const { return ms_pUi->TextRender(); }
 
+float CUi::EffectiveScreenAspect() const {
+	if (m_UseGraphicsScreenAspect) return Graphics()->ScreenAspect();
+
+	const int ScreenHeight = Graphics()->ScreenHeight();
+	if (ScreenHeight <= 0) return Graphics()->ScreenAspect();
+
+	return (float)Graphics()->ScreenWidth() / (float)ScreenHeight;
+}
+
 void CUi::Init(IKernel *pKernel)
 {
 	m_pClient = pKernel->RequestInterface<IClient>();

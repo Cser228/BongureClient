@@ -415,6 +415,8 @@ private:
 
 	CUIRect m_Screen;
 
+	bool m_UseGraphicsScreenAspect = true;
+
 	std::vector<CUIRect> m_vClips;
 	void UpdateClipping();
 
@@ -492,6 +494,12 @@ public:
 
 	void SetEnabled(bool Enabled) { m_Enabled = Enabled; }
 	bool Enabled() const { return m_Enabled; }
+
+	void SetUseGraphicsScreenAspect(bool UseGraphicsScreenAspect) {
+		m_UseGraphicsScreenAspect = UseGraphicsScreenAspect;
+	}
+	float EffectiveScreenAspect() const;
+
 	void Update(vec2 MouseWorldPos = vec2(-1.0f, -1.0f));
 	void DebugRender(float X, float Y);
 

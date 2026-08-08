@@ -69,7 +69,7 @@ CHud::CHud()
 
 void CHud::RenderDummyIndicator()
 {
-	if (g_Config.m_ClDummyPointer == 0) return;
+	if (g_Config.m_BcDummyPointer == 0) return;
 
     if(GameClient()->m_aLocalIds[0] == -1 || GameClient()->m_aLocalIds[1] == -1)
     {
@@ -145,14 +145,14 @@ void CHud::RenderDummyIndicator()
     TargetEdge.y = std::clamp(TargetEdge.y, Margin, m_Height - Margin);
 
     float Angle     = atan2(DirNorm.y, DirNorm.x);
-    float ArrowSize = g_Config.m_ClDummyPointerSize;
+    float ArrowSize = g_Config.m_BcDummyPointerSize;
 
     Graphics()->TextureSet(m_DummyArrowTexture);
     Graphics()->QuadsBegin();
     Graphics()->QuadsSetRotation(Angle);
-	float color_red = g_Config.m_ClDummyPointerColorR / 255.0f;
-	float color_green = g_Config.m_ClDummyPointerColorG / 255.0f;
-	float color_blue = g_Config.m_ClDummyPointerColorB / 255.0f;
+	float color_red = g_Config.m_BcDummyPointerColorR / 255.0f;
+	float color_green = g_Config.m_BcDummyPointerColorG / 255.0f;
+	float color_blue = g_Config.m_BcDummyPointerColorB / 255.0f;
     Graphics()->SetColor(color_red, color_green, color_blue, 1.0f);
     IGraphics::CQuadItem QuadItem(TargetEdge.x, TargetEdge.y, ArrowSize, ArrowSize);
     Graphics()->QuadsDraw(&QuadItem, 1);
@@ -1287,13 +1287,17 @@ void CHud::RenderCursor()
 	else
 	{
 		// Render spec cursor
-		if(!g_Config.m_ClSpecCursor || !GameClient()->m_CursorInfo.IsAvailable())
+		if(!g_Config.m_ClSpecCursor || !GameClient()->m_CursorInfo.IsAvailable()) {
+			if (UseGameNoHudAspect) Graphics()->SetScreenAspectOverrideEnabled(false);
 			return;
+		}
 
 		bool RenderSpecCursor = (GameClient()->m_Snap.m_SpecInfo.m_Active && GameClient()->m_Snap.m_SpecInfo.m_SpectatorId != SPEC_FREEVIEW) || Client()->State() == IClient::STATE_DEMOPLAYBACK;
 
-		if(!RenderSpecCursor)
+		if(!RenderSpecCursor) {
+			if (UseGameNoHudAspect) Graphics()->SetScreenAspectOverrideEnabled(false);
 			return;
+		}
 
 		// Calculate factor to keep cursor on screen
 		const vec2 HalfSize = vec2(Center.x - aPoints[0], Center.y - aPoints[1]);
@@ -1312,6 +1316,8 @@ void CHud::RenderCursor()
 	Graphics()->SetColor(1.0f, 1.0f, 1.0f, Alpha);
 	Graphics()->TextureSet(GameClient()->m_GameSkin.m_aSpriteWeaponCursors[CurWeapon]);
 	Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_aCursorOffset[CurWeapon], TargetPos.x, TargetPos.y, Scale, Scale);
+
+	if (UseGameNoHudAspect) Graphics()->SetScreenAspectOverrideEnabled(false);
 }
 
 void CHud::PrepareAmmoHealthAndArmorQuads()
@@ -3070,7 +3076,7 @@ void CHud::OnRender()
 	GameClient()->m_MusicIsland.RenderHud();
 	RenderCursor();
 
-	if (g_Config.m_ClBongaDebug) {
+	if (g_Config.m_BcBongaDebug) {
 		Graphics()->MapScreen(0.0f, 0.0f, m_Width, m_Height);
 		RenderBongaDebugWindow(); //
 	}
