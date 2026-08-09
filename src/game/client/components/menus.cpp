@@ -1,7 +1,7 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 
-#define MAX_LINE_LEN 70
+#define MAX_LINE_LEN 150
 
 #include "menus.h"
 
@@ -83,8 +83,8 @@ CMenus::CMenus()
 	m_TerminalCursorPos = 0;
 	m_TerminalSelectAll = false;
 
-	TerminalAddLine("BongureClient terminal");
-	TerminalAddLine("Type help to list commands.");
+	TerminalAddLine(Localize("BongureClient terminal"));
+	TerminalAddLine(Localize("Type `help` to list commands."));
 
 	m_NeedRestartGraphics = false;
 	m_NeedRestartSound = false;
@@ -121,6 +121,67 @@ CMenus::CMenus()
 
 	m_PasswordInput.SetBuffer(g_Config.m_Password, sizeof(g_Config.m_Password));
 	m_PasswordInput.SetHidden(true);
+}
+
+void CMenus::FirstLaunch() {
+	// Rect
+	const float RectColorR = 109.0f;
+	const float RectColorG = 112.0f;
+	const float RectColorB = 222.0f;
+	const float RectW = 400.0f;
+	const float RectH = 100.0f;
+	const float RectX = (1050 / 2) - (RectW / 2);
+	const float RectY = (600 / 2) - (RectH / 2);
+
+	Graphics()->BlendNormal();
+	Graphics()->TextureClear();
+	Graphics()->QuadsBegin();
+	Graphics()->SetColor(RectColorR / 255.0f, RectColorG / 255.0f, RectColorB / 255.0f, 1.0f);
+	IGraphics::CQuadItem QuadItem(RectX, RectY, RectW, RectH);
+	Graphics()->QuadsDrawTL(&QuadItem, 1);
+	Graphics()->QuadsEnd();
+	// Rect
+
+	// Label
+	const float TextRectX = RectX + 20.0f;
+	const float TextRectY = RectY + 10.0f;
+	const float TextRectFontSize = 20.0f;
+
+	TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+	TextRender()->Text(TextRectX, TextRectY, TextRectFontSize,
+		Localize("Turn off Bongure Client menu?"), -1.0f);
+	TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+	// Label
+
+	// Button Yes
+	static CButtonContainer s_YesButtonContainer;
+	CUIRect YesButtonRect;
+		YesButtonRect.h = TextRectFontSize;
+		YesButtonRect.w = (RectW / 2) - 20.0f;
+		YesButtonRect.x = TextRectX;
+		YesButtonRect.y = RectY + RectH - 10.0f - YesButtonRect.h;
+
+	if (DoButton_Menu(&s_YesButtonContainer, Localize("Yes"), 0, &YesButtonRect)) {
+		g_Config.m_BcFirstLaunch = 0;
+		g_Config.m_BcEnableMenu = 0;
+	}
+	// Button Yes
+
+	// Button No
+	static CButtonContainer s_NoButtonContainer;
+	CUIRect NoButtonRect;
+		NoButtonRect.h = TextRectFontSize;
+		NoButtonRect.w = (RectW / 2) - 20.0f;
+		NoButtonRect.x = YesButtonRect.x + YesButtonRect.w + 5.0f;
+		NoButtonRect.y = RectY + RectH - 10.0f - NoButtonRect.h;
+
+	if (DoButton_Menu(&s_NoButtonContainer, Localize("No"), 0, &NoButtonRect)) {
+		g_Config.m_BcFirstLaunch = 0;
+		g_Config.m_BcEnableMenu = 1;
+	}
+	// Button No
+
+	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool CMenus::CheckUpdate() {
@@ -240,7 +301,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
     Main.HSplitTop(35.0f, &TitleRow, &Main);
     TextRender()->TextColor(TextColor);
-    Ui()->DoLabel(&TitleRow, Localize("Настройки Bongure Client"), 22.0f, TEXTALIGN_MC);
+    Ui()->DoLabel(&TitleRow, Localize("Bongure Client Settings"), 22.0f, TEXTALIGN_MC);
 
     Main.HSplitTop(5.0f, nullptr, &Main);
 
@@ -248,7 +309,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&fon_vryb, Localize("Цвет фона и текста"), fon_vryb, &Row))
+    if(DoButton_CheckBox(&fon_vryb, Localize("Background and text color"), fon_vryb, &Row))
         fon_vryb ^= 1;
 
     if (fon_vryb) {
@@ -286,12 +347,12 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         static CLineInputBuffered<8> s_BgRInput, s_BgGInput, s_BgBInput;
         static CLineInputBuffered<8> s_TextRInput, s_TextGInput, s_TextBInput;
 
-        DoColorSliderTop(Localize("Фон R (красный)"),   g_Config.m_BcBongureMenuBgR, &g_Config.m_BcBongureMenuBgR, s_BgRInput);
-        DoColorSliderTop(Localize("Фон G (зелёный)"),   g_Config.m_BcBongureMenuBgG, &g_Config.m_BcBongureMenuBgG, s_BgGInput);
-        DoColorSliderTop(Localize("Фон B (синий)"),     g_Config.m_BcBongureMenuBgB, &g_Config.m_BcBongureMenuBgB, s_BgBInput);
-        DoColorSliderTop(Localize("Текст R (красный)"), g_Config.m_BcBongureMenuTextR, &g_Config.m_BcBongureMenuTextR, s_TextRInput);
-        DoColorSliderTop(Localize("Текст G (зелёный)"), g_Config.m_BcBongureMenuTextG, &g_Config.m_BcBongureMenuTextG, s_TextGInput);
-        DoColorSliderTop(Localize("Текст B (синий)"),   g_Config.m_BcBongureMenuTextB, &g_Config.m_BcBongureMenuTextB, s_TextBInput);
+        DoColorSliderTop(Localize("Background R (red)"),   g_Config.m_BcBongureMenuBgR, &g_Config.m_BcBongureMenuBgR, s_BgRInput);
+        DoColorSliderTop(Localize("Background G (green)"),   g_Config.m_BcBongureMenuBgG, &g_Config.m_BcBongureMenuBgG, s_BgGInput);
+        DoColorSliderTop(Localize("Background B (blue)"),     g_Config.m_BcBongureMenuBgB, &g_Config.m_BcBongureMenuBgB, s_BgBInput);
+        DoColorSliderTop(Localize("Text R (red)"), g_Config.m_BcBongureMenuTextR, &g_Config.m_BcBongureMenuTextR, s_TextRInput);
+        DoColorSliderTop(Localize("Text G (green)"), g_Config.m_BcBongureMenuTextG, &g_Config.m_BcBongureMenuTextG, s_TextGInput);
+        DoColorSliderTop(Localize("Text B (blue)"),   g_Config.m_BcBongureMenuTextB, &g_Config.m_BcBongureMenuTextB, s_TextBInput);
 
         Main.HSplitTop(10.0f, nullptr, &Main);
     }
@@ -307,10 +368,10 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     static bool s_HideAutoMute = true;
     TextRender()->TextColor(TextColor);
     
-    if(DoButton_CheckBox(&g_Config.m_BcAutoMute, Localize("Авто мьют"), g_Config.m_BcAutoMute, &AutoMuteLeft))
+    if(DoButton_CheckBox(&g_Config.m_BcAutoMute, Localize("Auto mute"), g_Config.m_BcAutoMute, &AutoMuteLeft))
         g_Config.m_BcAutoMute ^= 1;
         
-    if(DoButton_CheckBox(&s_HideAutoMute, Localize("Скрыть здесь"), s_HideAutoMute, &AutoMuteRight))
+    if(DoButton_CheckBox(&s_HideAutoMute, Localize("Hide"), s_HideAutoMute, &AutoMuteRight))
         s_HideAutoMute ^= 1;
 
     if(!s_HideAutoMute)
@@ -327,7 +388,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         if(!MuteTimesEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteTimes); s_MuteTimesInput.Set(aTmp); }
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteTimes, &g_Config.m_BcAutoMuteTimes, &SliderArea, Localize("Кол-во сообщений до мьюта"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
+        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteTimes, &g_Config.m_BcAutoMuteTimes, &SliderArea, Localize("Number of messages before mute"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
         if(Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f)) { const int P = str_toint(s_MuteTimesInput.GetString()); if(P >= 1 && P <= 20) g_Config.m_BcAutoMuteTimes = P; }
 
         static CLineInputBuffered<8> s_MuteTimeInput;
@@ -339,7 +400,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         if(!MuteTimeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteVremya); s_MuteTimeInput.Set(aTmp); }
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteVremya, &g_Config.m_BcAutoMuteVremya, &SliderArea2, Localize("Время за которое выдаётся мьют (сек)"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
+        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteVremya, &g_Config.m_BcAutoMuteVremya, &SliderArea2, Localize("The time it takes for a mute to be issued"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
         if(Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f)) { const int P = str_toint(s_MuteTimeInput.GetString()); if(P >= 5 && P <= 300) g_Config.m_BcAutoMuteVremya = P; }
     }
 
@@ -348,7 +409,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     // Auto Translate
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&g_Config.m_BcAutoTranslate, Localize("Авто перевод"), g_Config.m_BcAutoTranslate, &Row))
+    if(DoButton_CheckBox(&g_Config.m_BcAutoTranslate, Localize("Auto translate"), g_Config.m_BcAutoTranslate, &Row))
         g_Config.m_BcAutoTranslate ^= 1;
 
     Main.HSplitTop(5.0f, nullptr, &Main);
@@ -356,7 +417,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     // Bonga
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&g_Config.m_BcBongaVoice, Localize("Бонга"), g_Config.m_BcBongaVoice, &Row))
+    if(DoButton_CheckBox(&g_Config.m_BcBongaVoice, Localize("Bonga"), g_Config.m_BcBongaVoice, &Row))
         g_Config.m_BcBongaVoice ^= 1;
 
     Main.HSplitTop(5.0f, nullptr, &Main);
@@ -370,10 +431,10 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     static bool s_HideDummy = true;
     TextRender()->TextColor(TextColor);
     
-    if(DoButton_CheckBox(&g_Config.m_BcDummyPointer, Localize("Показатель дамми"), g_Config.m_BcDummyPointer, &DummyLeft))
+    if(DoButton_CheckBox(&g_Config.m_BcDummyPointer, Localize("Dummy pointer"), g_Config.m_BcDummyPointer, &DummyLeft))
         g_Config.m_BcDummyPointer ^= 1;
         
-    if(DoButton_CheckBox(&s_HideDummy, Localize("Скрыть здесь"), s_HideDummy, &DummyRight))
+    if(DoButton_CheckBox(&s_HideDummy, Localize("Hide"), s_HideDummy, &DummyRight))
         s_HideDummy ^= 1;
 
     if(g_Config.m_BcDummyPointer && !s_HideDummy)
@@ -389,7 +450,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         if(!SizeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcDummyPointerSize); s_DummySizeInput.Set(aTmp); }
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_BcDummyPointerSize, &g_Config.m_BcDummyPointerSize, &SliderArea, Localize("Размер стрелки"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
+        Ui()->DoScrollbarOption(&g_Config.m_BcDummyPointerSize, &g_Config.m_BcDummyPointerSize, &SliderArea, Localize("Pointer size"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
         if(Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f)) { const int P = str_toint(s_DummySizeInput.GetString()); if(P >= 1 && P <= 50) g_Config.m_BcDummyPointerSize = P; }
 
         auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
@@ -406,9 +467,9 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         };
 
         static CLineInputBuffered<8> s_DummyRInput, s_DummyGInput, s_DummyBInput;
-        DoColorSlider(Localize("R (красный)"), g_Config.m_BcDummyPointerColorR, &g_Config.m_BcDummyPointerColorR, s_DummyRInput);
-        DoColorSlider(Localize("G (зелёный)"), g_Config.m_BcDummyPointerColorG, &g_Config.m_BcDummyPointerColorG, s_DummyGInput);
-        DoColorSlider(Localize("B (синий)"),   g_Config.m_BcDummyPointerColorB, &g_Config.m_BcDummyPointerColorB, s_DummyBInput);
+        DoColorSlider(Localize("R (red)"), g_Config.m_BcDummyPointerColorR, &g_Config.m_BcDummyPointerColorR, s_DummyRInput);
+        DoColorSlider(Localize("G (green)"), g_Config.m_BcDummyPointerColorG, &g_Config.m_BcDummyPointerColorG, s_DummyGInput);
+        DoColorSlider(Localize("B (blue)"),   g_Config.m_BcDummyPointerColorB, &g_Config.m_BcDummyPointerColorB, s_DummyBInput);
 
         Main.HSplitTop(10.0f, nullptr, &Main); Main.HSplitTop(40.0f, &Row, &Main);
         CUIRect PreviewRect = Row; PreviewRect.x += Indent; PreviewRect.w = 80.0f;
@@ -417,7 +478,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
         CUIRect LabelRect = Row; LabelRect.x += Indent + 90.0f; LabelRect.w -= Indent + 90.0f;
         TextRender()->TextColor(TextColor);
-        Ui()->DoLabel(&LabelRect, Localize("Цвет стрелки"), 14.0f, TEXTALIGN_ML);
+        Ui()->DoLabel(&LabelRect, Localize("Pointer color"), 14.0f, TEXTALIGN_ML);
     }
 
     Main.HSplitTop(5.0f, nullptr, &Main);
@@ -426,7 +487,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	Main.HSplitTop(20.0f, &Row, &Main);
 	static bool s_EmojiSettings = false;
 	TextRender()->TextColor(TextColor);
-	if(DoButton_CheckBox(&s_EmojiSettings, Localize("Настройка эмодзи"), s_EmojiSettings, &Row))
+	if(DoButton_CheckBox(&s_EmojiSettings, Localize("Emoji system"), s_EmojiSettings, &Row))
 	    s_EmojiSettings ^= 1;
 
 	if(s_EmojiSettings)
@@ -548,7 +609,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	// Bonga Debug
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&g_Config.m_BcBongaDebug, Localize("Дебаг бонги"), g_Config.m_BcBongaDebug, &Row))
+    if(DoButton_CheckBox(&g_Config.m_BcBongaDebug, Localize("Bonga debug"), g_Config.m_BcBongaDebug, &Row))
         g_Config.m_BcBongaDebug ^= 1;
 
     Main.HSplitTop(5.0f, nullptr, &Main);
@@ -562,7 +623,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
 	static bool s_AspectRatioEnabled = false;
 	TextRender()->TextColor(TextColor);
-	if(DoButton_CheckBox(&s_AspectRatioEnabled, Localize("Кастомное расширение"), s_AspectRatioEnabled,
+	if(DoButton_CheckBox(&s_AspectRatioEnabled, Localize("Custom aspect ratio"), s_AspectRatioEnabled,
 		&Row)) s_AspectRatioEnabled ^= 1;
 
 	if(s_AspectRatioEnabled) {
@@ -589,11 +650,11 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 		//
 
 		const char *apPresetDropDownModes[] = {
-			Localize("Выключено (default)"),
+			Localize("Off (default)"),
 			"5:4",
 			"4:3",
 			"3:2",
-			Localize("Кастомизация")
+			Localize("Custom")
 		};
 		static const int s_apPresetDropDownModes_len = std::size(apPresetDropDownModes);
 		static const std::array<int, 4> s_aAspectPresetValues = {0, 125, 133, 150};
@@ -632,7 +693,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 		//Render
 
 		TextRender()->TextColor(TextColor);
-		Ui()->DoLabel(&PresetLabelRect, Localize("Пресет: "), 14.0f, TEXTALIGN_ML);
+		Ui()->DoLabel(&PresetLabelRect, Localize("Preset: "), 14.0f, TEXTALIGN_ML);
 
     	TextRender()->TextColor(TextRender()->DefaultTextColor());
 		const int NewPreset = Ui()->DoDropDown(&PresetDropDownRect, CurrentPreset, apPresetDropDownModes,
@@ -688,9 +749,9 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 		//
 
 		const char *apApplyDropDownModes[] = {
-			Localize("Только игра"),
-			Localize("Полностью"),
-			Localize("Игра без HUD")
+			Localize("Only game"),
+			Localize("Full"),
+			Localize("Game without HUD")
 		};
 		static const int s_apApplyDropDownModes_len = std::size(apApplyDropDownModes);
 
@@ -703,7 +764,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 		//Render
 
 		TextRender()->TextColor(TextColor);	
-		Ui()->DoLabel(&ApplyLabelRect, Localize("Применить: "), 14.0f, TEXTALIGN_ML);
+		Ui()->DoLabel(&ApplyLabelRect, Localize("Apply mode: "), 14.0f, TEXTALIGN_ML);
 
     	TextRender()->TextColor(TextRender()->DefaultTextColor());
 		const int NewApply = Ui()->DoDropDown(&ApplyDropDownRect, CurrentApply, apApplyDropDownModes,
@@ -783,7 +844,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 			//Render
 
 			TextRender()->TextColor(TextColor);
-			Ui()->DoLabel(&CustomNADLabelRect, Localize("Пользовательский размер: "), 14.0f, TEXTALIGN_ML);
+			Ui()->DoLabel(&CustomNADLabelRect, Localize("Custom size: "), 14.0f, TEXTALIGN_ML);
 
     		TextRender()->TextColor(TextRender()->DefaultTextColor());
 			Ui()->DoEditBox(&s_CustomAspectNumeratorInput, &NumeratorEditBoxRect, 14.0f);
@@ -804,7 +865,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 			const bool HasPendingCustomChange = InputNum != g_Config.m_BcCustomAspectRatioNum ||
 				InputDen != g_Config.m_BcCustomAspectRatioDen;
 
-			if (DoButton_Menu(&s_AspectApplyButton, Localize("Применить"), HasPendingCustomChange ?
+			if (DoButton_Menu(&s_AspectApplyButton, Localize("Apply"), HasPendingCustomChange ?
 				0 : -1, &ApplyButton) && HasPendingCustomChange) {
 				g_Config.m_BcCustomAspectRatioNum = InputNum;
 				g_Config.m_BcCustomAspectRatioDen = InputDen;
@@ -864,18 +925,18 @@ void CMenus::TerminalExecuteCommand()
 		str_comp_nocase(aTrimmed, "man") == 0 ||
 		str_comp_nocase(aTrimmed, "commands") == 0)
 	{
-		TerminalAddLine("Available commands:");
-		TerminalAddLine("play/browser/start = open browser");
-		TerminalAddLine("start_server = start sever");
-		TerminalAddLine("demo = open demo windows");
-		TerminalAddLine("settings = open settings");
-		TerminalAddLine("map_redactor = open map redactor");
-		TerminalAddLine("help/man/commands = print all commands");
-		TerminalAddLine("clear/cls = clear history commands");
-		TerminalAddLine("quit/exit = exit ddnet");
-		TerminalAddLine("stop_server = stop server");
-		TerminalAddLine("bongure_settings = open menu with settings");
-		TerminalAddLine("check_update = check there is new version of client");
+		TerminalAddLine(Localize("Available commands:"));
+		TerminalAddLine(Localize("play/browser/start = open browser"));
+		TerminalAddLine(Localize("start_server = start sever"));
+		TerminalAddLine(Localize("demo = open demo windows"));
+		TerminalAddLine(Localize("settings = open settings"));
+		TerminalAddLine(Localize("map_redactor = open map redactor"));
+		TerminalAddLine(Localize("help/man/commands = print all commands"));
+		TerminalAddLine(Localize("clear/cls = clear terminal"));
+		TerminalAddLine(Localize("quit/exit = exit ddnet"));
+		TerminalAddLine(Localize("stop_server = stop server"));
+		TerminalAddLine(Localize("bongure_settings = open menu with settings"));
+		TerminalAddLine(Localize("check_update = check there is new version of client"));
 	}
 	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
 		str_comp_nocase(aTrimmed, "browser") == 0 ||
@@ -883,37 +944,37 @@ void CMenus::TerminalExecuteCommand()
 	{
 		SetShowStart(false);
 		SetMenuPage(PAGE_INTERNET);
-		TerminalAddLine("Opening server browser...");
+		TerminalAddLine(Localize("Opening server browser..."));
 	}
 	else if(str_comp_nocase(aTrimmed, "start_server") == 0)
 	{
 		if(GameClient()->m_LocalServer.IsServerRunning())
 		{
-			TerminalAddLine("Local server already running.");
+			TerminalAddLine(Localize("Local server already running."));
 		}
 		else
 		{
 			GameClient()->m_LocalServer.RunServer({});
-			TerminalAddLine("Starting local server...");
+			TerminalAddLine(Localize("Starting local server..."));
 		}
 	}
 	else if(str_comp_nocase(aTrimmed, "demo") == 0)
 	{
 		SetShowStart(false);
 		SetMenuPage(PAGE_DEMOS);
-		TerminalAddLine("Opening demos...");
+		TerminalAddLine(Localize("Opening demos..."));
 	}
 	else if(str_comp_nocase(aTrimmed, "settings") == 0)
 	{
 		SetShowStart(false);
 		SetMenuPage(PAGE_SETTINGS);
-		TerminalAddLine("Opening settings...");
+		TerminalAddLine(Localize("Opening settings..."));
 	}
 	else if(str_comp_nocase(aTrimmed, "map_redactor") == 0)
 	{
 		g_Config.m_ClEditor = 1;
 		Input()->MouseModeRelative();
-		TerminalAddLine("Opening map editor...");
+		TerminalAddLine(Localize("Opening map editor..."));
 	}
 	else if (str_comp_nocase(aTrimmed, "clear") == 0 || 
 		str_comp_nocase(aTrimmed, "cls") == 0) 
@@ -929,19 +990,18 @@ void CMenus::TerminalExecuteCommand()
 	{
 		if(!GameClient()->m_LocalServer.IsServerRunning())
 		{
-			TerminalAddLine("Local server is not running.");
+			TerminalAddLine(Localize("Local server is not running."));
 		}
 		else
 		{
 			GameClient()->m_LocalServer.KillServer();
-			TerminalAddLine("Local server stopped.");
+			TerminalAddLine(Localize("Local server stopped."));
 		}
 	}
 	else if(str_comp_nocase_num(aTrimmed, "connect ", 8) == 0)
 	{
 		const char *pAddr = aTrimmed + 8;
 		
-		// Trim пробелы
 		while(*pAddr == ' ')
 			pAddr++;
 
@@ -963,10 +1023,10 @@ void CMenus::TerminalExecuteCommand()
 	}
 	else if (str_comp_nocase(aTrimmed, "check_update") == 0) {
 		if (CheckUpdate()) {
-			TerminalAddLine("There is a new update! Enter this link: https://github.com/Cser228/BongureClient/releases to update");
+			TerminalAddLine(Localize("There is a new update! Enter this link: https://github.com/Cser228/BongureClient/releases to update"));
 		}
 		else {
-			TerminalAddLine("Nope! There isn't new update.");
+			TerminalAddLine(Localize("Nope! There isn't new update."));
 		}
 	}
 	else if(str_startswith_nocase(aTrimmed, "background_color "))
@@ -985,7 +1045,7 @@ void CMenus::TerminalExecuteCommand()
 			g_Config.m_BcBongureMenuBgG = G;
 			g_Config.m_BcBongureMenuBgB = B;
 
-			TerminalAddLine("Menu background color updated.");
+			TerminalAddLine(Localize("Menu background color updated."));
 		}
 		else
 		{
@@ -1008,7 +1068,7 @@ void CMenus::TerminalExecuteCommand()
 			g_Config.m_BcBongureMenuTextG = G;
 			g_Config.m_BcBongureMenuTextB = B;
 
-			TerminalAddLine("Menu text color updated.");
+			TerminalAddLine(Localize("Menu text color updated."));
 		}
 		else
 		{
@@ -1918,7 +1978,6 @@ void CMenus::OnInterfacesInit(CGameClient *pClient)
 
 void CMenus::OnInit()
 {
-	// ── [BongureClient] Загрузка иконки Bongure Settings ─────────────
 	m_BongureSettingsTexture = Graphics()->LoadTexture(
     	"bongure_images/bongure_settings.png", IStorage::TYPE_ALL);
 
@@ -1927,7 +1986,6 @@ void CMenus::OnInit()
 
 	m_SmilePlus = Graphics()->LoadTexture(
 		"bongure_images/smile_plus.png", IStorage::TYPE_ALL);
-	// ──────────────────────────────────────────────────────────────────
 	
 	if(g_Config.m_ClShowWelcome)
 	{
@@ -2142,29 +2200,29 @@ void CMenus::Render()
 		ms_ColorTabbarActive = ms_ColorTabbarActiveIngame;
 		ms_ColorTabbarHover = ms_ColorTabbarHoverIngame;
 	}
-	else
-	{
-		const bool UseTerminalBackground =
-			(ClientState == IClient::STATE_OFFLINE && m_ShowStart) ||
-			ClientState == IClient::STATE_CONNECTING ||
-			ClientState == IClient::STATE_LOADING;
-	
-		if(UseTerminalBackground)
-		{
-			CUIRect FullScreen = *Ui()->Screen();
-			Graphics()->TextureClear();
-			Graphics()->QuadsBegin();
-			Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
-			IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
-			Graphics()->QuadsDrawTL(&Quad, 1);
-			Graphics()->QuadsEnd();
-		}
-		else
-		{
-			if(g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render())
+	else {
+		if (g_Config.m_BcEnableMenu == 1) {
+			const bool UseTerminalBackground =
+				(ClientState == IClient::STATE_OFFLINE && m_ShowStart) ||
+				ClientState == IClient::STATE_CONNECTING ||
+				ClientState == IClient::STATE_LOADING;
+		
+			if(UseTerminalBackground)
 			{
+				CUIRect FullScreen = *Ui()->Screen();
+				Graphics()->TextureClear();
+				Graphics()->QuadsBegin();
+				Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+				IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
+				Graphics()->QuadsDrawTL(&Quad, 1);
+				Graphics()->QuadsEnd();
+			}
+			else if (g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render()) {
 				RenderBackground();
 			}
+		}
+		else if (g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render()) {
+			RenderBackground();
 		}
 
 		ms_ColorTabbarInactive = ms_ColorTabbarInactiveOutgame;
@@ -2173,12 +2231,10 @@ void CMenus::Render()
 	}
 
 	CUIRect Screen = *Ui()->Screen();
-	/*
 	if(Client()->State() != IClient::STATE_DEMOPLAYBACK || m_Popup != POPUP_NONE)
 	{
 		Screen.Margin(10.0f, &Screen);
 	}
-	*/
 
 	switch(ClientState)
 	{
@@ -2189,13 +2245,15 @@ void CMenus::Render()
 
 	case IClient::STATE_CONNECTING:
 	{
-		CUIRect FullScreen = *Ui()->Screen();
-		Graphics()->TextureClear();
-		Graphics()->QuadsBegin();
-		Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
-		IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
-		Graphics()->QuadsDrawTL(&Quad, 1);
-		Graphics()->QuadsEnd();
+		if (g_Config.m_BcEnableMenu == 1) {
+			CUIRect FullScreen = *Ui()->Screen();
+			Graphics()->TextureClear();
+			Graphics()->QuadsBegin();
+			Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+			IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
+			Graphics()->QuadsDrawTL(&Quad, 1);
+			Graphics()->QuadsEnd();
+		}
 
 		RenderPopupConnecting(Screen);
 		break;
@@ -2203,13 +2261,15 @@ void CMenus::Render()
 
 	case IClient::STATE_LOADING:
 	{
-		CUIRect FullScreen = *Ui()->Screen();
-		Graphics()->TextureClear();
-		Graphics()->QuadsBegin();
-		Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
-		IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
-		Graphics()->QuadsDrawTL(&Quad, 1);
-		Graphics()->QuadsEnd();
+		if (g_Config.m_BcEnableMenu == 1) {
+			CUIRect FullScreen = *Ui()->Screen();
+			Graphics()->TextureClear();
+			Graphics()->QuadsBegin();
+			Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+			IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
+			Graphics()->QuadsDrawTL(&Quad, 1);
+			Graphics()->QuadsEnd();
+		}
 	
 		RenderPopupLoading(Screen);
 		break;
@@ -2220,9 +2280,14 @@ void CMenus::Render()
 		{
 			RenderPopupFullscreen(Screen);
 		}
-		else if(m_ShowStart)
-		{
-			RenderTerminal(Screen);
+		else if(m_ShowStart) {
+			if (g_Config.m_BcEnableMenu == 1) {
+				RenderTerminal(Screen);
+			}
+			else {
+				if (!g_Config.m_RiUiNewMenu) m_MenusStart.RenderStartMenu(Screen);
+				else m_MenusStartRClient.RenderStartMenu(Screen);
+			}
 		}
 		else
 		{
@@ -3583,216 +3648,222 @@ bool CMenus::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
 
 bool CMenus::OnInput(const IInput::CEvent &Event)
 {
-	if(m_ShowBongureSettings)
-    {
-        Ui()->OnInput(Event);
-        return true;
-    }
-
-	if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
-	{
-		if(Event.m_Flags & IInput::FLAG_TEXT)
+	if (g_Config.m_BcEnableMenu == 1) {
+		if(m_ShowBongureSettings)
 		{
-			if(m_TerminalSelectAll)
-			{
-				str_copy(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
-				m_TerminalCursorPos = str_length(m_aTerminalInput);
-				m_TerminalSelectAll = false;
-				return true;
-			}
-
-			const int Len = str_length(m_aTerminalInput);
-			const int InsertLen = str_length(Event.m_aText);
-
-			if(Len + InsertLen < (int)sizeof(m_aTerminalInput))
-			{
-				mem_move(
-					m_aTerminalInput + m_TerminalCursorPos + InsertLen,
-					m_aTerminalInput + m_TerminalCursorPos,
-					Len - m_TerminalCursorPos + 1);
-
-				mem_copy(
-					m_aTerminalInput + m_TerminalCursorPos,
-					Event.m_aText,
-					InsertLen);
-
-				m_TerminalCursorPos += InsertLen;
-			}
+			Ui()->OnInput(Event);
 			return true;
 		}
 
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE)
+		if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
 		{
-			if(m_TerminalSelectAll)
-			{
-				m_aTerminalInput[0] = '\0';
-				m_TerminalCursorPos = 0;
-				m_TerminalSelectAll = false;
-				return true;
-			}
-
-			if(m_TerminalCursorPos > 0)
-			{
-				const int Len = str_length(m_aTerminalInput);
-				mem_move(
-					m_aTerminalInput + m_TerminalCursorPos - 1,
-					m_aTerminalInput + m_TerminalCursorPos,
-					Len - m_TerminalCursorPos + 1);
-
-				m_TerminalCursorPos--;
-			}
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_LEFT)
-		{
-			if(m_TerminalCursorPos > 0)
-			{
-				m_TerminalCursorPos--;
-				m_TerminalSelectAll = false;
-			}
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RIGHT)
-		{
-			const int Len = str_length(m_aTerminalInput);
-			if(m_TerminalCursorPos < Len)
-			{
-				m_TerminalCursorPos++;
-				m_TerminalSelectAll = false;
-			}
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_UP)
-		{
-			if(m_TerminalCommandHistoryCount > 0)
-			{
-				if(m_TerminalCommandHistoryIndex < 0)
-					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount - 1;
-				else if(m_TerminalCommandHistoryIndex > 0)
-					m_TerminalCommandHistoryIndex--;
-
-				str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
-				m_TerminalCursorPos = str_length(m_aTerminalInput);
-				m_TerminalSelectAll = false;
-			}
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_DOWN)
-		{
-			if(m_TerminalCommandHistoryCount > 0)
-			{
-				if(m_TerminalCommandHistoryIndex >= 0 && m_TerminalCommandHistoryIndex < m_TerminalCommandHistoryCount - 1)
-				{
-					m_TerminalCommandHistoryIndex++;
-					str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
-					m_TerminalCursorPos = str_length(m_aTerminalInput);
-					m_TerminalSelectAll = false;
-				}
-				else
-				{
-					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
-					m_aTerminalInput[0] = '\0';
-					m_TerminalCursorPos = 0;
-					m_TerminalSelectAll = false;
-				}
-			}
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_A)
-		{
-			m_TerminalSelectAll = true;
-			m_TerminalCursorPos = str_length(m_aTerminalInput);
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_HOME)
-		{
-			m_TerminalSelectAll = false;
-			m_TerminalCursorPos = 0;
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_END)
-		{
-			m_TerminalSelectAll = false;
-			m_TerminalCursorPos = str_length(m_aTerminalInput);
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_C)
-		{
-			if(m_TerminalSelectAll)
-				Input()->SetClipboardText(m_aTerminalInput);
-			else
-				Input()->SetClipboardText(m_aTerminalInput);
-			return true;
-		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_V)
-		{
-			std::string pClipboardString = Input()->GetClipboardText();
-			char* pClipboardNotConst = (char*)malloc(pClipboardString.length()+1);
-			for (size_t i = 0; i < pClipboardString.length(); i++) {
-				pClipboardNotConst[i] = pClipboardString[i];
-			}
-			pClipboardNotConst[pClipboardString.length()] = '\0';
-
-			const char *pClipboard = pClipboardNotConst;
-
-			if(pClipboard)
+			if(Event.m_Flags & IInput::FLAG_TEXT)
 			{
 				if(m_TerminalSelectAll)
 				{
-					str_copy(m_aTerminalInput, pClipboard, sizeof(m_aTerminalInput));
+					str_copy(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
 					m_TerminalCursorPos = str_length(m_aTerminalInput);
 					m_TerminalSelectAll = false;
 					return true;
 				}
 
 				const int Len = str_length(m_aTerminalInput);
-				const int PasteLen = str_length(pClipboard);
+				const int InsertLen = str_length(Event.m_aText);
 
-				if(Len + PasteLen < (int)sizeof(m_aTerminalInput))
+				if(Len + InsertLen < (int)sizeof(m_aTerminalInput))
 				{
 					mem_move(
-						m_aTerminalInput + m_TerminalCursorPos + PasteLen,
+						m_aTerminalInput + m_TerminalCursorPos + InsertLen,
 						m_aTerminalInput + m_TerminalCursorPos,
 						Len - m_TerminalCursorPos + 1);
 
 					mem_copy(
 						m_aTerminalInput + m_TerminalCursorPos,
-						pClipboard,
-						PasteLen);
+						Event.m_aText,
+						InsertLen);
 
-					m_TerminalCursorPos += PasteLen;
+					m_TerminalCursorPos += InsertLen;
 				}
+				return true;
 			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE)
+			{
+				if(m_TerminalSelectAll)
+				{
+					m_aTerminalInput[0] = '\0';
+					m_TerminalCursorPos = 0;
+					m_TerminalSelectAll = false;
+					return true;
+				}
+
+				if(m_TerminalCursorPos > 0)
+				{
+					const int Len = str_length(m_aTerminalInput);
+					mem_move(
+						m_aTerminalInput + m_TerminalCursorPos - 1,
+						m_aTerminalInput + m_TerminalCursorPos,
+						Len - m_TerminalCursorPos + 1);
+
+					m_TerminalCursorPos--;
+				}
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_LEFT)
+			{
+				if(m_TerminalCursorPos > 0)
+				{
+					m_TerminalCursorPos--;
+					m_TerminalSelectAll = false;
+				}
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RIGHT)
+			{
+				const int Len = str_length(m_aTerminalInput);
+				if(m_TerminalCursorPos < Len)
+				{
+					m_TerminalCursorPos++;
+					m_TerminalSelectAll = false;
+				}
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_UP)
+			{
+				if(m_TerminalCommandHistoryCount > 0)
+				{
+					if(m_TerminalCommandHistoryIndex < 0)
+						m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount - 1;
+					else if(m_TerminalCommandHistoryIndex > 0)
+						m_TerminalCommandHistoryIndex--;
+
+					str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+					m_TerminalCursorPos = str_length(m_aTerminalInput);
+					m_TerminalSelectAll = false;
+				}
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_DOWN)
+			{
+				if(m_TerminalCommandHistoryCount > 0)
+				{
+					if(m_TerminalCommandHistoryIndex >= 0 && m_TerminalCommandHistoryIndex < m_TerminalCommandHistoryCount - 1)
+					{
+						m_TerminalCommandHistoryIndex++;
+						str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+						m_TerminalCursorPos = str_length(m_aTerminalInput);
+						m_TerminalSelectAll = false;
+					}
+					else
+					{
+						m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
+						m_aTerminalInput[0] = '\0';
+						m_TerminalCursorPos = 0;
+						m_TerminalSelectAll = false;
+					}
+				}
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_A)
+			{
+				m_TerminalSelectAll = true;
+				m_TerminalCursorPos = str_length(m_aTerminalInput);
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_HOME)
+			{
+				m_TerminalSelectAll = false;
+				m_TerminalCursorPos = 0;
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_END)
+			{
+				m_TerminalSelectAll = false;
+				m_TerminalCursorPos = str_length(m_aTerminalInput);
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_C)
+			{
+				if(m_TerminalSelectAll)
+					Input()->SetClipboardText(m_aTerminalInput);
+				else
+					Input()->SetClipboardText(m_aTerminalInput);
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_V)
+			{
+				std::string pClipboardString = Input()->GetClipboardText();
+				char* pClipboardNotConst = (char*)malloc(pClipboardString.length()+1);
+				for (size_t i = 0; i < pClipboardString.length(); i++) {
+					pClipboardNotConst[i] = pClipboardString[i];
+				}
+				pClipboardNotConst[pClipboardString.length()] = '\0';
+
+				const char *pClipboard = pClipboardNotConst;
+
+				if(pClipboard)
+				{
+					if(m_TerminalSelectAll)
+					{
+						str_copy(m_aTerminalInput, pClipboard, sizeof(m_aTerminalInput));
+						m_TerminalCursorPos = str_length(m_aTerminalInput);
+						m_TerminalSelectAll = false;
+						return true;
+					}
+
+					const int Len = str_length(m_aTerminalInput);
+					const int PasteLen = str_length(pClipboard);
+
+					if(Len + PasteLen < (int)sizeof(m_aTerminalInput))
+					{
+						mem_move(
+							m_aTerminalInput + m_TerminalCursorPos + PasteLen,
+							m_aTerminalInput + m_TerminalCursorPos,
+							Len - m_TerminalCursorPos + 1);
+
+						mem_copy(
+							m_aTerminalInput + m_TerminalCursorPos,
+							pClipboard,
+							PasteLen);
+
+						m_TerminalCursorPos += PasteLen;
+					}
+				}
+				return true;
+			}
+
+			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RETURN)
+			{
+				TerminalExecuteCommand();
+				return true;
+			}
+
 			return true;
 		}
-
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RETURN)
+		
+		// Escape key is always handled to activate/deactivate menu
+		if((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive() || m_ShowBongureSettings)
 		{
-			TerminalExecuteCommand();
+			Ui()->OnInput(Event);
+
+			if(m_ShowBongureSettings && (Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE)
+				return true;
+
 			return true;
 		}
-
-		return true;
 	}
-	
-	// Escape key is always handled to activate/deactivate menu
-	if((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive() || m_ShowBongureSettings)
-	{
-    	Ui()->OnInput(Event);
-
-    	if(m_ShowBongureSettings && (Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE)
-        	return true;
-
-    	return true;
+	else if ((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive()) {
+		Ui()->OnInput(Event);
+		return true;
 	}
 
 	return false;
@@ -3844,8 +3915,7 @@ void CMenus::OnWindowResize()
 	TextRender()->DeleteTextContainer(m_MotdTextContainerIndex);
 }
 
-void CMenus::OnRender()
-{
+void CMenus::OnRender() {
 	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
 		SetActive(true);
 
@@ -3879,10 +3949,11 @@ void CMenus::OnRender()
 	Ui()->Update();
 
 	Render();
-	if(m_ShowBongureSettings) {
-		RenderBongureSettings(*Ui()->Screen());
-		Ui()->RenderPopupMenus();
-	}
+
+	if(m_ShowBongureSettings) RenderBongureSettings(*Ui()->Screen());
+	if (g_Config.m_BcFirstLaunch == 1) CMenus::FirstLaunch();
+
+	Ui()->RenderPopupMenus();
 
 	if(IsActive())
 	{
@@ -3901,7 +3972,7 @@ void CMenus::OnRender()
 			SetActive(false);
 		}
 	}
-
+	
 	Ui()->FinishCheck();
 	Ui()->ClearHotkeys();
 	Ui()->SetUseGraphicsScreenAspect(true);

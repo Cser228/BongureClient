@@ -2612,8 +2612,8 @@ if(CLIENT)
     components/censor.cpp
     components/censor.h
     components/chat.cpp
-	components/voice_assistant.cpp
-	components/voice_assistant.h
+	components/bongureclient/voice_assistant.cpp
+	components/bongureclient/voice_assistant.h
     components/chat.h
     components/community_icons.cpp
     components/community_icons.h

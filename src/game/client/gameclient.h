@@ -67,7 +67,7 @@
 #include "components/statboard.h"
 
 //Bongure Client
-#include "components/voice_assistant.h"
+#include "components/bongureclient/voice_assistant.h"
 
 //Rclient
 #include "components/rclient/adminpanel.h"

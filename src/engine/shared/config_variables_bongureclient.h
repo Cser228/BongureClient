@@ -48,3 +48,11 @@ MACRO_CONFIG_INT(BcCustomAspectRatio, bc_custom_aspect_ratio, 0, 0, 1000, CFGFLA
 MACRO_CONFIG_INT(BcCustomAspectRatioNum, bc_custom_aspect_ratio_num, 0, 0, 100000, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Custom aspect ratio numerator (width), 0=unset")
 MACRO_CONFIG_INT(BcCustomAspectRatioDen, bc_custom_aspect_ratio_den, 0, 0, 100000, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Custom aspect ratio denominator (height), 0=unset")
 // Aspect ratio
+
+// First launch
+MACRO_CONFIG_INT(BcFirstLaunch, bc_first_launch, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "It's first launch?")
+// First launch
+
+// Enable menu
+MACRO_CONFIG_INT(BcEnableMenu, bc_enable_menu, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Enable Bongure Client menu")
+// Enable menu

@@ -2969,9 +2969,6 @@ void CHud::OnNewSnapshot()
 }
 
 void CHud::RenderBongaDebugWindow() {
-	float x0, y0, x1, y1;
-	Graphics()->GetScreen(&x0, &y0, &x1, &y1);
-
 	AnyHud anyhud_this = CHud::all_hud_map["bonga_debug_window"];
 	
 	float FrameW = anyhud_this.w;

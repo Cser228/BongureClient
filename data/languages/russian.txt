@@ -2651,3 +2651,180 @@ When a Tee is hookable
 [Hook collision line color]
 Hook collision line tip
 == 
+
+BongureClient terminal
+== Терминал Bongure Client
+
+Type `help` to list commands.
+== Напишите `help` чтобы вывести доступные команды
+
+Bongure Client Settings
+== Настройки Bongure Client
+
+Background and text color
+== Цвет фона и текста
+
+Background R (red)
+== Фон R (красный)
+
+Background G (green)
+== Фон G (зелёный)
+
+Background B (blue)
+== Фон B (синий)
+
+Text R (red)
+== Текст R (красный)
+
+Text G (green)
+== Текст G (зелёный)
+
+Text B (blue)
+== Текст B (синий)
+
+Auto mute
+== Авто мьют
+
+Hide
+== Скрыть
+
+Number of messages before mute
+== Число сообщений до мьюта
+
+The time it takes for a mute to be issued
+== Время необходимое для мьюта
+
+Auto translate
+== Авто перевод
+
+Bonga
+== Бонга
+
+Dummy pointer
+== Указатель на дамми
+
+Pointer size
+== Размер указателя
+
+R (red)
+== R (красный)
+
+G (green)
+== G (зелёный)
+
+B (blue)
+== B (синий)
+
+Pointer color
+== Цвет указателя
+
+Emoji system
+== Система смайлов
+
+Bonga debug
+== Дебаг бонги
+
+Custom aspect ratio
+== Пользовательское соотношение сторон
+
+Off (default)
+== Выключено (станд.)
+
+Preset: 
+== Пресет: 
+
+Only game
+== Только игра
+
+Full
+== Полностью
+
+Game without HUD
+== Игра без HUD
+
+Apply mode: 
+== Применить к: 
+
+Custom size: 
+== Пользовательское соотношение
+
+Apply
+== Применить
+
+Available commands:
+== Доступные команды:
+
+play/browser/start = open browser
+== play/browser/start = открыть браузер
+
+start_server = start sever
+== start_server = запустить локальный сервер
+
+demo = open demo windows
+== demo = открыть меню с демо
+
+settings = open settings
+== settings = открыть настройки
+
+map_redactor = open map redactor
+== map_redactor = открыть меню с редактором карт
+
+help/man/commands = print all commands
+== help/man/commands = вывести все доступные команды
+
+clear/cls = clear terminal
+== clear/cls = очистить терминал
+
+quit/exit = exit ddnet
+== quit/exit = выйти из игры
+
+stop_server = stop server
+== stop_server = остановить локальный сервер
+
+bongure_settings = open menu with settings
+== bongure_settings = открыть меню с настройками Bongure Client
+
+check_update = check there is new version of client
+== check_update = проверить обновление Bongure Client
+
+Opening server browser...
+== Запуск браузера...
+
+Local server already running.
+== Локальный сервер уже запущен.
+
+Starting local server...
+== Запуск локального сервера...
+
+Opening demos...
+== Открытие меню с демо...
+
+Opening settings...
+== Открытие настроек...
+
+Opening map editor...
+== Открытие меню с редактором карт
+
+Local server is not running.
+== Локальный сервер не запущен.
+
+Local server stopped.
+== Локальный сервер был остановлен.
+
+There is a new update! Enter this link: https://github.com/Cser228/BongureClient/releases to update
+== Есть новое обновление! Перейди по этой ссылке: https://github.com/Cser228/BongureClient/releases чтобы обновить Bongure Client
+
+Nope! There isn't new update.
+== Нет нового обновления.
+
+Menu background color updated.
+== Цвет фона в меню был обновлён.
+
+Menu text color updated.
+== Цвет текста в меню был обновлён.
+
+Bongure settings
+== Настройки Bongure Client
+
+Turn off Bongure Client menu?
+== Выключить меню Bongure Client?
