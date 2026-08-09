@@ -881,7 +881,14 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
 	//CUSTOM NUM AND DEN
 	}
+	Main.HSplitTop(5.0f, nullptr, &Main);
 
+	// Bongure Client menu
+	Main.HSplitTop(20.0f, &Row, &Main);
+    TextRender()->TextColor(TextColor);
+    if (DoButton_CheckBox(&g_Config.m_BcEnableMenu, Localize("Enable Bongure Client custom menu"), g_Config.m_BcEnableMenu, &Row)) {
+        g_Config.m_BcEnableMenu ^= 1;
+	}
 	Main.HSplitTop(5.0f, nullptr, &Main);
 
     TextRender()->TextColor(TextRender()->DefaultTextColor());
@@ -1627,9 +1634,31 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 			Console()->ExecuteLine("ri_launch_second_client", IConsole::CLIENT_ID_UNSPECIFIED);
 		}
 		GameClient()->m_Tooltips.DoToolTip(&s_LaunchClientButton, &Button, Localize("Launch another client window. It uses the same config and user files."));
-		Box.VSplitRight(10.0f, &Box, nullptr);
 
+		// Bongure Client settings button
+		Box.VSplitRight(10.0f, &Box, nullptr);
+		Box.VSplitRight(33.0f, &Box, &Button);
+
+		static CButtonContainer s_BongureSettingsButton;
+		if (DoButton_MenuTab(&s_BongureSettingsButton, "", 0, &Button, IGraphics::CORNER_T, nullptr)) {
+			m_ShowBongureSettings = true;
+		}
+
+		Graphics()->TextureSet(m_BongureSettingsTexture);
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		CUIRect IconRect = Button;
+		IconRect.Margin(6.0f, &IconRect);
+		IGraphics::CQuadItem QuadItem(IconRect.x, IconRect.y, IconRect.w, IconRect.h);
+		Graphics()->QuadsDrawTL(&QuadItem, 1);
+		Graphics()->QuadsEnd();
+
+		GameClient()->m_Tooltips.DoToolTip(&s_BongureSettingsButton, &Button,
+			Localize("Bongure settings"));
+
+		Box.VSplitRight(10.0f, &Box, nullptr);
 		Box.VSplitLeft(33.0f, &Button, &Box);
+		// Bongure Client settings button
 
 		bool GotNewsOrUpdate = false;
 
@@ -1779,13 +1808,12 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 			m_ControlPageOpening = true;
 		}
 
-			// ── [BongureClient] Кнопка настроек в ESC ──────────────────────
+			// Bongure Client settings button
 			{
     			Box.VSplitLeft(0.0f, nullptr, &Box);
     			Box.VSplitLeft(33.0f, &Button, &Box);
     			static CButtonContainer s_BongureSettingsButton;
 
-    			// Фон кнопки — аналогично CORNER_T как у кнопки Editor
     			const bool BongureHot = Ui()->HotItem() == &s_BongureSettingsButton;
     			{
     			    ColorRGBA BtnColor = BongureHot
@@ -1794,35 +1822,32 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
     			    Button.Draw(BtnColor, IGraphics::CORNER_T, 10.0f);
     			}
 
-    			// PNG-иконка из data/bongure_images/bongure_settings.png
     			CUIRect IconRect;
     			Button.Margin(4.0f, &IconRect);
     			Graphics()->TextureSet(m_BongureSettingsTexture);
     			Graphics()->WrapClamp();
     			Graphics()->QuadsBegin();
     			if(BongureHot)
-    			    Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);   // ярко при hover
+    			    Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
     			else
-    			    Graphics()->SetColor(0.7f, 0.7f, 0.7f, 0.8f);   // тускло в покое
+    			    Graphics()->SetColor(0.7f, 0.7f, 0.7f, 0.8f);
     			IGraphics::CQuadItem QuadItem(IconRect.x, IconRect.y,
     			                                IconRect.w, IconRect.h);
     			Graphics()->QuadsDrawTL(&QuadItem, 1);
     			Graphics()->QuadsEnd();
     			Graphics()->WrapNormal();
 
-    			// Тултип как у Editor/Settings
     			GameClient()->m_Tooltips.DoToolTip(
         			&s_BongureSettingsButton, &Button,
         			Localize("Bongure settings"));
 
-    			// Логика нажатия
     			if(Ui()->DoButtonLogic(&s_BongureSettingsButton, 0, &Button,
         			BUTTONFLAG_LEFT))
     			{
         			m_ShowBongureSettings = true;
     			}
 			}
-			// ────────────────────────────────────────────────────────────────
+			// Bongure Client settings button
 
 		if(Box.w >= 10.0f + 33.0f + 10.0f)
 		{
@@ -3648,220 +3673,209 @@ bool CMenus::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
 
 bool CMenus::OnInput(const IInput::CEvent &Event)
 {
-	if (g_Config.m_BcEnableMenu == 1) {
-		if(m_ShowBongureSettings)
-		{
-			Ui()->OnInput(Event);
+	if(m_ShowBongureSettings) {
+		if ((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE) {
+			m_ShowBongureSettings = false;
 			return true;
 		}
 
-		if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
-		{
-			if(Event.m_Flags & IInput::FLAG_TEXT)
+		Ui()->OnInput(Event);
+		return true;
+	}
+
+	if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
+	{
+		if((Event.m_Flags & IInput::FLAG_TEXT) && g_Config.m_BcEnableMenu == 1) {
+			if(m_TerminalSelectAll)
+			{
+				str_copy(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
+				m_TerminalCursorPos = str_length(m_aTerminalInput);
+				m_TerminalSelectAll = false;
+				return true;
+			}
+
+			const int Len = str_length(m_aTerminalInput);
+			const int InsertLen = str_length(Event.m_aText);
+
+			if(Len + InsertLen < (int)sizeof(m_aTerminalInput))
+			{
+				mem_move(
+					m_aTerminalInput + m_TerminalCursorPos + InsertLen,
+					m_aTerminalInput + m_TerminalCursorPos,
+					Len - m_TerminalCursorPos + 1);
+
+				mem_copy(
+					m_aTerminalInput + m_TerminalCursorPos,
+					Event.m_aText,
+					InsertLen);
+
+				m_TerminalCursorPos += InsertLen;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE &&
+			g_Config.m_BcEnableMenu == 1) {
+			if(m_TerminalSelectAll)
+			{
+				m_aTerminalInput[0] = '\0';
+				m_TerminalCursorPos = 0;
+				m_TerminalSelectAll = false;
+				return true;
+			}
+
+			if(m_TerminalCursorPos > 0)
+			{
+				const int Len = str_length(m_aTerminalInput);
+				mem_move(
+					m_aTerminalInput + m_TerminalCursorPos - 1,
+					m_aTerminalInput + m_TerminalCursorPos,
+					Len - m_TerminalCursorPos + 1);
+
+				m_TerminalCursorPos--;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_LEFT &&
+			g_Config.m_BcEnableMenu == 1) {
+			if(m_TerminalCursorPos > 0)
+			{
+				m_TerminalCursorPos--;
+				m_TerminalSelectAll = false;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RIGHT &&
+			g_Config.m_BcEnableMenu == 1) {
+			const int Len = str_length(m_aTerminalInput);
+			if(m_TerminalCursorPos < Len)
+			{
+				m_TerminalCursorPos++;
+				m_TerminalSelectAll = false;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_UP &&
+			g_Config.m_BcEnableMenu == 1) {
+			if(m_TerminalCommandHistoryCount > 0)
+			{
+				if(m_TerminalCommandHistoryIndex < 0)
+					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount - 1;
+				else if(m_TerminalCommandHistoryIndex > 0)
+					m_TerminalCommandHistoryIndex--;
+
+				str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+				m_TerminalCursorPos = str_length(m_aTerminalInput);
+				m_TerminalSelectAll = false;
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_DOWN &&
+			g_Config.m_BcEnableMenu == 1) {
+			if(m_TerminalCommandHistoryCount > 0)
+			{
+				if(m_TerminalCommandHistoryIndex >= 0 && m_TerminalCommandHistoryIndex < m_TerminalCommandHistoryCount - 1)
+				{
+					m_TerminalCommandHistoryIndex++;
+					str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+					m_TerminalCursorPos = str_length(m_aTerminalInput);
+					m_TerminalSelectAll = false;
+				}
+				else
+				{
+					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
+					m_aTerminalInput[0] = '\0';
+					m_TerminalCursorPos = 0;
+					m_TerminalSelectAll = false;
+				}
+			}
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_A &&
+			g_Config.m_BcEnableMenu == 1) {
+			m_TerminalSelectAll = true;
+			m_TerminalCursorPos = str_length(m_aTerminalInput);
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_HOME &&
+			g_Config.m_BcEnableMenu == 1) {
+			m_TerminalSelectAll = false;
+			m_TerminalCursorPos = 0;
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_END &&
+			g_Config.m_BcEnableMenu == 1) {
+			m_TerminalSelectAll = false;
+			m_TerminalCursorPos = str_length(m_aTerminalInput);
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_C &&
+			g_Config.m_BcEnableMenu == 1) {
+			Input()->SetClipboardText(m_aTerminalInput);
+			return true;
+		}
+
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_V &&
+			g_Config.m_BcEnableMenu == 1) {
+			std::string pClipboardString = Input()->GetClipboardText();
+			char* pClipboardNotConst = (char*)malloc(pClipboardString.length()+1);
+			for (size_t i = 0; i < pClipboardString.length(); i++) {
+				pClipboardNotConst[i] = pClipboardString[i];
+			}
+			pClipboardNotConst[pClipboardString.length()] = '\0';
+
+			const char *pClipboard = pClipboardNotConst;
+
+			if(pClipboard)
 			{
 				if(m_TerminalSelectAll)
 				{
-					str_copy(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
+					str_copy(m_aTerminalInput, pClipboard, sizeof(m_aTerminalInput));
 					m_TerminalCursorPos = str_length(m_aTerminalInput);
 					m_TerminalSelectAll = false;
 					return true;
 				}
 
 				const int Len = str_length(m_aTerminalInput);
-				const int InsertLen = str_length(Event.m_aText);
+				const int PasteLen = str_length(pClipboard);
 
-				if(Len + InsertLen < (int)sizeof(m_aTerminalInput))
+				if(Len + PasteLen < (int)sizeof(m_aTerminalInput))
 				{
 					mem_move(
-						m_aTerminalInput + m_TerminalCursorPos + InsertLen,
+						m_aTerminalInput + m_TerminalCursorPos + PasteLen,
 						m_aTerminalInput + m_TerminalCursorPos,
 						Len - m_TerminalCursorPos + 1);
 
 					mem_copy(
 						m_aTerminalInput + m_TerminalCursorPos,
-						Event.m_aText,
-						InsertLen);
+						pClipboard,
+						PasteLen);
 
-					m_TerminalCursorPos += InsertLen;
+					m_TerminalCursorPos += PasteLen;
 				}
-				return true;
 			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE)
-			{
-				if(m_TerminalSelectAll)
-				{
-					m_aTerminalInput[0] = '\0';
-					m_TerminalCursorPos = 0;
-					m_TerminalSelectAll = false;
-					return true;
-				}
-
-				if(m_TerminalCursorPos > 0)
-				{
-					const int Len = str_length(m_aTerminalInput);
-					mem_move(
-						m_aTerminalInput + m_TerminalCursorPos - 1,
-						m_aTerminalInput + m_TerminalCursorPos,
-						Len - m_TerminalCursorPos + 1);
-
-					m_TerminalCursorPos--;
-				}
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_LEFT)
-			{
-				if(m_TerminalCursorPos > 0)
-				{
-					m_TerminalCursorPos--;
-					m_TerminalSelectAll = false;
-				}
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RIGHT)
-			{
-				const int Len = str_length(m_aTerminalInput);
-				if(m_TerminalCursorPos < Len)
-				{
-					m_TerminalCursorPos++;
-					m_TerminalSelectAll = false;
-				}
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_UP)
-			{
-				if(m_TerminalCommandHistoryCount > 0)
-				{
-					if(m_TerminalCommandHistoryIndex < 0)
-						m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount - 1;
-					else if(m_TerminalCommandHistoryIndex > 0)
-						m_TerminalCommandHistoryIndex--;
-
-					str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
-					m_TerminalCursorPos = str_length(m_aTerminalInput);
-					m_TerminalSelectAll = false;
-				}
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_DOWN)
-			{
-				if(m_TerminalCommandHistoryCount > 0)
-				{
-					if(m_TerminalCommandHistoryIndex >= 0 && m_TerminalCommandHistoryIndex < m_TerminalCommandHistoryCount - 1)
-					{
-						m_TerminalCommandHistoryIndex++;
-						str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
-						m_TerminalCursorPos = str_length(m_aTerminalInput);
-						m_TerminalSelectAll = false;
-					}
-					else
-					{
-						m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
-						m_aTerminalInput[0] = '\0';
-						m_TerminalCursorPos = 0;
-						m_TerminalSelectAll = false;
-					}
-				}
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_A)
-			{
-				m_TerminalSelectAll = true;
-				m_TerminalCursorPos = str_length(m_aTerminalInput);
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_HOME)
-			{
-				m_TerminalSelectAll = false;
-				m_TerminalCursorPos = 0;
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_END)
-			{
-				m_TerminalSelectAll = false;
-				m_TerminalCursorPos = str_length(m_aTerminalInput);
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_C)
-			{
-				if(m_TerminalSelectAll)
-					Input()->SetClipboardText(m_aTerminalInput);
-				else
-					Input()->SetClipboardText(m_aTerminalInput);
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_V)
-			{
-				std::string pClipboardString = Input()->GetClipboardText();
-				char* pClipboardNotConst = (char*)malloc(pClipboardString.length()+1);
-				for (size_t i = 0; i < pClipboardString.length(); i++) {
-					pClipboardNotConst[i] = pClipboardString[i];
-				}
-				pClipboardNotConst[pClipboardString.length()] = '\0';
-
-				const char *pClipboard = pClipboardNotConst;
-
-				if(pClipboard)
-				{
-					if(m_TerminalSelectAll)
-					{
-						str_copy(m_aTerminalInput, pClipboard, sizeof(m_aTerminalInput));
-						m_TerminalCursorPos = str_length(m_aTerminalInput);
-						m_TerminalSelectAll = false;
-						return true;
-					}
-
-					const int Len = str_length(m_aTerminalInput);
-					const int PasteLen = str_length(pClipboard);
-
-					if(Len + PasteLen < (int)sizeof(m_aTerminalInput))
-					{
-						mem_move(
-							m_aTerminalInput + m_TerminalCursorPos + PasteLen,
-							m_aTerminalInput + m_TerminalCursorPos,
-							Len - m_TerminalCursorPos + 1);
-
-						mem_copy(
-							m_aTerminalInput + m_TerminalCursorPos,
-							pClipboard,
-							PasteLen);
-
-						m_TerminalCursorPos += PasteLen;
-					}
-				}
-				return true;
-			}
-
-			if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RETURN)
-			{
-				TerminalExecuteCommand();
-				return true;
-			}
-
 			return true;
 		}
-		
-		// Escape key is always handled to activate/deactivate menu
-		if((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive() || m_ShowBongureSettings)
-		{
-			Ui()->OnInput(Event);
 
-			if(m_ShowBongureSettings && (Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE)
-				return true;
-
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RETURN &&
+			g_Config.m_BcEnableMenu == 1) {
+			TerminalExecuteCommand();
 			return true;
 		}
+
+		return true;
 	}
-	else if ((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive()) {
+
+	// Escape key is always handled to activate/deactivate menu
+	if(((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE) || IsActive()) {
 		Ui()->OnInput(Event);
 		return true;
 	}

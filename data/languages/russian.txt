@@ -2828,3 +2828,6 @@ Bongure settings
 
 Turn off Bongure Client menu?
 == Выключить меню Bongure Client?
+
+Enable Bongure Client custom menu
+== Включить кастомное меню Bongure Client

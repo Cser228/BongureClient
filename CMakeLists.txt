@@ -408,7 +408,11 @@ if(NOT MSVC AND NOT HAIKU)
     add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wno-format) # Don't warn about format strings in release mode since our `str_format` optimization is incompatible with it.
   endif()
   add_c_compiler_flag_if_supported(OUR_FLAGS_DEP -Wno-implicit-function-declaration)
-  add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wno-nullability-completeness) # Mac OS build on github
+
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wno-nullability-completeness)
+  endif()
+
   add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wduplicated-cond)
   add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wduplicated-branches)
   add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wlogical-op)
@@ -2605,6 +2609,8 @@ if(CLIENT)
     components/background.h
     components/binds.cpp
     components/binds.h
+	components/bongureclient/voice_assistant.cpp
+	components/bongureclient/voice_assistant.h
     components/broadcast.cpp
     components/broadcast.h
     components/camera.cpp
@@ -2612,8 +2618,6 @@ if(CLIENT)
     components/censor.cpp
     components/censor.h
     components/chat.cpp
-	components/bongureclient/voice_assistant.cpp
-	components/bongureclient/voice_assistant.h
     components/chat.h
     components/community_icons.cpp
     components/community_icons.h
