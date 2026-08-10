@@ -2831,3 +2831,9 @@ Turn off Bongure Client menu?
 
 Enable Bongure Client custom menu
 == Включить кастомное меню Bongure Client
+
+version = write bongure client version in terminal
+== version = Написать версию Bongure Client в терминал
+
+Unknown command: 
+== Неизвестная команда: 

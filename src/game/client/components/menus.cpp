@@ -83,8 +83,8 @@ CMenus::CMenus()
 	m_TerminalCursorPos = 0;
 	m_TerminalSelectAll = false;
 
-	TerminalAddLine(Localize("BongureClient terminal"));
-	TerminalAddLine(Localize("Type `help` to list commands."));
+	TerminalAddLine("BongureClient terminal");
+	TerminalAddLine("Type `help` to list commands.");
 
 	m_NeedRestartGraphics = false;
 	m_NeedRestartSound = false;
@@ -941,18 +941,19 @@ void CMenus::TerminalExecuteCommand()
 		str_comp_nocase(aTrimmed, "man") == 0 ||
 		str_comp_nocase(aTrimmed, "commands") == 0)
 	{
-		TerminalAddLine(Localize("Available commands:"));
-		TerminalAddLine(Localize("play/browser/start = open browser"));
-		TerminalAddLine(Localize("start_server = start sever"));
-		TerminalAddLine(Localize("demo = open demo windows"));
-		TerminalAddLine(Localize("settings = open settings"));
-		TerminalAddLine(Localize("map_redactor = open map redactor"));
-		TerminalAddLine(Localize("help/man/commands = print all commands"));
-		TerminalAddLine(Localize("clear/cls = clear terminal"));
-		TerminalAddLine(Localize("quit/exit = exit ddnet"));
-		TerminalAddLine(Localize("stop_server = stop server"));
-		TerminalAddLine(Localize("bongure_settings = open menu with settings"));
-		TerminalAddLine(Localize("check_update = check there is new version of client"));
+		TerminalAddLine("Available commands:");
+		TerminalAddLine("play/browser/start = open browser");
+		TerminalAddLine("start_server = start sever");
+		TerminalAddLine("demo = open demo windows");
+		TerminalAddLine("settings = open settings");
+		TerminalAddLine("map_redactor = open map redactor");
+		TerminalAddLine("help/man/commands = print all commands");
+		TerminalAddLine("clear/cls = clear terminal");
+		TerminalAddLine("quit/exit = exit ddnet");
+		TerminalAddLine("stop_server = stop server");
+		TerminalAddLine("bongure_settings = open menu with settings");
+		TerminalAddLine("check_update = check there is new version of client");
+		TerminalAddLine("version = write bongure client version in terminal")
 	}
 	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
 		str_comp_nocase(aTrimmed, "browser") == 0 ||
@@ -960,37 +961,37 @@ void CMenus::TerminalExecuteCommand()
 	{
 		SetShowStart(false);
 		SetMenuPage(PAGE_INTERNET);
-		TerminalAddLine(Localize("Opening server browser..."));
+		TerminalAddLine("Opening server browser...");
 	}
 	else if(str_comp_nocase(aTrimmed, "start_server") == 0)
 	{
 		if(GameClient()->m_LocalServer.IsServerRunning())
 		{
-			TerminalAddLine(Localize("Local server already running."));
+			TerminalAddLine("Local server already running.");
 		}
 		else
 		{
 			GameClient()->m_LocalServer.RunServer({});
-			TerminalAddLine(Localize("Starting local server..."));
+			TerminalAddLine("Starting local server...");
 		}
 	}
 	else if(str_comp_nocase(aTrimmed, "demo") == 0)
 	{
 		SetShowStart(false);
 		SetMenuPage(PAGE_DEMOS);
-		TerminalAddLine(Localize("Opening demos..."));
+		TerminalAddLine("Opening demos...");
 	}
 	else if(str_comp_nocase(aTrimmed, "settings") == 0)
 	{
 		SetShowStart(false);
 		SetMenuPage(PAGE_SETTINGS);
-		TerminalAddLine(Localize("Opening settings..."));
+		TerminalAddLine("Opening settings...");
 	}
 	else if(str_comp_nocase(aTrimmed, "map_redactor") == 0)
 	{
 		g_Config.m_ClEditor = 1;
 		Input()->MouseModeRelative();
-		TerminalAddLine(Localize("Opening map editor..."));
+		TerminalAddLine("Opening map editor...");
 	}
 	else if (str_comp_nocase(aTrimmed, "clear") == 0 || 
 		str_comp_nocase(aTrimmed, "cls") == 0) 
@@ -1006,31 +1007,12 @@ void CMenus::TerminalExecuteCommand()
 	{
 		if(!GameClient()->m_LocalServer.IsServerRunning())
 		{
-			TerminalAddLine(Localize("Local server is not running."));
+			TerminalAddLine("Local server is not running.");
 		}
 		else
 		{
 			GameClient()->m_LocalServer.KillServer();
-			TerminalAddLine(Localize("Local server stopped."));
-		}
-	}
-	else if(str_comp_nocase_num(aTrimmed, "connect ", 8) == 0)
-	{
-		const char *pAddr = aTrimmed + 8;
-		
-		while(*pAddr == ' ')
-			pAddr++;
-
-		if(*pAddr == '\0')
-		{
-			TerminalAddLine("Usage: connect <ip:port>");
-		}
-		else
-		{
-			char aMsg[256];
-			str_format(aMsg, sizeof(aMsg), "Connecting to %s...", pAddr);
-			TerminalAddLine(aMsg);
-			Client()->Connect(pAddr);
+			TerminalAddLine("Local server stopped.");
 		}
 	}
 	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) 
@@ -1039,62 +1021,19 @@ void CMenus::TerminalExecuteCommand()
 	}
 	else if (str_comp_nocase(aTrimmed, "check_update") == 0) {
 		if (CheckUpdate()) {
-			TerminalAddLine(Localize("There is a new update! Enter this link: https://github.com/Cser228/BongureClient/releases to update"));
+			TerminalAddLine("There is a new update! Enter this link: https://github.com/Cser228/BongureClient/releases to update");
 		}
 		else {
-			TerminalAddLine(Localize("Nope! There isn't new update."));
+			TerminalAddLine("Nope! There isn't new update.");
 		}
 	}
-	else if(str_startswith_nocase(aTrimmed, "background_color "))
-	{
-		int R, G, B;
-		if(sscanf(aTrimmed, "background_color %d %d %d", &R, &G, &B) == 3)
-		{
-			if(R < 0) R = 0;
-			if(R > 255) R = 255;
-			if(G < 0) G = 0;
-			if(G > 255) G = 255;
-			if(B < 0) B = 0;
-			if(B > 255) B = 255;
-
-			g_Config.m_BcBongureMenuBgR = R;
-			g_Config.m_BcBongureMenuBgG = G;
-			g_Config.m_BcBongureMenuBgB = B;
-
-			TerminalAddLine(Localize("Menu background color updated."));
-		}
-		else
-		{
-			TerminalAddLine("Usage: background_color R G B");
-		}
-	}
-	else if(str_startswith_nocase(aTrimmed, "font_color "))
-	{
-		int R, G, B;
-		if(sscanf(aTrimmed, "font_color %d %d %d", &R, &G, &B) == 3)
-		{
-			if(R < 0) R = 0;
-			if(R > 255) R = 255;
-			if(G < 0) G = 0;
-			if(G > 255) G = 255;
-			if(B < 0) B = 0;
-			if(B > 255) B = 255;
-
-			g_Config.m_BcBongureMenuTextR = R;
-			g_Config.m_BcBongureMenuTextG = G;
-			g_Config.m_BcBongureMenuTextB = B;
-
-			TerminalAddLine(Localize("Menu text color updated."));
-		}
-		else
-		{
-			TerminalAddLine("Usage: font_color R G B");
-		}
+	else if (str_comp_nocase(aTrimmed, "version") == 0) {
+		TerminalAddLine(BONGURE_CLIENT_VERSION);
 	}
 	else
 	{
 		char aBuf[320];
-		str_format(aBuf, sizeof(aBuf), "Unknown command: %s", aTrimmed);
+		str_format(aBuf, sizeof(aBuf), "%s%s", Localize("Unknown command: "), aTrimmed);
 		TerminalAddLine(aBuf);
 	}
 
@@ -1166,7 +1105,7 @@ void CMenus::RenderTerminal(CUIRect Screen)
 
 	for(int i = StartLine; i < m_TerminalHistoryCount; i++)
 	{
-		TextRender()->Text(X, CurY, FontSize, m_aaTerminalHistory[i], -1.0f);
+		TextRender()->Text(X, CurY, FontSize, Localize(m_aaTerminalHistory[i]), -1.0f);
 		CurY += LineStep;
 	}
 
