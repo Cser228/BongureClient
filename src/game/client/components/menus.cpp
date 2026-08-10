@@ -125,13 +125,15 @@ CMenus::CMenus()
 
 void CMenus::FirstLaunch() {
 	// Rect
+	CUIRect Screen = *Ui()->Screen();
+
 	const float RectColorR = 109.0f;
 	const float RectColorG = 112.0f;
 	const float RectColorB = 222.0f;
 	const float RectW = 400.0f;
 	const float RectH = 100.0f;
-	const float RectX = (1050 / 2) - (RectW / 2);
-	const float RectY = (600 / 2) - (RectH / 2);
+	const float RectX = (Screen.w / 2) - (RectW / 2);
+	const float RectY = (Screen.h / 2) - (RectH / 2);
 
 	Graphics()->BlendNormal();
 	Graphics()->TextureClear();
@@ -143,23 +145,29 @@ void CMenus::FirstLaunch() {
 	// Rect
 
 	// Label
-	const float TextRectX = RectX + 20.0f;
-	const float TextRectY = RectY + 10.0f;
-	const float TextRectFontSize = 20.0f;
-
-	TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
-	TextRender()->Text(TextRectX, TextRectY, TextRectFontSize,
-		Localize("Turn off Bongure Client menu?"), -1.0f);
-	TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+	CUIRect TextQuestion;
+		TextQuestion.x = RectX;
+		TextQuestion.y = RectY + 10.0f;
+		TextQuestion.w = RectW;
+		TextQuestion.h = 20.0f;
+	Ui()->DoLabel(&TextQuestion, Localize("Turn off Bongure Client menu?"), 20.0f, TEXTALIGN_TC);
 	// Label
+
+	// Buttons global
+	const float MarginBorder = 10.0f;
+	const float MarginBetweenButtons = 10.0f;
+	const float ButtonsH = 20.0f;
+	const float ButtonsY = RectY + RectH - MarginBorder - ButtonsH;
+	const float ButtonsW = (RectW - 2.0f * MarginBorder - MarginBetweenButtons) / 2.0f;
+	// Buttons global
 
 	// Button Yes
 	static CButtonContainer s_YesButtonContainer;
 	CUIRect YesButtonRect;
-		YesButtonRect.h = TextRectFontSize;
-		YesButtonRect.w = (RectW / 2) - 20.0f;
-		YesButtonRect.x = TextRectX;
-		YesButtonRect.y = RectY + RectH - 10.0f - YesButtonRect.h;
+		YesButtonRect.h = ButtonsH;
+		YesButtonRect.w = ButtonsW;
+		YesButtonRect.x = RectX + MarginBorder;
+		YesButtonRect.y = ButtonsY;
 
 	if (DoButton_Menu(&s_YesButtonContainer, Localize("Yes"), 0, &YesButtonRect)) {
 		g_Config.m_BcFirstLaunch = 0;
@@ -170,10 +178,10 @@ void CMenus::FirstLaunch() {
 	// Button No
 	static CButtonContainer s_NoButtonContainer;
 	CUIRect NoButtonRect;
-		NoButtonRect.h = TextRectFontSize;
-		NoButtonRect.w = (RectW / 2) - 20.0f;
-		NoButtonRect.x = YesButtonRect.x + YesButtonRect.w + 5.0f;
-		NoButtonRect.y = RectY + RectH - 10.0f - NoButtonRect.h;
+		NoButtonRect.h = ButtonsH;
+		NoButtonRect.w = ButtonsW;
+		NoButtonRect.x = YesButtonRect.x + YesButtonRect.w + MarginBetweenButtons;
+		NoButtonRect.y = ButtonsY;
 
 	if (DoButton_Menu(&s_NoButtonContainer, Localize("No"), 0, &NoButtonRect)) {
 		g_Config.m_BcFirstLaunch = 0;
@@ -182,6 +190,7 @@ void CMenus::FirstLaunch() {
 	// Button No
 
 	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+	TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
 
 bool CMenus::CheckUpdate() {
@@ -2313,6 +2322,8 @@ void CMenus::Render()
 				if (!g_Config.m_RiUiNewMenu) m_MenusStart.RenderStartMenu(Screen);
 				else m_MenusStartRClient.RenderStartMenu(Screen);
 			}
+
+			if (g_Config.m_BcFirstLaunch == 1) CMenus::FirstLaunch();
 		}
 		else
 		{
@@ -3965,7 +3976,6 @@ void CMenus::OnRender() {
 	Render();
 
 	if(m_ShowBongureSettings) RenderBongureSettings(*Ui()->Screen());
-	if (g_Config.m_BcFirstLaunch == 1) CMenus::FirstLaunch();
 
 	Ui()->RenderPopupMenus();
 
