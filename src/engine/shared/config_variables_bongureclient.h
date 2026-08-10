@@ -56,3 +56,8 @@ MACRO_CONFIG_INT(BcFirstLaunch, bc_first_launch, 1, 0, 1, CFGFLAG_CLIENT | CFGFL
 // Enable menu
 MACRO_CONFIG_INT(BcEnableMenu, bc_enable_menu, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Enable Bongure Client menu")
 // Enable menu
+
+// Eye comfort
+MACRO_CONFIG_INT(BcEyeComfort, bc_eye_comfort, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Render a warm yellow screen overlay to reduce eye strain")
+MACRO_CONFIG_INT(BcEyeComfortStrength, bc_eye_comfort_strength, 35, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Eye comfort intensity in percent; increases warmth and lowers brightness together")
+// Eye comfort

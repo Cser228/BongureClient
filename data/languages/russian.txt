@@ -2837,3 +2837,9 @@ version = write bongure client version in terminal
 
 Unknown command: 
 == Неизвестная команда: 
+
+Eye comfort
+== Защита для глаз
+
+Comfort level
+== Уровень комфорта

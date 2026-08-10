@@ -927,6 +927,7 @@ void CGameClient::OnRender()
 	Input()->Clear();
 
 	CLineInput::RenderCandidates();
+	if (g_Config.m_BcEyeComfort == 1) RenderEyeComfortOverlay();
 
 	const bool WasNewTick = m_NewTick;
 
@@ -6025,4 +6026,26 @@ void CGameClient::SetConnectInfo(const NETADDR *pAddress)
 void CGameClient::RclientOnDummyChange(bool DummyConnected)
 {
 	m_RClient.RclientOnDummyChange(DummyConnected);
+}
+
+void CGameClient::RenderEyeComfortOverlay() {
+	const float Strength = std::clamp(g_Config.m_BcEyeComfortStrength / 100.0f, 0.0f, 1.0f);
+	if(Strength <= 0.0f) return;
+
+	const CUIRect Screen = *Ui()->Screen();
+	const float Brightness = std::clamp(1.0f - Strength * 0.43f, 0.57f, 1.0f);
+
+	Ui()->MapScreen();
+	Graphics()->TextureClear();
+	Graphics()->BlendNormal();
+
+	const ColorRGBA WarmOverlayColor(1.0f, 0.93f, 0.74f, 0.34f * Strength);
+	Graphics()->DrawRect(Screen.x, Screen.y, Screen.w, Screen.h, WarmOverlayColor,
+		IGraphics::CORNER_ALL, 0.0f);
+
+	if(Brightness < 1.0f) {
+		const ColorRGBA BrightnessOverlayColor(0.0f, 0.0f, 0.0f, 1.0f - Brightness);
+		Graphics()->DrawRect(Screen.x, Screen.y, Screen.w, Screen.h, BrightnessOverlayColor,
+			IGraphics::CORNER_ALL, 0.0f);
+	}
 }

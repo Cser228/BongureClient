@@ -900,7 +900,48 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	}
 	Main.HSplitTop(5.0f, nullptr, &Main);
 
+	// Eye comfort
+	Main.HSplitTop(20.0f, &Row, &Main);
+	TextRender()->TextColor(TextColor);
+	if (DoButton_CheckBox(&g_Config.m_BcEyeComfort, Localize("Eye comfort"), g_Config.m_BcEyeComfort,
+		&Row)) {
+		g_Config.m_BcEyeComfort ^= 1;
+	}
+
+	if (g_Config.m_BcEyeComfort == 1) {
+        Main.HSplitTop(5.0f, nullptr, &Main);
+        Main.HSplitTop(20.0f, &Row, &Main);
+
+		const float Indent = 20.0f;
+
+        static CLineInputBuffered<8> s_EyeComfortStrengthInput;
+        CUIRect EyeComfortStrengthRow = Row;
+			EyeComfortStrengthRow.x += Indent;
+			EyeComfortStrengthRow.w -= Indent;
+        CUIRect EyeComfortStrengthSlider, EyeComfortStrengthEdit;
+			EyeComfortStrengthRow.VSplitRight(50.0f, &EyeComfortStrengthSlider, &EyeComfortStrengthEdit);
+
+        bool EyeComfortStrengthEditActive = Ui()->HotItem() == &s_EyeComfortStrengthInput ||
+			Ui()->ActiveItem() == &s_EyeComfortStrengthInput;
+        if(!EyeComfortStrengthEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcEyeComfortStrength);
+			s_EyeComfortStrengthInput.Set(aTmp);
+		}
+
+        TextRender()->TextColor(TextColor);
+        Ui()->DoScrollbarOption(&g_Config.m_BcEyeComfortStrength, &g_Config.m_BcEyeComfortStrength,
+			&EyeComfortStrengthSlider, Localize("Comfort level"), 0, 100, &CUi::ms_LinearScrollbarScale,
+			0u);
+        if(Ui()->DoEditBox(&s_EyeComfortStrengthInput, &EyeComfortStrengthEdit, 14.0f)) {
+			const int P = str_toint(s_EyeComfortStrengthInput.GetString());
+			if(P >= 0 && P <= 100) g_Config.m_BcEyeComfortStrength = P;
+		}
+	}
+	Main.HSplitTop(5.0f, nullptr, &Main);
+
     TextRender()->TextColor(TextRender()->DefaultTextColor());
+	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void CMenus::TerminalExecuteCommand()
@@ -953,7 +994,7 @@ void CMenus::TerminalExecuteCommand()
 		TerminalAddLine("stop_server = stop server");
 		TerminalAddLine("bongure_settings = open menu with settings");
 		TerminalAddLine("check_update = check there is new version of client");
-		TerminalAddLine("version = write bongure client version in terminal")
+		TerminalAddLine("version = write bongure client version in terminal");
 	}
 	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
 		str_comp_nocase(aTrimmed, "browser") == 0 ||
