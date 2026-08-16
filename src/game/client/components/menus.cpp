@@ -940,6 +940,36 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	}
 	Main.HSplitTop(5.0f, nullptr, &Main);
 
+	// Optimization
+	Main.HSplitTop(20.0f, &Row, &Main);
+
+	// Button optimization
+	static bool OptimizationShow = false;
+
+	TextRender()->TextColor(TextColor);
+	if (DoButton_CheckBox(&OptimizationShow, Localize("Optimization"), OptimizationShow, &Row)) {
+		OptimizationShow ^= 1;
+	}
+	// Button optimization
+
+	if (OptimizationShow) {
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+
+		CUIRect InRow = Row;
+			InRow.x += 20.0f;
+
+		//Disable textures
+		if (DoButton_CheckBox(&g_Config.m_BcDisableTextures, Localize("Disable textures"),
+			g_Config.m_BcDisableTextures, &InRow)) {
+			g_Config.m_BcDisableTextures ^= 1;
+		}
+		//Disable textures
+	}
+
+	Main.HSplitTop(5.0f, nullptr, &Main);
+	// Optimization
+
     TextRender()->TextColor(TextRender()->DefaultTextColor());
 	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }

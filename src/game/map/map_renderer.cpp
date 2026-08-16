@@ -140,8 +140,7 @@ void CMapRenderer::Load(ERenderType Type, CLayers *pLayers, IMapImages *pMapImag
 	}
 }
 
-void CMapRenderer::Render(const CRenderLayerParams &Params)
-{
+void CMapRenderer::Render(const CRenderLayerParams &Params) {
 	float ScreenXLeft, ScreenYTop, ScreenXRight, ScreenYBottom;
 	Graphics()->GetScreen(&ScreenXLeft, &ScreenYTop, &ScreenXRight, &ScreenYBottom);
 
@@ -151,8 +150,7 @@ void CMapRenderer::Render(const CRenderLayerParams &Params)
 		if(pRenderLayer->IsGroup())
 			DoRenderGroup = pRenderLayer->DoRender(Params);
 
-		if(!DoRenderGroup)
-			continue;
+		if(!DoRenderGroup) continue;
 
 		if(pRenderLayer->DoRender(Params))
 			pRenderLayer->Render(Params);

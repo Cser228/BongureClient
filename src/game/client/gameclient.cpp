@@ -349,8 +349,9 @@ void CGameClient::ForceUpdateConsoleRemoteCompletionSuggestions()
 	m_GameConsole.ForceUpdateRemoteCompletionSuggestions();
 }
 
-void CGameClient::OnInit()
-{
+void CGameClient::OnInit() {
+	EdgeHelperPrevState = m_EdgeHelper.IsActive();
+
 	const int64_t OnInitStart = time_get();
 
 	Client()->SetLoadingCallback([this](IClient::ELoadingCallbackDetail Detail) {
@@ -497,16 +498,7 @@ void CGameClient::OnInit()
 	log_trace("gameclient", "initialization finished after %.2fms", (time_get() - OnInitStart) * 1000.0f / (float)time_freq());
 }
 
-void CGameClient::OnUpdate()
-{
-	//Bongure Client BC_EDGEINFO
-	if (g_Config.m_BcEdgeInfoBc == 1 && m_EdgeHelper.IsActive() == false) {
-		m_EdgeHelper.SetActive(true);
-	}
-	else if (g_Config.m_BcEdgeInfoBc == 0 && m_EdgeHelper.IsActive() == true) {
-		m_EdgeHelper.SetActive(false);
-	}
-	
+void CGameClient::OnUpdate() {
 	HandleLanguageChanged();
 
 	CUIElementBase::Init(Ui()); // update static pointer because game and editor use separate UI
@@ -849,8 +841,13 @@ void CGameClient::UpdatePositions()
 	UpdateRenderedCharacters();
 }
 
-void CGameClient::OnRender()
-{
+void CGameClient::OnRender() {
+	// Bongure Client
+	if (EdgeHelperPrevState != g_Config.m_BcEdgeInfo && g_Config.m_BcEdgeInfo != m_EdgeHelper.IsActive()) {
+		m_EdgeHelper.SetActive(g_Config.m_BcEdgeInfo);
+		EdgeHelperPrevState = g_Config.m_BcEdgeInfo;
+	}
+
 	const ColorRGBA ClearColor = color_cast<ColorRGBA>(ColorHSLA(g_Config.m_ClOverlayEntities ? g_Config.m_ClBackgroundEntitiesColor : g_Config.m_ClBackgroundColor));
 	Graphics()->Clear(ClearColor.r, ClearColor.g, ClearColor.b);
 

@@ -6,8 +6,7 @@
 #include <engine/console.h>
 
 #include <game/client/component.h>
-class CEdgeHelper : public CComponent
-{
+class CEdgeHelper : public CComponent {
 	bool m_Active = false;
 
 	int m_Pos_x;

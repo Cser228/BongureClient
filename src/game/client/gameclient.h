@@ -269,6 +269,9 @@ public:
 	CMenusRClientClickGui m_RClientClickGui;
 
 private:
+	// Bongure Client
+	bool EdgeHelperPrevState;
+
 	std::vector<class CComponent *> m_vpAll;
 	std::vector<class CComponent *> m_vpInput;
 	CNetObjHandler m_NetObjHandler;

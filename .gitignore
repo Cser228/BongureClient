@@ -7,6 +7,10 @@ bundle/
 !/other/bundle/
 
 BUG.txt
+BongureClient-Linux-*
+BongureClient-Windows-*
+BongureRelease-Linux
+BongureRelease-Windows
 
 .DS_Store
 .ninja_deps

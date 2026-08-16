@@ -17,8 +17,7 @@
 #include <game/client/gameclient.h>
 #include <game/client/render.h>
 #include <game/client/ui.h>
-struct SEdgeHelperProperties
-{
+struct SEdgeHelperProperties {
 	static constexpr float ms_Padding = 3.0f;
 	static constexpr float ms_Rounding = 3.0f;
 
@@ -52,29 +51,22 @@ void CEdgeHelper::OnConsoleInit()
 	Console()->Register("ri_toggle_edgeinfo", "", CFGFLAG_CLIENT, ConToggleEdgeHelper, this, "Toggle edge info");
 }
 
-void CEdgeHelper::ConToggleEdgeHelper(IConsole::IResult *pResult, void *pUserData)
-{
+void CEdgeHelper::ConToggleEdgeHelper(IConsole::IResult *pResult, void *pUserData) {
 	CEdgeHelper *pSelf = (CEdgeHelper *)pUserData;
 	pSelf->SetActive(!pSelf->IsActive());
-
 }
 
-void CEdgeHelper::SetActive(bool Active)
-{
-	if(m_Active == Active)
-		return;
+void CEdgeHelper::SetActive(bool Active) {
+	if(m_Active == Active) return;
 
 	m_Active = Active;
-	if(m_Active)
-	{
-		if(!g_Config.m_RiEdgeInfoJump && !g_Config.m_RiEdgeInfoCords)
-		{
+	if(m_Active) {
+		if(!g_Config.m_RiEdgeInfoJump && !g_Config.m_RiEdgeInfoCords) {
 			GameClient()->Echo("Enable any edgeinfo function");
 			OnReset();
 		}
 	}
-	else
-	{
+	else {
 		OnReset();
 	}
 }
@@ -91,16 +83,13 @@ void CEdgeHelper::OnRelease()
 	SetActive(false);
 }
 
-void CEdgeHelper::OnRender()
-{
-	if(!IsActive())
-		return;
+void CEdgeHelper::OnRender() {
+	if(!IsActive()) return;
 
 	RenderEdgeHelper();
 }
 
-void CEdgeHelper::RenderEdgeHelper()
-{
+void CEdgeHelper::RenderEdgeHelper() {
 	CUIRect Base, EdgeInfo, JumpInfo;
 
 	Base.h = 100.0f * 3.0f / (g_Config.m_RiEdgeInfoJump && g_Config.m_RiEdgeInfoCords ? 6 : 12);
@@ -279,12 +268,8 @@ void CEdgeHelper::RenderEdgeHelperJumpInfo(CUIRect *pBase)
 	TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
 
-bool CEdgeHelper::IsActive() const
-{
-	if(m_Active)
-		return true;
-
-	return false;
+bool CEdgeHelper::IsActive() const {
+	return m_Active;
 }
 
 void CEdgeHelper::DoIconButton(CUIRect *pRect, const char *pIcon, float TextSize, ColorRGBA IconColor) const

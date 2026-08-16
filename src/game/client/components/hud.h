@@ -10,8 +10,6 @@
 
 #include <game/client/component.h>
 
-#include <map>
-
 struct SScoreInfo
 {
 	SScoreInfo()
@@ -156,8 +154,6 @@ public:
 	//
 
 
-	std::map<std::string, AnyHud> all_hud_map;
-
 	void RenderBongaDebugWindow();
 
 
@@ -181,8 +177,6 @@ public:
 	void RenderNinjaBarPos(float x, float y, float Width, float Height, float Progress, float Alpha = 1.0f);
 
 private:
-	void InitAllHudMap();
-
 	void RenderRecord();
 	void RenderDDRaceEffects();
 	void RenderDummyIndicator();

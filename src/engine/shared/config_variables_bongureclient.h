@@ -19,7 +19,7 @@ MACRO_CONFIG_INT(BcDummyPointerColorB, bc_dummy_pointer_color_b, 255, 0, 255, CF
 //Dummy arrow
 
 //Edge info by 1 0
-MACRO_CONFIG_INT(BcEdgeInfoBc, bc_edgeinfo, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Rushie edge info only by toggle, its 1 0")
+MACRO_CONFIG_INT(BcEdgeInfo, bc_edgeinfo, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Rushie edge info only by toggle, its 1 0")
 //Edge info by 1 0
 
 // Auto-mute system
@@ -61,3 +61,7 @@ MACRO_CONFIG_INT(BcEnableMenu, bc_enable_menu, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG
 MACRO_CONFIG_INT(BcEyeComfort, bc_eye_comfort, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Render a warm yellow screen overlay to reduce eye strain")
 MACRO_CONFIG_INT(BcEyeComfortStrength, bc_eye_comfort_strength, 35, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Eye comfort intensity in percent; increases warmth and lowers brightness together")
 // Eye comfort
+
+// Optimization
+MACRO_CONFIG_INT(BcDisableTextures, bc_disable_textures, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Disable textures for optimization")
+// Optimization
