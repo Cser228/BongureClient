@@ -1558,8 +1558,8 @@ void CPlayers::OnRender()
 				aRenderInfo[i].m_TeeRenderFlags |= TEE_EFFECT_SPARKLE;
 
 			Frozen = GameClient()->m_aClients[i].m_Predicted.m_FreezeEnd != 0;
-			// TClient
-			if(g_Config.m_TcFastInput)
+			// TClient || Changed by Bongure Client
+			if(g_Config.m_BcFastInputs != BC_INPUTS_OFF)
 				Frozen = GameClient()->m_aClients[i].m_RegularPredicted.m_FreezeEnd != 0;
 		}
 		else

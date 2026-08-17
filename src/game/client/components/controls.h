@@ -65,5 +65,8 @@ private:
 	static void ConKeyInputCounter(IConsole::IResult *pResult, void *pUserData);
 	static void ConKeyInputSet(IConsole::IResult *pResult, void *pUserData);
 	static void ConKeyInputNextPrevWeapon(IConsole::IResult *pResult, void *pUserData);
+
+	// Bongure Client
+	int ResolveMovementDirection(int Dummy, bool LeftPressed, bool RightPressed, bool UpdateState);
 };
 #endif

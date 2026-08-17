@@ -2929,8 +2929,23 @@ void CClient::Update()
 					SendInput();
 				}
 
-				if(g_Config.m_TcFastInput && GameClient()->CheckNewInput())
-				{
+				const bool HasFastInput =
+					(g_Config.m_BcFastInputs == BC_INPUTS_FAST && g_Config.m_TcFastInputAmount > 0) ||
+					(g_Config.m_BcFastInputs == BC_INPUTS_BEST && g_Config.m_BcBestFastInputAmount > 0) ||
+					(g_Config.m_BcFastInputs == BC_INPUTS_SAIKO &&
+						g_Config.m_BcSaikoFastInputAmount > 0) ||
+					(g_Config.m_BcFastInputs == BC_INPUTS_DELTA &&
+						g_Config.m_BcDeltaFastInputAmount > 0) ||
+					(g_Config.m_BcFastInputs == BC_INPUTS_F && g_Config.m_BcFFastInputAmount > 0) ||
+					(g_Config.m_BcFastInputs == BC_INPUTS_CLOUD &&
+						g_Config.m_BcCloudFastInputAmount > 0);
+
+				if (HasFastInput && (g_Config.m_BcFastInputs == BC_INPUTS_SAIKO ||
+					g_Config.m_BcFastInputs == BC_INPUTS_CLOUD)) {
+					GameClient()->CheckNewInput();
+					Repredict = true;
+				}
+				else if (HasFastInput && GameClient()->CheckNewInput()) {
 					Repredict = true;
 				}
 			}

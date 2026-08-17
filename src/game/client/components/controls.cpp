@@ -181,6 +181,7 @@ void CControls::OnMessage(int Msg, void *pRawMsg)
 	}
 }
 
+// This function changed by Bongure Client
 int CControls::SnapInput(int *pData)
 {
 	const bool FreezeInput =
@@ -284,11 +285,10 @@ int CControls::SnapInput(int *pData)
 			m_aInputData[g_Config.m_ClDummy].m_TargetX = 1;
 
 		// set direction
-		m_aInputData[g_Config.m_ClDummy].m_Direction = 0;
-		if(m_aInputDirectionLeft[g_Config.m_ClDummy] && !m_aInputDirectionRight[g_Config.m_ClDummy])
-			m_aInputData[g_Config.m_ClDummy].m_Direction = -1;
-		if(!m_aInputDirectionLeft[g_Config.m_ClDummy] && m_aInputDirectionRight[g_Config.m_ClDummy])
-			m_aInputData[g_Config.m_ClDummy].m_Direction = 1;
+		const bool LeftPressed = m_aInputDirectionLeft[g_Config.m_ClDummy] != 0;
+		const bool RightPressed = m_aInputDirectionRight[g_Config.m_ClDummy] != 0;
+		m_aInputData[g_Config.m_ClDummy].m_Direction = ResolveMovementDirection(g_Config.m_ClDummy,
+			LeftPressed, RightPressed, true);
 
 		// dummy copy moves
 		if(g_Config.m_ClDummyCopyMoves)
@@ -359,8 +359,7 @@ int CControls::SnapInput(int *pData)
 	// copy and return size
 	m_aLastData[g_Config.m_ClDummy] = m_aInputData[g_Config.m_ClDummy];
 
-	if(!Send)
-		return 0;
+	if(!Send) return 0;
 
 	m_LastSendTime = time_get();
 	mem_copy(pData, &m_aInputData[g_Config.m_ClDummy], sizeof(m_aInputData[0]));
@@ -511,72 +510,52 @@ float CControls::GetMaxMouseDistance() const
 	return minimum((FollowFactor != 0 ? CameraMaxDistance / FollowFactor + DeadZone : MaxDistance), MaxDistance);
 }
 
-bool CControls::CheckNewInput()
-{
-	if(g_Config.m_RiFastInputVersion == 0)
-	{
-		const int Dummy = g_Config.m_ClDummy;
-		CNetObj_PlayerInput TestInput = m_aInputData[Dummy];
-		TestInput.m_Direction = 0;
-		if(m_aInputDirectionLeft[Dummy] && !m_aInputDirectionRight[Dummy])
-			TestInput.m_Direction = -1;
-		if(!m_aInputDirectionLeft[Dummy] && m_aInputDirectionRight[Dummy])
-			TestInput.m_Direction = 1;
+// This function changed by Bongure Client
+bool CControls::CheckNewInput() {
+	if(g_Config.m_BcFastInputs == BC_INPUTS_SAIKO && g_Config.m_BcSaikoFastInputAmount > 0) {
+		CNetObj_PlayerInput TestInput = m_aInputData[g_Config.m_ClDummy];
+		const bool LeftPressed = m_aInputDirectionLeft[g_Config.m_ClDummy] != 0;
+		const bool RightPressed = m_aInputDirectionRight[g_Config.m_ClDummy] != 0;
+		TestInput.m_Direction = ResolveMovementDirection(g_Config.m_ClDummy, LeftPressed, RightPressed,
+			false);
+
+
 
 		bool NewInput = false;
-		if(m_aFastInput[Dummy].m_Direction != TestInput.m_Direction)
-			NewInput = true;
-		if(m_aFastInput[Dummy].m_Hook != TestInput.m_Hook)
-			NewInput = true;
-		if(m_aFastInput[Dummy].m_Fire != TestInput.m_Fire)
-			NewInput = true;
-		if(m_aFastInput[Dummy].m_Jump != TestInput.m_Jump)
-			NewInput = true;
-		if(m_aFastInput[Dummy].m_NextWeapon != TestInput.m_NextWeapon)
-			NewInput = true;
-		if(m_aFastInput[Dummy].m_PrevWeapon != TestInput.m_PrevWeapon)
-			NewInput = true;
-		if(m_aFastInput[Dummy].m_WantedWeapon != TestInput.m_WantedWeapon)
-			NewInput = true;
+		if(m_aFastInput[g_Config.m_ClDummy].m_Direction != TestInput.m_Direction)       NewInput = true;
+		if(m_aFastInput[g_Config.m_ClDummy].m_Hook != TestInput.m_Hook)                 NewInput = true;
+		if(m_aFastInput[g_Config.m_ClDummy].m_Fire != TestInput.m_Fire)                 NewInput = true;
+		if(m_aFastInput[g_Config.m_ClDummy].m_Jump != TestInput.m_Jump)                 NewInput = true;
+		if(m_aFastInput[g_Config.m_ClDummy].m_NextWeapon != TestInput.m_NextWeapon)     NewInput = true;
+		if(m_aFastInput[g_Config.m_ClDummy].m_PrevWeapon != TestInput.m_PrevWeapon)     NewInput = true;
+		if(m_aFastInput[g_Config.m_ClDummy].m_WantedWeapon != TestInput.m_WantedWeapon) NewInput = true;
 
-		if(g_Config.m_ClSubTickAiming)
-		{
-			TestInput.m_TargetX = (int)m_aMousePos[Dummy].x;
-			TestInput.m_TargetY = (int)m_aMousePos[Dummy].y;
+		if(g_Config.m_ClSubTickAiming) {
+			TestInput.m_TargetX = (int)m_aMousePos[g_Config.m_ClDummy].x;
+			TestInput.m_TargetY = (int)m_aMousePos[g_Config.m_ClDummy].y;
 		}
 
-		m_aFastInput[Dummy] = TestInput;
+		m_aFastInput[g_Config.m_ClDummy] = TestInput;
 
 		return NewInput;
 	}
 
 	bool NewInput[2] = {};
-	for(int Dummy = 0; Dummy < NUM_DUMMIES; Dummy++)
-	{
+	for(int Dummy = 0; Dummy < NUM_DUMMIES; ++Dummy) {
 		CNetObj_PlayerInput TestInput = m_aInputData[Dummy];
-		if(Dummy == g_Config.m_ClDummy)
-		{
-			TestInput.m_Direction = 0;
-			if(m_aInputDirectionLeft[Dummy] && !m_aInputDirectionRight[Dummy])
-				TestInput.m_Direction = -1;
-			if(!m_aInputDirectionLeft[Dummy] && m_aInputDirectionRight[Dummy])
-				TestInput.m_Direction = 1;
+		if(Dummy == g_Config.m_ClDummy) {
+			const bool LeftPressed = m_aInputDirectionLeft[Dummy] != 0;
+			const bool RightPressed = m_aInputDirectionRight[Dummy] != 0;
+			TestInput.m_Direction = ResolveMovementDirection(Dummy, LeftPressed, RightPressed, false);
 		}
 
-		if(m_aFastInput[Dummy].m_Direction != TestInput.m_Direction)
-			NewInput[Dummy] = true;
-		if(m_aFastInput[Dummy].m_Hook != TestInput.m_Hook)
-			NewInput[Dummy] = true;
-		if(m_aFastInput[Dummy].m_Fire != TestInput.m_Fire)
-			NewInput[Dummy] = true;
-		if(m_aFastInput[Dummy].m_Jump != TestInput.m_Jump)
-			NewInput[Dummy] = true;
-		if(m_aFastInput[Dummy].m_NextWeapon != TestInput.m_NextWeapon)
-			NewInput[Dummy] = true;
-		if(m_aFastInput[Dummy].m_PrevWeapon != TestInput.m_PrevWeapon)
-			NewInput[Dummy] = true;
-		if(m_aFastInput[Dummy].m_WantedWeapon != TestInput.m_WantedWeapon)
-			NewInput[Dummy] = true;
+		if(m_aFastInput[Dummy].m_Direction != TestInput.m_Direction)       NewInput[Dummy] = true;
+		if(m_aFastInput[Dummy].m_Hook != TestInput.m_Hook) 				   NewInput[Dummy] = true;
+		if(m_aFastInput[Dummy].m_Fire != TestInput.m_Fire) 				   NewInput[Dummy] = true;
+		if(m_aFastInput[Dummy].m_Jump != TestInput.m_Jump) 				   NewInput[Dummy] = true;
+		if(m_aFastInput[Dummy].m_NextWeapon != TestInput.m_NextWeapon)     NewInput[Dummy] = true;
+		if(m_aFastInput[Dummy].m_PrevWeapon != TestInput.m_PrevWeapon)     NewInput[Dummy] = true;
+		if(m_aFastInput[Dummy].m_WantedWeapon != TestInput.m_WantedWeapon) NewInput[Dummy] = true;
 
 		bool SetMousePos = false;
 		// We need to be careful about how we manage the mouse position to avoid mispredicted hooks and fires
@@ -617,4 +596,13 @@ bool CControls::CheckNewInput()
 		return true;
 	else
 		return false;
+}
+
+int CControls::ResolveMovementDirection(int Dummy, bool LeftPressed, bool RightPressed,
+	bool UpdateState) {
+
+	int Direction = 0;
+	if(LeftPressed && !RightPressed) Direction = -1;
+	if(!LeftPressed && RightPressed) Direction = 1;
+	return Direction;
 }

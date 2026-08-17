@@ -110,9 +110,7 @@ void CVoiceAssistant::Toggle()
 	}
 }
 
-void CVoiceAssistant::OnRender()
-{
-	// Синхронизация с конфигом
+void CVoiceAssistant::OnRender() {
 	if(g_Config.m_BcBongaVoice && !m_Active.load() && m_Initialized)
 		Toggle();
 	else if(!g_Config.m_BcBongaVoice && m_Active.load())
@@ -165,10 +163,10 @@ std::string CVoiceAssistant::TruncateUtf8(const std::string &Text, size_t MaxCha
     while(i < Text.size() && Chars < MaxChars)
     {
         unsigned char c = (unsigned char)Text[i];
-        if(c < 0x80)        i += 1; // ASCII
-        else if(c < 0xE0)   i += 2; // 2-байтовый (русский)
-        else if(c < 0xF0)   i += 3; // 3-байтовый
-        else                i += 4; // 4-байтовый
+        if(c < 0x80)        i += 1;
+        else if(c < 0xE0)   i += 2;
+        else if(c < 0xF0)   i += 3;
+        else                i += 4;
         Chars++;
     }
     return Text.substr(0, i);
@@ -261,16 +259,13 @@ std::string CVoiceAssistant::ParseJsonText(const char *pJson) const
 size_t CVoiceAssistant::FindTrigger(const std::string &Text) const
 {
 	const char *apTriggers[] = {
-		// эй + варианты
 		"\xd1\x8d\xd0\xb9 \xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd0\xb0",               // эй бонга
 		"\xd1\x8d\xd0\xb9 \xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd1\x83\xd1\x80\xd0\xb0", // эй бонгура
 		"\xd1\x8d\xd0\xb9 \xd0\xbc\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xbe",                 // эй манго
 		"\xd1\x8d\xd0\xb9 \xd0\xb2\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xb0",                 // эй ванга
-		// хей + варианты
 		"\xd1\x85\xd0\xb5\xd0\xb9 \xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd0\xb0",         // хей бонга
 		"\xd1\x85\xd0\xb5\xd0\xb9 \xd0\xbc\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xbe",         // хей манго
 		"\xd1\x85\xd0\xb5\xd0\xb9 \xd0\xb2\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xb0",         // хей ванга
-		// одиночные
 		"\xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd1\x83\xd1\x80\xd0\xb0",                   // бонгура
 		"\xd0\xb1\xd0\xbe\xd0\xbd\xd0\xb3\xd0\xb0",                                   // бонга
 		"\xd0\xbc\xd0\xb0\xd0\xbd\xd0\xb3\xd0\xbe",                                   // манго
@@ -303,7 +298,6 @@ std::string CVoiceAssistant::ExtractCommand(const std::string &Text, bool *pCaps
 	if(pCaps)
 		*pCaps = false;
 
-	// Капс-команды (крикни, орни) — проверяем ПЕРВЫМИ
 	const char *apCapsCmds[] = {
 		"\xd0\xba\xd1\x80\xd0\xb8\xd0\xba\xd0\xbd\xd0\xb8 \xd0\xb2 \xd1\x87\xd0\xb0\xd1\x82 ",   // крикни в чат
 		"\xd0\xbe\xd1\x80\xd0\xbd\xd0\xb8 \xd0\xb2 \xd1\x87\xd0\xb0\xd1\x82 ",                     // орни в чат
@@ -331,7 +325,6 @@ std::string CVoiceAssistant::ExtractCommand(const std::string &Text, bool *pCaps
 		}
 	}
 
-	// Обычные команды
 	const char *apCmds[] = {
 		"\xd0\xbd\xd0\xb0\xd0\xbf\xd0\xb8\xd1\x88\xd0\xb8 \xd0\xb2 \xd1\x87\xd0\xb0\xd1\x82 ",
 		"\xd0\xbd\xd0\xb0\xd0\xbf\xd0\xb8\xd1\x88\xd0\xb8 \xd0\xb2 \xd1\x87\xd0\xb0\xd1\x82\xd0\xb5 ",
@@ -369,12 +362,10 @@ std::string CVoiceAssistant::ToUpperCase(const std::string &Text) const
 	{
 		unsigned char c = (unsigned char)Text[i];
 
-		// ASCII a-z
 		if(c >= 'a' && c <= 'z')
 		{
 			Result += (char)(c - 32);
 		}
-		// Русские а-п: 0xD0 0xB0..0xBF → А-П: 0xD0 0x90..0x9F
 		else if(c == 0xD0 && i + 1 < Text.size())
 		{
 			unsigned char c2 = (unsigned char)Text[i + 1];
@@ -389,8 +380,6 @@ std::string CVoiceAssistant::ToUpperCase(const std::string &Text) const
 				Result += (char)c;
 			}
 		}
-		// Русские р-я: 0xD1 0x80..0x8F → Р-Я: 0xD0 0xA0..0xAF
-		// ё: 0xD1 0x91 → Ё: 0xD0 0x81
 		else if(c == 0xD1 && i + 1 < Text.size())
 		{
 			unsigned char c2 = (unsigned char)Text[i + 1];
@@ -400,7 +389,7 @@ std::string CVoiceAssistant::ToUpperCase(const std::string &Text) const
 				Result += (char)(c2 + 0x20);
 				i++;
 			}
-			else if(c2 == 0x91) // ё → Ё
+			else if(c2 == 0x91)
 			{
 				Result += (char)0xD0;
 				Result += (char)0x81;

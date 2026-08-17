@@ -65,3 +65,20 @@ MACRO_CONFIG_INT(BcEyeComfortStrength, bc_eye_comfort_strength, 35, 0, 100, CFGF
 // Optimization
 MACRO_CONFIG_INT(BcDisableTextures, bc_disable_textures, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Disable textures for optimization")
 // Optimization
+
+// Fast inputs
+MACRO_CONFIG_INT(BcFastInputs, bc_fast_inputs, 0, 0, 6, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Input prediction mode (0 = off, 1 = fast, 2 = best, 3 = saiko, 4 = delta, 5 = f, 6 = cloud)")
+MACRO_CONFIG_INT(BcBestFastInputAmount, bc_best_fast_input_amount, 0, 0, 1000, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Best input prediction amount in 0.01 ticks")
+MACRO_CONFIG_INT(BcBestFastInputSmoothing, bc_best_fast_input_smoothing, 0, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Best input smoothing amount (0-100%)")
+MACRO_CONFIG_INT(BcBestFastInputLatencyComp, bc_best_fast_input_latency_comp, 0, 0, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Best input latency compensation (0-50%)")
+MACRO_CONFIG_INT(BcBestFastInputInterpolation, bc_best_fast_input_interpolation, 1, 1, 3, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Best input interpolation mode (1 = linear, 2 = cubic, 3 = smooth)")
+MACRO_CONFIG_INT(BcBestFastInputOthers, bc_best_fast_input_others, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Apply best input to other tees")
+MACRO_CONFIG_INT(BcSaikoFastInputAmount, bc_saiko_fast_input_amount, 0, 0, 500, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Saiko input amount in 0.01 ticks")
+MACRO_CONFIG_INT(BcSaikoFastInputOthers, bc_saiko_fast_input_others, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Apply Saiko input to other tees")
+MACRO_CONFIG_INT(BcDeltaFastInputAmount, bc_delta_fast_input_amount, 0, 0, 500, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Delta input amount in 0.01 ticks")
+MACRO_CONFIG_INT(BcDeltaFastInputOthers, bc_delta_fast_input_others, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Apply delta input to other tees")
+MACRO_CONFIG_INT(BcFFastInputAmount, bc_f_fast_input_amount, 0, 0, 5000, CFGFLAG_CLIENT | CFGFLAG_SAVE, "F input amount in 0.001-tick units (0=off, 1000=1.000 ticks, max 5000=5.000 ticks)")
+MACRO_CONFIG_INT(BcFFastInputOthers, bc_f_fast_input_others, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Apply F input to other tees")
+MACRO_CONFIG_INT(BcCloudFastInputAmount, bc_cloud_fast_input_amount, 0, 0, 500, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Cloud input amount in 0.01 ticks")
+MACRO_CONFIG_INT(BcCloudFastInputOthers, bc_cloud_fast_input_others, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Apply cloud input to other tees")
+// Fast inputs

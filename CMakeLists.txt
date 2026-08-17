@@ -2609,6 +2609,10 @@ if(CLIENT)
     components/background.h
     components/binds.cpp
     components/binds.h
+	components/bongureclient/cloud_input.cpp
+	components/bongureclient/cloud_input.h
+	components/bongureclient/inputs.cpp
+	components/bongureclient/inputs.h
 	components/bongureclient/voice_assistant.cpp
 	components/bongureclient/voice_assistant.h
     components/broadcast.cpp

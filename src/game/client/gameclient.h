@@ -68,6 +68,7 @@
 
 //Bongure Client
 #include "components/bongureclient/voice_assistant.h"
+#include "components/bongureclient/cloud_input.h"
 
 //Rclient
 #include "components/rclient/adminpanel.h"
@@ -231,6 +232,9 @@ public:
 	CTooltips m_Tooltips;
 
 	CLocalServer m_LocalServer;
+
+	// Bongure Client Components
+	CCloudInput m_CloudInput;
 
 	// TClient Components
 	CSkinProfiles m_SkinProfiles;
@@ -761,6 +765,10 @@ public:
 
 	int m_aNextChangeInfo[NUM_DUMMIES];
 
+	// Bongure Client
+	bool IsCloudInputMode() const;
+	bool IsFastInputLocalClient(int ClientId) const;
+
 	// DDRace
 
 	int m_aLocalIds[NUM_DUMMIES];
@@ -1084,6 +1092,10 @@ private:
 	void StoreSave(const char *pTeamMembers, const char *pGeneratedCode) const;
 
 public:
+	// Bongure Client
+	int m_aCloudSmoothTick[2] = {};
+	float m_aCloudSmoothIntraTick[2] = {};
+
 	// TClient
 	int m_SmoothTick = 0;
 	float m_SmoothIntraTick = 0;

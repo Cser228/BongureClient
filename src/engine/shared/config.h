@@ -60,6 +60,17 @@ public:
 
 extern CConfig g_Config;
 
+// Bongure Client
+enum {
+	BC_INPUTS_OFF = 0,
+	BC_INPUTS_FAST,
+	BC_INPUTS_BEST,
+	BC_INPUTS_SAIKO,
+	BC_INPUTS_DELTA,
+	BC_INPUTS_F,
+	BC_INPUTS_CLOUD,
+};
+
 /**
  * The default values of all config variables in @link CConfig @endlink.
  */
