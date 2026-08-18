@@ -185,10 +185,8 @@ CChat::CChat()
 
 void CChat::LoadSmilesDB()
 {
-    // 1. Сначала очищаем старые данные
     smile_db.clear(); 
 
-    // 2. Читаем файл
     std::ifstream In("data/smiles_db.txt");
     if (!In.is_open())
         return;
@@ -491,8 +489,8 @@ void CChat::OnConsoleInit()
 		ConAutoMuteReset, this, "Reset all auto-mute trackers and unmute players");
 }
 
-void CChat::OnInit()
-{
+// This function changed by Bongure Client
+void CChat::OnInit() {
 	LoadSmilesDB();
 	smile_window_open = false;
 	smile_string = "";
@@ -1767,8 +1765,8 @@ void CChat::OnPrepareLines(float y)
 	TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
 
-void CChat::OnRender()
-{
+// This function changed by Bongure Client
+void CChat::OnRender() {
 	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
 		return;
 
@@ -1783,7 +1781,9 @@ void CChat::OnRender()
 	const char *pInput = m_Input.GetString();
 	int CursorOffset = m_Input.GetCursorOffset();
 
+	// Bongure Client
 	smile_window_open = false;
+	smile_string.clear();
 
 	if (CursorOffset > 0) {
 		int word_start = CursorOffset - 1;
@@ -1800,12 +1800,25 @@ void CChat::OnRender()
 				}
 			}
 			if (colon_count == 1) {
-				smile_window_open = true;
+				smile_string.assign(pInput + word_start, CursorOffset - word_start);
+
+				for (const auto &[key, value] : smile_db) {
+					if (key.starts_with(smile_string)) {
+						smile_window_open = true;
+						break;
+					}
+				}
 			}
 		}
 	}
 
-	if (smile_window_open == false && smile_show != "") smile_show = "";
+	if (!smile_window_open) {
+		smile_show.clear();
+		smile_string.clear();
+		smile_window_offset = 0;
+		smile_texts_y = 0.0f;
+	}
+	// Bongure Client
 
 	if(m_PendingChatCounter > 0 && m_LastChatSend + time_freq() < time())
 	{
