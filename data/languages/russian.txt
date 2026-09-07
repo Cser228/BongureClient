@@ -2849,3 +2849,12 @@ Optimization
 
 Disable textures
 == Отключить текстуры
+
+Fast input (this is a hide button)
+== Быстрый ввод (это кнопка которая прячет гуи)
+
+Enable fast input
+== Включить быстрый ввод
+
+Fast input
+== Быстрый ввод

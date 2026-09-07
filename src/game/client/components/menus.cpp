@@ -970,6 +970,101 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	Main.HSplitTop(5.0f, nullptr, &Main);
 	// Optimization
 
+	// Fast inputs
+	Main.HSplitTop(20.0f, &Row, &Main);
+
+	static bool s_show_fast_inputs_block = false;
+	TextRender()->TextColor(TextColor);
+	if (DoButton_CheckBox(&s_show_fast_inputs_block, Localize("Fast input (this is a hide button)"),
+		s_show_fast_inputs_block, &Row)) {
+
+		s_show_fast_inputs_block = !s_show_fast_inputs_block;
+	}
+
+	if (s_show_fast_inputs_block) {
+        Main.HSplitTop(5.0f, nullptr, &Main);
+        Main.HSplitTop(20.0f, &Row, &Main);
+
+		static bool s_enable_fast_input = false;
+		CUIRect Row20 = Row;
+			Row20.x += 20.0f;
+
+		if (DoButton_CheckBox(&s_enable_fast_input, Localize("Enable fast input"), s_enable_fast_input,
+			&Row20)) {
+			
+			s_enable_fast_input = !s_enable_fast_input;
+		}
+
+		if (s_enable_fast_input) {
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+
+			//Lable
+			CUIRect FastInputLabelRect = Row;
+				FastInputLabelRect.x += 40.0f;
+			//Lable
+
+			//DropDown
+			CUIRect FastInputDropDownRect = Row;
+				FastInputDropDownRect.x += 200.0f;
+				FastInputDropDownRect.w = 250.0f;
+
+			//
+
+			static CUi::SDropDownState s_FastInputDropDownState;
+			static CScrollRegion s_FastInputDropDownScrollRegion;
+			s_FastInputDropDownState.m_SelectionPopupContext.m_pScrollRegion = &s_FastInputDropDownScrollRegion;
+
+			//
+
+			const char *apFastInputDropDownModes[] = {
+				"Fast",
+				"Best",
+				"Saiko",
+				"Delta",
+				"F",
+				"Cloud"
+			};
+			static const int s_apFastInputDropDownModes_len = std::size(apFastInputDropDownModes);
+			static const std::array<int, s_apFastInputDropDownModes_len> s_aAspectFastInputValues =
+				{BC_INPUTS_FAST, BC_INPUTS_BEST, BC_INPUTS_SAIKO, BC_INPUTS_DELTA, BC_INPUTS_F,
+				BC_INPUTS_CLOUD};
+
+			//
+
+			int CurrentFastInput = 0;
+			for (size_t i = 0; i < s_apFastInputDropDownModes_len; ++i) {
+				if (s_aAspectFastInputValues[i] == g_Config.m_BcFastInputs) {
+					CurrentFastInput = i;
+				}
+			}
+			//DropDown
+
+			//Render
+
+			Ui()->DoLabel(&FastInputLabelRect, Localize("Fast input"), 14.0f, TEXTALIGN_ML);
+			TextRender()->TextColor(TextRender()->DefaultTextColor());
+
+			const int NewFastInput = Ui()->DoDropDown(&FastInputDropDownRect, CurrentFastInput, apFastInputDropDownModes,
+				s_apFastInputDropDownModes_len, s_FastInputDropDownState);
+
+			TextRender()->TextColor(TextColor);
+
+
+			//Logic
+
+			if (CurrentFastInput != NewFastInput) {
+				g_Config.m_BcFastInputs = s_aAspectFastInputValues[NewFastInput];
+			}
+		}
+		else {
+			g_Config.m_BcFastInputs = BC_INPUTS_OFF;
+		}
+	}
+
+	Main.HSplitTop(5.0f, nullptr, &Main);
+	// Fast inputs
+
     TextRender()->TextColor(TextRender()->DefaultTextColor());
 	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
