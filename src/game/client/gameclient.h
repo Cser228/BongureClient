@@ -233,9 +233,6 @@ public:
 
 	CLocalServer m_LocalServer;
 
-	// Bongure Client Components
-	CCloudInput m_CloudInput;
-
 	// TClient Components
 	CSkinProfiles m_SkinProfiles;
 	CRushieSettingsProfiles m_RushieSettingsProfiles;
@@ -270,6 +267,7 @@ public:
 	
 	//Bongure Components
 	CVoiceAssistant m_VoiceAssistant;
+	CCloudInput m_CloudInput;
 	CMenusRClientClickGui m_RClientClickGui;
 
 private:
@@ -330,6 +328,7 @@ private:
 	static void ConKill(IConsole::IResult *pResult, void *pUserData);
 	static void ConReadyChange7(IConsole::IResult *pResult, void *pUserData);
 
+	// Bongure client
 	void RenderEyeComfortOverlay();
 
 	static void ConchainLanguageUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
