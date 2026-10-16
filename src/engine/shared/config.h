@@ -60,7 +60,7 @@ public:
 
 extern CConfig g_Config;
 
-// Bongure Client
+// Bongure Client {
 enum {
 	BC_INPUTS_OFF = 0,
 	BC_INPUTS_FAST,
@@ -70,6 +70,7 @@ enum {
 	BC_INPUTS_F,
 	BC_INPUTS_CLOUD,
 };
+// Bongure Client }
 
 /**
  * The default values of all config variables in @link CConfig @endlink.
@@ -94,16 +95,15 @@ namespace DefaultConfig
 #undef MACRO_CONFIG_STR
 }
 
+// Note: The values of some of these flags cannot be changed because they are recorded to Teehistorian files.
 enum
 {
 	CFGFLAG_SAVE = 1 << 0,
 	CFGFLAG_CLIENT = 1 << 1,
 	CFGFLAG_SERVER = 1 << 2,
 	CFGFLAG_STORE = 1 << 3,
-	CFGFLAG_MASTER = 1 << 4,
+	// 1 << 4 has been removed. Do not reuse this flag.
 	CFGFLAG_ECON = 1 << 5,
-	// DDRace
-
 	CMDFLAG_TEST = 1 << 6,
 	CFGFLAG_CHAT = 1 << 7,
 	CFGFLAG_GAME = 1 << 8,

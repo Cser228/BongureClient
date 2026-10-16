@@ -27,7 +27,7 @@ class CScoreboard : public CComponent
 	void RenderTitleBar(CUIRect TitleBar, int Team, const char *pTitle);
 	void RenderGoals(CUIRect Goals);
 	void RenderSpectators(CUIRect Spectators);
-	void RenderScoreboard(CUIRect Scoreboard, int Team, int CountStart, int CountEnd, CScoreboardRenderState &State);
+	void RenderScoreboard(CUIRect Scoreboard, int Team, int CountStart, int CountEnd, CScoreboardRenderState &State, int NumPlayersForSize = -1);
 	void RenderRecordingNotification(float x);
 
 	static void ConKeyScoreboard(IConsole::IResult *pResult, void *pUserData);
@@ -52,26 +52,8 @@ class CScoreboard : public CComponent
 		CButtonContainer m_FriendAction;
 		CButtonContainer m_MuteAction;
 		CButtonContainer m_EmoticonAction;
-		CButtonContainer m_TrackerAction;
-		CButtonContainer m_TeamAction;
-		CButtonContainer m_WarAction;
 
 		CButtonContainer m_SpectateButton;
-		CButtonContainer m_ProfileButton;
-		CButtonContainer m_WhisperButton;
-		CButtonContainer m_CopySkinButton;
-		CButtonContainer m_VoteKickButton;
-		CButtonContainer m_FindHoursButton;
-		CButtonContainer m_ClipNameButton;
-		CButtonContainer m_SwapButton;
-		CButtonContainer m_VcMuteButton;
-		CButtonContainer m_VoiceVolumeSlider;
-
-		CButtonContainer m_TeamExitButton;
-		CButtonContainer m_TeamJoinButton;
-		CButtonContainer m_TeamInviteButton;
-		CButtonContainer m_TeamKickButton;
-		CButtonContainer m_TeamLockButton;
 
 		int m_ClientId;
 		bool m_IsLocal;
@@ -96,8 +78,25 @@ class CScoreboard : public CComponent
 	public:
 		char m_PlayerButtonId;
 		char m_SpectatorSecondLineButtonId;
+
+		CCachedText m_Score;
+		CCachedText m_ScoreMillis;
+		CCachedText m_Name;
+		CCachedText m_MuteMark;
+		CCachedText m_ReadyMark;
+		CCachedText m_Clan;
+		CCachedText m_Ping;
 	};
 	CPlayerElement m_aPlayers[MAX_CLIENTS];
+
+	CCachedText m_TitleScore;
+	CCachedText m_TitleScoreMillis;
+	CCachedText m_HeadlineScore;
+	CCachedText m_HeadlineName;
+	CCachedText m_HeadlineClan;
+	CCachedText m_HeadlinePing;
+
+	void ResetTexts();
 
 public:
 	CScoreboard();
@@ -105,14 +104,14 @@ public:
 	void OnConsoleInit() override;
 	void OnInit() override;
 	void OnReset() override;
+	void OnShutdown() override;
+	void OnWindowResize() override;
 	void OnRender() override;
 	void OnRelease() override;
 	bool OnCursorMove(float x, float y, IInput::ECursorType CursorType) override;
 	bool OnInput(const IInput::CEvent &Event) override;
 
 	bool IsActive() const;
-	bool HasMouseCursor() const { return IsActive() && m_MouseUnlocked; };
-	vec2 MouseCursorPos() const;
 };
 
 #endif

@@ -12,6 +12,7 @@
 
 #include <game/client/component.h>
 
+// This class changed by Bongure Client
 class CControls : public CComponent
 {
 public:
@@ -66,7 +67,8 @@ private:
 	static void ConKeyInputSet(IConsole::IResult *pResult, void *pUserData);
 	static void ConKeyInputNextPrevWeapon(IConsole::IResult *pResult, void *pUserData);
 
-	// Bongure Client
+	// Bongure Client {
 	int ResolveMovementDirection(int Dummy, bool LeftPressed, bool RightPressed, bool UpdateState);
+	// Bongure Client }
 };
 #endif

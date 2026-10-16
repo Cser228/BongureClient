@@ -394,9 +394,6 @@ void CEffects::Explosion(vec2 Pos, float Alpha)
 void CEffects::HammerHit(vec2 Pos, float Alpha, float Volume)
 {
 	// add the explosion
-	Alpha = g_Config.m_RiShowHammerHit == 1 ? Alpha : 0;
-	if(g_Config.m_RiShowHammerHit == 2)
-		return;
 	CParticle p;
 	p.SetDefault();
 	p.m_Spr = SPRITE_PART_HIT01;
@@ -414,13 +411,10 @@ void CEffects::HammerHit(vec2 Pos, float Alpha, float Volume)
 
 void CEffects::OnRender()
 {
-	float Speed = 1.0f;
-	if(Client()->State() == IClient::STATE_DEMOPLAYBACK)
-		Speed = DemoPlayer()->BaseInfo()->m_Speed;
-
+	const float Speed = GameClient()->GetAnimationPlaybackSpeed();
 	const int64_t Now = time();
 	auto UpdateClock = [&](bool &Add, int64_t &LastUpdate, int Frequency) {
-		Add = Now - LastUpdate > time_freq() / ((float)Frequency * Speed);
+		Add = (Now - LastUpdate) / (float)time_freq() * Speed > 1.0f / Frequency;
 		if(Add)
 			LastUpdate = Now;
 	};

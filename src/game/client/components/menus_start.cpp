@@ -2,7 +2,9 @@
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 #include "menus_start.h"
 
+// Bongure Client {
 #include <base/system.h>
+// Bongure Client }
 
 #include <engine/client/updater.h>
 #include <engine/font_icons.h>
@@ -23,6 +25,7 @@
 #include <android/android_main.h>
 #endif
 
+// Bongure Client {
 void CMenusStart::RenderBongureclientStartMenu(CUIRect MainView) {
 	GameClient()->m_MenuBackground.ChangePosition(CMenuBackground::POS_START);
 	
@@ -187,43 +190,21 @@ void CMenusStart::RenderStandardStartMenu(CUIRect MainView) {
 	MainView.HSplitTop(15.0f, &TClientVersion, &MainView);
 	TClientVersion.VSplitRight(40.0f, &TClientVersion, nullptr);
 	char aTBuf[64];
-	char aRBuf[64];
-	char aBBuf[64];
-	str_format(aTBuf, sizeof(aTBuf), "TClient %s", TCLIENT_VERSION);
-	if(GameClient()->m_TClient.NeedUpdate())
-		TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
+	str_format(aTBuf, sizeof(aTBuf), CLIENT_NAME " %s", CLIENT_RELEASE_VERSION);
 	Ui()->DoLabel(&TClientVersion, aTBuf, 14.0f, TEXTALIGN_MR);
-	TextRender()->TextColor(TextRender()->DefaultTextColor());
-
-	// Position RClient below TClient
+#if defined(CONF_AUTOUPDATE)
+	CUIRect UpdateToDateText;
+	MainView.HSplitTop(15.0f, &UpdateToDateText, nullptr);
+	UpdateToDateText.VSplitRight(40.0f, &UpdateToDateText, nullptr);
+	if(!GameClient()->m_TClient.NeedUpdate() && GameClient()->m_TClient.m_FetchedTClientInfo)
 	{
-		CUIRect RClientVersion;
-		MainView.HSplitTop(25.0f, &RClientVersion, nullptr);
-		RClientVersion.VSplitRight(42.5f, &RClientVersion, nullptr);
-		str_format(aRBuf, sizeof(aRBuf), "RClient %s", RCLIENT_VERSION);
-		if(GameClient()->m_RClient.NeedUpdate())
-			TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
-		Ui()->DoLabel(&RClientVersion, aRBuf, 14.0f, TEXTALIGN_MR);
-		TextRender()->TextColor(TextRender()->DefaultTextColor());
+		Ui()->DoLabel(&UpdateToDateText, TCLocalize("(On Latest)"), 14.0f, TEXTALIGN_MR);
 	}
-
-	// Position Bongure Client below RClient
+	else
 	{
-		CUIRect BongureClientVersion;
-		MainView.HSplitTop(25.0f, &BongureClientVersion, nullptr);
-		BongureClientVersion.VSplitRight(42.5f, &BongureClientVersion, nullptr);
-		str_format(aBBuf, sizeof(aBBuf), "Bongure Client %s", BONGURE_CLIENT_VERSION);
-		BongureClientVersion.y += 25.0f;
-		Ui()->DoLabel(&BongureClientVersion, aBBuf, 14.0f, TEXTALIGN_MR);
-		TextRender()->TextColor(TextRender()->DefaultTextColor());
+		Ui()->DoLabel(&UpdateToDateText, TCLocalize("(Fetching Update Info)"), 14.0f, TEXTALIGN_MR);
 	}
-
-	{
-		CUIRect Version;
-		MainView.HSplitTop(40.0f, &Version, nullptr);
-		char aBuf[128] = "Based on Rushie Client";
-		Ui()->DoLabel(&Version, aBuf, 14.0f, TEXTALIGN_CENTER);
-	}
+#endif
 	static CButtonContainer s_ConsoleButton;
 	TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
 	TextRender()->SetRenderFlags(ETextRenderFlags::TEXT_RENDER_FLAG_ONLY_ADVANCE_WIDTH | ETextRenderFlags::TEXT_RENDER_FLAG_NO_X_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_Y_BEARING | ETextRenderFlags::TEXT_RENDER_FLAG_NO_PIXEL_ALIGNMENT | ETextRenderFlags::TEXT_RENDER_FLAG_NO_OVERSIZE);
@@ -237,24 +218,6 @@ void CMenusStart::RenderStandardStartMenu(CUIRect MainView) {
 	CUIRect VersionUpdate;
 	MainView.HSplitBottom(20.0f, nullptr, &VersionUpdate);
 	VersionUpdate.VMargin(VMargin, &VersionUpdate);
-	if(GameClient()->m_RClient.NeedUpdate())
-	{
-		CUIRect UpdateButton;
-		VersionUpdate.VSplitRight(100.0f, &VersionUpdate, &UpdateButton);
-		VersionUpdate.VSplitRight(10.0f, &VersionUpdate, nullptr);
-
-		static CButtonContainer s_VersionUpdate;
-		if(GameClient()->m_Menus.DoButton_Menu(&s_VersionUpdate, Localize("Download"), 0, &UpdateButton, BUTTONFLAG_LEFT, 0, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(1.0f, 0.2f, 0.2f, 0.25f)))
-		{
-			Client()->ViewLink(CRClient::RCLIENT_URL);
-		}
-
-		char aBuf[128];
-		str_format(aBuf, sizeof(aBuf), Localize("Rushie client %s is out!"), GameClient()->m_RClient.m_aVersionStr);
-		TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
-		Ui()->DoLabel(&VersionUpdate, aBuf, 14.0f, TEXTALIGN_ML);
-		TextRender()->TextColor(TextRender()->DefaultTextColor());
-	}
 #if defined(CONF_AUTOUPDATE)
 	CUIRect UpdateButton;
 	VersionUpdate.VSplitRight(100.0f, &VersionUpdate, &UpdateButton);
@@ -262,12 +225,12 @@ void CMenusStart::RenderStandardStartMenu(CUIRect MainView) {
 
 	char aBuf[128];
 	const IUpdater::EUpdaterState State = Updater()->GetCurrentState();
-	const bool NeedUpdate = GameClient()->m_RClient.NeedUpdate();
+	const bool NeedUpdate = GameClient()->m_TClient.NeedUpdate();
 
 	if(State == IUpdater::CLEAN && NeedUpdate)
 	{
 		static CButtonContainer s_VersionUpdate;
-		if(GameClient()->m_Menus.DoButton_Menu(&s_VersionUpdate, Localize("Update now"), 0, &UpdateButton, BUTTONFLAG_LEFT, 0, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(1.0f, 0.2f, 0.2f, 0.25f)))
+		if(GameClient()->m_Menus.DoButton_Menu(&s_VersionUpdate, Localize("Update now"), 0, &UpdateButton, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)))
 		{
 			Updater()->InitiateUpdate();
 		}
@@ -275,7 +238,7 @@ void CMenusStart::RenderStandardStartMenu(CUIRect MainView) {
 	else if(State == IUpdater::NEED_RESTART)
 	{
 		static CButtonContainer s_VersionUpdate;
-		if(GameClient()->m_Menus.DoButton_Menu(&s_VersionUpdate, Localize("Restart"), 0, &UpdateButton, BUTTONFLAG_LEFT, 0, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(1.0f, 0.2f, 0.2f, 0.25f)))
+		if(GameClient()->m_Menus.DoButton_Menu(&s_VersionUpdate, Localize("Restart"), 0, &UpdateButton, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)))
 		{
 			Client()->Restart();
 		}
@@ -287,8 +250,8 @@ void CMenusStart::RenderStandardStartMenu(CUIRect MainView) {
 
 	if(State == IUpdater::CLEAN && NeedUpdate)
 	{
-		str_format(aBuf, sizeof(aBuf), Localize("Rushie client %s is out!"), GameClient()->m_RClient.m_aVersionStr);
-		TextRender()->TextColor(1.0f, 0.2f, 0.2f, 1.0f);
+		str_format(aBuf, sizeof(aBuf), Localize("TClient %s is out!"), GameClient()->m_TClient.m_aVersionStr);
+		TextRender()->TextColor(1.0f, 0.4f, 0.4f, 1.0f);
 	}
 	else if(State == IUpdater::CLEAN)
 	{
@@ -320,7 +283,7 @@ void CMenusStart::RenderStandardStartMenu(CUIRect MainView) {
 		VersionUpdate.VSplitRight(10.0f, &VersionUpdate, nullptr);
 
 		static CButtonContainer s_DownloadButton;
-		if(GameClient()->m_Menus.DoButton_Menu(&s_DownloadButton, Localize("Download"), 0, &DownloadButton, BUTTONFLAG_LEFT, 0, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)))
+		if(GameClient()->m_Menus.DoButton_Menu(&s_DownloadButton, Localize("Download"), 0, &DownloadButton, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.0f, 0.0f, 0.0f, 0.25f)))
 		{
 			Client()->ViewLink("https://ddnet.org/downloads/");
 		}
@@ -339,10 +302,14 @@ void CMenusStart::RenderStandardStartMenu(CUIRect MainView) {
 		GameClient()->m_Menus.SetMenuPage(NewPage);
 	}
 }
+// Bongure Client }
 
+// This function changed by Bongure Client
 void CMenusStart::RenderStartMenu(CUIRect MainView) {
+	// Bongure Client {
 	if (g_Config.m_BcEnableMenu == 1) CMenusStart::RenderBongureclientStartMenu(MainView);
 	else CMenusStart::RenderStandardStartMenu(MainView);
+	// Bongure Client }
 }
 
 bool CMenusStart::CheckHotKey(int Key) const

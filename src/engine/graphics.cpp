@@ -28,6 +28,26 @@ void IGraphics::CalcScreenParams(float Aspect, float Zoom, float *pWidth, float 
 	*pHeight *= Zoom;
 }
 
+CScreenRect IGraphics::MapScreenToWorld(float CenterX, float CenterY, float ParallaxX, float ParallaxY,
+	float ParallaxZoom, float OffsetX, float OffsetY, float Aspect, float Zoom) const
+{
+	float Width, Height;
+	CalcScreenParams(Aspect, Zoom, &Width, &Height);
+
+	float Scale = (ParallaxZoom * (Zoom - 1.0f) + 100.0f) / 100.0f / Zoom;
+	Width *= Scale;
+	Height *= Scale;
+
+	CenterX *= ParallaxX / 100.0f;
+	CenterY *= ParallaxY / 100.0f;
+
+	return CScreenRect(
+		OffsetX + CenterX - Width / 2,
+		OffsetY + CenterY - Height / 2,
+		Width,
+		Height);
+}
+
 void IGraphics::MapScreenToWorld(float CenterX, float CenterY, float ParallaxX, float ParallaxY,
 	float ParallaxZoom, float OffsetX, float OffsetY, float Aspect, float Zoom, float *pPoints) const
 {
@@ -48,8 +68,12 @@ void IGraphics::MapScreenToWorld(float CenterX, float CenterY, float ParallaxX, 
 
 void IGraphics::MapScreenToInterface(float CenterX, float CenterY, float Zoom)
 {
-	float aPoints[4];
-	MapScreenToWorld(CenterX, CenterY, 100.0f, 100.0f, 100.0f,
-		0, 0, ScreenAspect(), Zoom, aPoints);
-	MapScreen(aPoints[0], aPoints[1], aPoints[2], aPoints[3]);
+	CScreenRect ScreenRect = MapScreenToWorld(CenterX, CenterY, 100.0f, 100.0f, 100.0f,
+		0, 0, ScreenAspect(), Zoom);
+	MapScreen(ScreenRect);
+}
+
+void IGraphics::MapScreenToSize(float Width, float Height)
+{
+	MapScreen(CScreenRect(0, 0, Width, Height));
 }

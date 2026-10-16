@@ -2,8 +2,10 @@
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 #include "binds.h"
 
+#include <base/dbg.h>
 #include <base/log.h>
-#include <base/system.h>
+#include <base/mem.h>
+#include <base/str.h>
 
 #include <engine/config.h>
 #include <engine/console.h>
@@ -57,14 +59,14 @@ void CBinds::Bind(int KeyId, const char *pStr, bool FreeOnly, int ModifierCombin
 	GetKeyBindName(KeyId, ModifierCombination, aBindName, sizeof(aBindName));
 	if(!pStr[0])
 	{
-		log_debug_color(BIND_PRINT_COLOR, "binds", "unbound %s", aBindName);
+		log_info_color(BIND_PRINT_COLOR, "binds", "unbound %s", aBindName);
 	}
 	else
 	{
 		int Size = str_length(pStr) + 1;
 		m_aapKeyBindings[ModifierCombination][KeyId] = (char *)malloc(Size);
 		str_copy(m_aapKeyBindings[ModifierCombination][KeyId], pStr, Size);
-		log_debug_color(BIND_PRINT_COLOR, "binds", "bound %s = %s", aBindName, m_aapKeyBindings[ModifierCombination][KeyId]);
+		log_info_color(BIND_PRINT_COLOR, "binds", "bound %s = %s", aBindName, m_aapKeyBindings[ModifierCombination][KeyId]);
 	}
 }
 
@@ -175,10 +177,7 @@ bool CBinds::OnInput(const IInput::CEvent &Event)
 			// still allow key release events to be forwarded to this component, so the active binds can be cleared.
 			if(GameClient()->m_Chat.IsActive() ||
 				GameClient()->m_GameConsole.IsActive() ||
-				GameClient()->m_Menus.IsActive() ||
-				(g_Config.m_RiScoreboardFreezeInputs && GameClient()->m_Scoreboard.HasMouseCursor() && !str_find(m_aapKeyBindings[Bind.m_ModifierMask][Bind.m_Key], "+scoreboard")) ||
-				(g_Config.m_RiNewMenuFreezeInputs && GameClient()->m_RClientClickGui.HasMouseCursor() && !str_find(m_aapKeyBindings[Bind.m_ModifierMask][Bind.m_Key], "toggle_rclient_clickgui"))
-				)
+				GameClient()->m_Menus.IsActive())
 			{
 				return;
 			}
@@ -243,22 +242,6 @@ const char *CBinds::Get(int KeyId, int ModifierCombination) const
 const char *CBinds::Get(const CBindSlot &BindSlot) const
 {
 	return Get(BindSlot.m_Key, BindSlot.m_ModifierMask);
-}
-
-void CBinds::GetBindCommands(std::vector<std::string> &vCommands) const
-{
-	vCommands.clear();
-	for(int Modifier = KeyModifier::NONE; Modifier < KeyModifier::COMBINATION_COUNT; Modifier++)
-	{
-		for(int Key = KEY_FIRST; Key < KEY_LAST; Key++)
-		{
-			if(!m_aapKeyBindings[Modifier][Key])
-				continue;
-			char *pBuf = GetKeyBindCommand(Modifier, Key);
-			vCommands.emplace_back(pBuf);
-			free(pBuf);
-		}
-	}
 }
 
 void CBinds::GetKey(const char *pBindStr, char *pBuf, size_t BufSize) const
@@ -376,7 +359,9 @@ void CBinds::ConBinds(IConsole::IResult *pResult, void *pUserData)
 		else
 		{
 			if(!pBinds->m_aapKeyBindings[BindSlot.m_ModifierMask][BindSlot.m_Key])
+			{
 				log_info_color(BIND_PRINT_COLOR, "binds", "%s is not bound", pKeyName);
+			}
 			else
 			{
 				char *pBuf = pBinds->GetKeyBindCommand(BindSlot.m_ModifierMask, BindSlot.m_Key);
@@ -442,11 +427,21 @@ CBindSlot CBinds::GetBindSlot(const char *pBindString) const
 			return EMPTY_BIND_SLOT;
 
 		if(str_find(pKey + 1, "+"))
+		{
 			pKey = str_next_token(pKey + 1, "+", aMod, sizeof(aMod));
+			if(pKey == nullptr)
+				return EMPTY_BIND_SLOT;
+		}
 		else
 			break;
 	}
-	return {Input()->FindKeyByName(ModifierMask == KeyModifier::NONE ? aMod : pKey + 1), ModifierMask};
+	int Key = Input()->FindKeyByName(ModifierMask == KeyModifier::NONE ? aMod : pKey + 1);
+	if(Key == KEY_ESCAPE)
+	{
+		// Binding to Escape key is not supported
+		Key = KEY_UNKNOWN;
+	}
+	return {Key, ModifierMask};
 }
 
 const char *CBinds::GetModifierName(int Modifier)
@@ -552,5 +547,10 @@ void CBinds::SetDDRaceBinds(bool FreeOnly)
 		Bind(KEY_LALT, "toggle_scoreboard_cursor", FreeOnly);
 	}
 
-	g_Config.m_ClDDRaceBindsSet = 2;
+	if(g_Config.m_ClDDRaceBindsSet < 3)
+	{
+		Bind(KEY_W, "+jump", FreeOnly);
+	}
+
+	g_Config.m_ClDDRaceBindsSet = 3;
 }

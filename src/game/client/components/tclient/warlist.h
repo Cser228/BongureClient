@@ -132,7 +132,6 @@ class CWarList : public CComponent
 	// Backend Commands for config file
 	static void ConAddWarEntry(IConsole::IResult *pResult, void *pUserData);
 	static void ConUpsertWarType(IConsole::IResult *pResult, void *pUserData);
-	static void ConResetWarlist(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConfigSaveCallback(IConfigManager *pConfigManager, void *pUserData);
 
@@ -182,7 +181,6 @@ public:
 
 	void RemoveWarEntry(int Index);
 	void RemoveWarType(int Index);
-	void ResetToDefaults();
 
 	ColorRGBA GetPriorityColor(int ClientId);
 	ColorRGBA GetNameplateColor(int ClientId);

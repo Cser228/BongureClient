@@ -1,0 +1,1 @@
+/home/cser228/programming/BongureClientFromTater/build/release/libddnet_base.rlib: /home/cser228/programming/BongureClientFromTater/src/base/color.rs /home/cser228/programming/BongureClientFromTater/src/base/dbg.rs /home/cser228/programming/BongureClientFromTater/src/base/lib.rs /home/cser228/programming/BongureClientFromTater/src/base/rust.rs

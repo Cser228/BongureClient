@@ -7,9 +7,17 @@
 
 #include <base/color.h>
 #include <base/log.h>
+#include <base/vmath.h>
+
+#include <base/dbg.h>
+#include <base/fs.h>
+#include <base/str.h>
+#include <base/time.h>
+
+//Bongure Client {
 #include <base/math.h>
 #include <base/system.h>
-#include <base/vmath.h>
+//Bongure Client }
 
 #include <engine/client.h>
 #include <engine/client/updater.h>
@@ -37,17 +45,21 @@
 #include <game/client/gameclient.h>
 #include <game/client/ui_listbox.h>
 #include <game/localization.h>
+// Bongure Client {
 #include <game/version.h>
+// Bongure Client }
 
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <vector>
+// Bongure Client {
 #include <curl/curl.h>
 #include <string>
 #include <map>
 #include <fstream>
 #include <stdio.h>
+// Bongure Client }
 
 using namespace std::chrono_literals;
 
@@ -65,17 +77,21 @@ ColorRGBA CMenus::ms_ColorTabbarHoverIngame;
 float CMenus::ms_ButtonHeight = 25.0f;
 float CMenus::ms_ListheaderHeight = 17.0f;
 
+//Bongure Client {
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
+//Bongure Client }
 
+// This function changed by Bongure Client
 CMenus::CMenus()
 {
 	m_Popup = POPUP_NONE;
 	m_MenuPage = 0;
 	m_GamePage = PAGE_GAME;
-	
+
+	// Bongure Client {
 	m_aTerminalInput[0] = '\0';
 	m_TerminalHistoryCount = 0;
 	m_TerminalCommandHistoryCount = 0;
@@ -85,6 +101,7 @@ CMenus::CMenus()
 
 	TerminalAddLine("BongureClient terminal");
 	TerminalAddLine("Type `help` to list commands.");
+	// Bongure Client }
 
 	m_NeedRestartGraphics = false;
 	m_NeedRestartSound = false;
@@ -123,6 +140,7 @@ CMenus::CMenus()
 	m_PasswordInput.SetHidden(true);
 }
 
+// Bongure Client {
 void CMenus::FirstLaunch() {
 	// Rect
 	CUIRect Screen = *Ui()->Screen();
@@ -230,30 +248,27 @@ bool CMenus::CheckUpdate() {
 	return false;
 }
 
-void CMenus::TerminalAddCommandToHistory(const char *pCommand)
-{
-	if(!pCommand || !pCommand[0])
-		return;
+void CMenus::TerminalAddCommandToHistory (const char *pCommand) {
+	if(!pCommand || !pCommand[0]) return;
 
-	if(m_TerminalCommandHistoryCount < TERMINAL_COMMAND_HISTORY)
-	{
-		str_copy(m_aaTerminalCommandHistory[m_TerminalCommandHistoryCount], pCommand, sizeof(m_aaTerminalCommandHistory[0]));
+	if(m_TerminalCommandHistoryCount < TERMINAL_COMMAND_HISTORY) {
+		str_copy(m_aaTerminalCommandHistory[m_TerminalCommandHistoryCount], pCommand,
+			sizeof(m_aaTerminalCommandHistory[0]));
 		m_TerminalCommandHistoryCount++;
 	}
-	else
-	{
-		for(int i = 1; i < TERMINAL_COMMAND_HISTORY; i++)
-		{
-			str_copy(m_aaTerminalCommandHistory[i - 1], m_aaTerminalCommandHistory[i], sizeof(m_aaTerminalCommandHistory[0]));
+	else {
+		for(int i = 1; i < TERMINAL_COMMAND_HISTORY; ++i) {
+			str_copy(m_aaTerminalCommandHistory[i - 1], m_aaTerminalCommandHistory[i],
+				sizeof(m_aaTerminalCommandHistory[0]));
 		}
-		str_copy(m_aaTerminalCommandHistory[TERMINAL_COMMAND_HISTORY - 1], pCommand, sizeof(m_aaTerminalCommandHistory[0]));
+		str_copy(m_aaTerminalCommandHistory[TERMINAL_COMMAND_HISTORY - 1], pCommand,
+			sizeof(m_aaTerminalCommandHistory[0]));
 	}
 
 	m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
 }
 
-void CMenus::TerminalAddLine(const char *pLine)
-{
+void CMenus::TerminalAddLine(const char *pLine) {
 	if (!pLine || pLine[0] == '\0') return;
 	
 	std::string text(pLine);
@@ -277,18 +292,18 @@ void CMenus::TerminalAddLine(const char *pLine)
 			text.clear();
 		}
 
-		if(m_TerminalHistoryCount < TERMINAL_HISTORY_LINES)
-		{
-			str_copy(m_aaTerminalHistory[m_TerminalHistoryCount], linePart.c_str(), sizeof(m_aaTerminalHistory[0]));
+		if(m_TerminalHistoryCount < TERMINAL_HISTORY_LINES) {
+			str_copy(m_aaTerminalHistory[m_TerminalHistoryCount], linePart.c_str(),
+				sizeof(m_aaTerminalHistory[0]));
 			m_TerminalHistoryCount++;
 		}
-		else
-		{
-			for(int i = 1; i < TERMINAL_HISTORY_LINES; i++)
-			{
-				str_copy(m_aaTerminalHistory[i - 1], m_aaTerminalHistory[i], sizeof(m_aaTerminalHistory[0]));
+		else {
+			for(int i = 1; i < TERMINAL_HISTORY_LINES; ++i) {
+				str_copy(m_aaTerminalHistory[i - 1], m_aaTerminalHistory[i],
+					sizeof(m_aaTerminalHistory[0]));
 			}
-			str_copy(m_aaTerminalHistory[TERMINAL_HISTORY_LINES - 1], linePart.c_str(), sizeof(m_aaTerminalHistory[0]));
+			str_copy(m_aaTerminalHistory[TERMINAL_HISTORY_LINES - 1], linePart.c_str(),
+				sizeof(m_aaTerminalHistory[0]));
 		}
 	}
 }
@@ -356,12 +371,18 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         static CLineInputBuffered<8> s_BgRInput, s_BgGInput, s_BgBInput;
         static CLineInputBuffered<8> s_TextRInput, s_TextGInput, s_TextBInput;
 
-        DoColorSliderTop(Localize("Background R (red)"),   g_Config.m_BcBongureMenuBgR, &g_Config.m_BcBongureMenuBgR, s_BgRInput);
-        DoColorSliderTop(Localize("Background G (green)"),   g_Config.m_BcBongureMenuBgG, &g_Config.m_BcBongureMenuBgG, s_BgGInput);
-        DoColorSliderTop(Localize("Background B (blue)"),     g_Config.m_BcBongureMenuBgB, &g_Config.m_BcBongureMenuBgB, s_BgBInput);
-        DoColorSliderTop(Localize("Text R (red)"), g_Config.m_BcBongureMenuTextR, &g_Config.m_BcBongureMenuTextR, s_TextRInput);
-        DoColorSliderTop(Localize("Text G (green)"), g_Config.m_BcBongureMenuTextG, &g_Config.m_BcBongureMenuTextG, s_TextGInput);
-        DoColorSliderTop(Localize("Text B (blue)"),   g_Config.m_BcBongureMenuTextB, &g_Config.m_BcBongureMenuTextB, s_TextBInput);
+        DoColorSliderTop(Localize("Background R (red)"), g_Config.m_BcBongureMenuBgR,
+			&g_Config.m_BcBongureMenuBgR, s_BgRInput);
+        DoColorSliderTop(Localize("Background G (green)"), g_Config.m_BcBongureMenuBgG,
+			&g_Config.m_BcBongureMenuBgG, s_BgGInput);
+        DoColorSliderTop(Localize("Background B (blue)"), g_Config.m_BcBongureMenuBgB,
+			&g_Config.m_BcBongureMenuBgB, s_BgBInput);
+        DoColorSliderTop(Localize("Text R (red)"), g_Config.m_BcBongureMenuTextR,
+				&g_Config.m_BcBongureMenuTextR, s_TextRInput);
+        DoColorSliderTop(Localize("Text G (green)"), g_Config.m_BcBongureMenuTextG,
+			&g_Config.m_BcBongureMenuTextG, s_TextGInput);
+        DoColorSliderTop(Localize("Text B (blue)"), g_Config.m_BcBongureMenuTextB,
+			&g_Config.m_BcBongureMenuTextB, s_TextBInput);
 
         Main.HSplitTop(10.0f, nullptr, &Main);
     }
@@ -377,14 +398,13 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     static bool s_HideAutoMute = true;
     TextRender()->TextColor(TextColor);
     
-    if(DoButton_CheckBox(&g_Config.m_BcAutoMute, Localize("Auto mute"), g_Config.m_BcAutoMute, &AutoMuteLeft))
-        g_Config.m_BcAutoMute ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcAutoMute, Localize("Auto mute"), g_Config.m_BcAutoMute,
+		&AutoMuteLeft)) g_Config.m_BcAutoMute ^= 1;
         
     if(DoButton_CheckBox(&s_HideAutoMute, Localize("Hide"), s_HideAutoMute, &AutoMuteRight))
         s_HideAutoMute ^= 1;
 
-    if(!s_HideAutoMute)
-    {
+    if(!s_HideAutoMute) {
         const float Indent = 20.0f;
         static CLineInputBuffered<8> s_MuteTimesInput;
 
@@ -393,24 +413,44 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         CUIRect IndentedRow = Row; IndentedRow.x += Indent; IndentedRow.w -= Indent;
         CUIRect SliderArea, EditArea; IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
 
-        bool MuteTimesEditActive = Ui()->HotItem() == &s_MuteTimesInput || Ui()->ActiveItem() == &s_MuteTimesInput;
-        if(!MuteTimesEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteTimes); s_MuteTimesInput.Set(aTmp); }
+        bool MuteTimesEditActive = Ui()->HotItem() == &s_MuteTimesInput ||
+			Ui()->ActiveItem() == &s_MuteTimesInput;
+
+        if (!MuteTimesEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteTimes);
+			s_MuteTimesInput.Set(aTmp);
+		}
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteTimes, &g_Config.m_BcAutoMuteTimes, &SliderArea, Localize("Number of messages before mute"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
-        if(Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f)) { const int P = str_toint(s_MuteTimesInput.GetString()); if(P >= 1 && P <= 20) g_Config.m_BcAutoMuteTimes = P; }
+        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteTimes, &g_Config.m_BcAutoMuteTimes, &SliderArea,
+			Localize("Number of messages before mute"), 1, 20, &CUi::ms_LinearScrollbarScale, 0u);
+        if (Ui()->DoEditBox(&s_MuteTimesInput, &EditArea, 14.0f)) {
+			const int P = str_toint(s_MuteTimesInput.GetString());
+			if (P >= 1 && P <= 20) g_Config.m_BcAutoMuteTimes = P;
+		}
 
         static CLineInputBuffered<8> s_MuteTimeInput;
         Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
         IndentedRow = Row; IndentedRow.x += Indent; IndentedRow.w -= Indent;
         CUIRect SliderArea2, EditArea2; IndentedRow.VSplitRight(50.0f, &SliderArea2, &EditArea2);
 
-        bool MuteTimeEditActive = Ui()->HotItem() == &s_MuteTimeInput || Ui()->ActiveItem() == &s_MuteTimeInput;
-        if(!MuteTimeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteVremya); s_MuteTimeInput.Set(aTmp); }
+        bool MuteTimeEditActive = Ui()->HotItem() == &s_MuteTimeInput ||
+			Ui()->ActiveItem() == &s_MuteTimeInput;
+        if (!MuteTimeEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcAutoMuteVremya);
+			s_MuteTimeInput.Set(aTmp);
+		}
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteVremya, &g_Config.m_BcAutoMuteVremya, &SliderArea2, Localize("The time it takes for a mute to be issued"), 5, 300, &CUi::ms_LinearScrollbarScale, 0u);
-        if(Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f)) { const int P = str_toint(s_MuteTimeInput.GetString()); if(P >= 5 && P <= 300) g_Config.m_BcAutoMuteVremya = P; }
+        Ui()->DoScrollbarOption(&g_Config.m_BcAutoMuteVremya, &g_Config.m_BcAutoMuteVremya, &SliderArea2,
+			Localize("The time it takes for a mute to be issued"), 5, 300, &CUi::ms_LinearScrollbarScale,
+			0u);
+        if (Ui()->DoEditBox(&s_MuteTimeInput, &EditArea2, 14.0f)) {
+			const int P = str_toint(s_MuteTimeInput.GetString());
+			if(P >= 5 && P <= 300) g_Config.m_BcAutoMuteVremya = P;
+		}
     }
 
     Main.HSplitTop(5.0f, nullptr, &Main);
@@ -418,8 +458,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     // Auto Translate
     Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if(DoButton_CheckBox(&g_Config.m_BcAutoTranslate, Localize("Auto translate"), g_Config.m_BcAutoTranslate, &Row))
-        g_Config.m_BcAutoTranslate ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcAutoTranslate, Localize("Auto translate"),
+		g_Config.m_BcAutoTranslate, &Row)) g_Config.m_BcAutoTranslate ^= 1;
 
     Main.HSplitTop(5.0f, nullptr, &Main);
 
@@ -440,8 +480,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     static bool s_HideDummy = true;
     TextRender()->TextColor(TextColor);
     
-    if(DoButton_CheckBox(&g_Config.m_BcDummyPointer, Localize("Dummy pointer"), g_Config.m_BcDummyPointer, &DummyLeft))
-        g_Config.m_BcDummyPointer ^= 1;
+    if(DoButton_CheckBox(&g_Config.m_BcDummyPointer, Localize("Dummy pointer"),
+		g_Config.m_BcDummyPointer, &DummyLeft)) g_Config.m_BcDummyPointer ^= 1;
         
     if(DoButton_CheckBox(&s_HideDummy, Localize("Hide"), s_HideDummy, &DummyRight))
         s_HideDummy ^= 1;
@@ -455,34 +495,64 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
         CUIRect IndentedRow = Row; IndentedRow.x += Indent; IndentedRow.w -= Indent;
         CUIRect SliderArea, EditArea; IndentedRow.VSplitRight(50.0f, &SliderArea, &EditArea);
 
-        bool SizeEditActive = Ui()->HotItem() == &s_DummySizeInput || Ui()->ActiveItem() == &s_DummySizeInput;
-        if(!SizeEditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", g_Config.m_BcDummyPointerSize); s_DummySizeInput.Set(aTmp); }
+        bool SizeEditActive = Ui()->HotItem() == &s_DummySizeInput ||
+			Ui()->ActiveItem() == &s_DummySizeInput;
+        if (!SizeEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcDummyPointerSize);
+			s_DummySizeInput.Set(aTmp);
+		}
 
         TextRender()->TextColor(TextColor);
-        Ui()->DoScrollbarOption(&g_Config.m_BcDummyPointerSize, &g_Config.m_BcDummyPointerSize, &SliderArea, Localize("Pointer size"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
-        if(Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f)) { const int P = str_toint(s_DummySizeInput.GetString()); if(P >= 1 && P <= 50) g_Config.m_BcDummyPointerSize = P; }
+        Ui()->DoScrollbarOption(&g_Config.m_BcDummyPointerSize, &g_Config.m_BcDummyPointerSize,
+			&SliderArea, Localize("Pointer size"), 1, 50, &CUi::ms_LinearScrollbarScale, 0u);
+        if (Ui()->DoEditBox(&s_DummySizeInput, &EditArea, 14.0f)) {
+			const int P = str_toint(s_DummySizeInput.GetString());
+			if(P >= 1 && P <= 50) g_Config.m_BcDummyPointerSize = P;
+		}
 
-        auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId, CLineInputBuffered<8> &Input) {
-            Main.HSplitTop(5.0f, nullptr, &Main); Main.HSplitTop(20.0f, &Row, &Main);
-            CUIRect IndentedRow_lambda = Row; IndentedRow_lambda.x += Indent; IndentedRow_lambda.w -= Indent;
-            CUIRect SliderArea_lambda, EditArea_lambda; IndentedRow_lambda.VSplitRight(50.0f, &SliderArea_lambda, &EditArea_lambda);
+        auto DoColorSlider = [&](const char *pLabel, int &ConfigVal, void *pId,
+			CLineInputBuffered<8> &Input) {
+
+            Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+            CUIRect IndentedRow_lambda = Row;
+				IndentedRow_lambda.x += Indent;
+				IndentedRow_lambda.w -= Indent;
+
+            CUIRect SliderArea_lambda, EditArea_lambda;
+			IndentedRow_lambda.VSplitRight(50.0f, &SliderArea_lambda, &EditArea_lambda);
 
             bool EditActive = Ui()->HotItem() == &Input || Ui()->ActiveItem() == &Input;
-            if(!EditActive) { char aTmp[8]; str_format(aTmp, 8, "%d", ConfigVal); Input.Set(aTmp); }
+            if (!EditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", ConfigVal);
+				Input.Set(aTmp);
+			}
 
             TextRender()->TextColor(TextColor);
-            Ui()->DoScrollbarOption(pId, &ConfigVal, &SliderArea_lambda, pLabel, 0, 255, &CUi::ms_LinearScrollbarScale, 0u);
-            if(Ui()->DoEditBox(&Input, &EditArea_lambda, 14.0f)) { const int P = str_toint(Input.GetString()); if(P >= 0 && P <= 255) ConfigVal = P; }
+            Ui()->DoScrollbarOption(pId, &ConfigVal, &SliderArea_lambda, pLabel, 0, 255,
+				&CUi::ms_LinearScrollbarScale, 0u);
+            if (Ui()->DoEditBox(&Input, &EditArea_lambda, 14.0f)) {
+				const int P = str_toint(Input.GetString());
+				if(P >= 0 && P <= 255) ConfigVal = P;
+			}
         };
 
         static CLineInputBuffered<8> s_DummyRInput, s_DummyGInput, s_DummyBInput;
-        DoColorSlider(Localize("R (red)"), g_Config.m_BcDummyPointerColorR, &g_Config.m_BcDummyPointerColorR, s_DummyRInput);
-        DoColorSlider(Localize("G (green)"), g_Config.m_BcDummyPointerColorG, &g_Config.m_BcDummyPointerColorG, s_DummyGInput);
-        DoColorSlider(Localize("B (blue)"),   g_Config.m_BcDummyPointerColorB, &g_Config.m_BcDummyPointerColorB, s_DummyBInput);
+        DoColorSlider(Localize("R (red)"), g_Config.m_BcDummyPointerColorR,
+			&g_Config.m_BcDummyPointerColorR, s_DummyRInput);
+        DoColorSlider(Localize("G (green)"), g_Config.m_BcDummyPointerColorG,
+			&g_Config.m_BcDummyPointerColorG, s_DummyGInput);
+        DoColorSlider(Localize("B (blue)"), g_Config.m_BcDummyPointerColorB,
+			&g_Config.m_BcDummyPointerColorB, s_DummyBInput);
 
         Main.HSplitTop(10.0f, nullptr, &Main); Main.HSplitTop(40.0f, &Row, &Main);
         CUIRect PreviewRect = Row; PreviewRect.x += Indent; PreviewRect.w = 80.0f;
-        ColorRGBA PreviewColor(g_Config.m_BcDummyPointerColorR / 255.0f, g_Config.m_BcDummyPointerColorG / 255.0f, g_Config.m_BcDummyPointerColorB / 255.0f, 1.0f);
+        ColorRGBA PreviewColor(
+			g_Config.m_BcDummyPointerColorR / 255.0f,
+			g_Config.m_BcDummyPointerColorG / 255.0f,
+			g_Config.m_BcDummyPointerColorB / 255.0f, 1.0f);
         PreviewRect.Draw(PreviewColor, IGraphics::CORNER_ALL, 6.0f);
 
         CUIRect LabelRect = Row; LabelRect.x += Indent + 90.0f; LabelRect.w -= Indent + 90.0f;
@@ -868,8 +938,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
 			//Logic
 
-			const int InputNum = maximum(1, s_CustomAspectNumeratorInput.GetInteger());
-			const int InputDen = maximum(1, s_CustomAspectDenominatorInput.GetInteger());
+			const int InputNum = std::max(1, s_CustomAspectNumeratorInput.GetInteger());
+			const int InputDen = std::max(1, s_CustomAspectDenominatorInput.GetInteger());
 
 			const bool HasPendingCustomChange = InputNum != g_Config.m_BcCustomAspectRatioNum ||
 				InputDen != g_Config.m_BcCustomAspectRatioDen;
@@ -895,9 +965,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	// Bongure Client menu
 	Main.HSplitTop(20.0f, &Row, &Main);
     TextRender()->TextColor(TextColor);
-    if (DoButton_CheckBox(&g_Config.m_BcEnableMenu, Localize("Enable Bongure Client custom menu"), g_Config.m_BcEnableMenu, &Row)) {
-        g_Config.m_BcEnableMenu ^= 1;
-	}
+    if (DoButton_CheckBox(&g_Config.m_BcEnableMenu, Localize("Enable Bongure Client custom menu"),
+		g_Config.m_BcEnableMenu, &Row)) g_Config.m_BcEnableMenu ^= 1;
 	Main.HSplitTop(5.0f, nullptr, &Main);
 
 	// Eye comfort
@@ -1013,7 +1082,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
 			static CUi::SDropDownState s_FastInputDropDownState;
 			static CScrollRegion s_FastInputDropDownScrollRegion;
-			s_FastInputDropDownState.m_SelectionPopupContext.m_pScrollRegion = &s_FastInputDropDownScrollRegion;
+			s_FastInputDropDownState.m_SelectionPopupContext.m_pScrollRegion =
+				&s_FastInputDropDownScrollRegion;
 
 			//
 
@@ -1045,7 +1115,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 			Ui()->DoLabel(&FastInputLabelRect, Localize("Fast input"), 14.0f, TEXTALIGN_ML);
 			TextRender()->TextColor(TextRender()->DefaultTextColor());
 
-			const int NewFastInput = Ui()->DoDropDown(&FastInputDropDownRect, CurrentFastInput, apFastInputDropDownModes,
+			const int NewFastInput =
+				Ui()->DoDropDown(&FastInputDropDownRect, CurrentFastInput, apFastInputDropDownModes,
 				s_apFastInputDropDownModes_len, s_FastInputDropDownState);
 
 			TextRender()->TextColor(TextColor);
@@ -1069,29 +1140,25 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-void CMenus::TerminalExecuteCommand()
-{
+void CMenus::TerminalExecuteCommand() {
 	char aCommand[256];
 	str_copy(aCommand, m_aTerminalInput, sizeof(aCommand));
 
 	// trim left
 	const char *pStart = aCommand;
-	while(*pStart == ' ' || *pStart == '\t')
-		pStart++;
+	while(*pStart == ' ' || *pStart == '\t') pStart++;
 
 	char aTrimmed[256];
 	str_copy(aTrimmed, pStart, sizeof(aTrimmed));
 
 	// trim right
 	int Len = str_length(aTrimmed);
-	while(Len > 0 && (aTrimmed[Len - 1] == ' ' || aTrimmed[Len - 1] == '\t'))
-	{
+	while(Len > 0 && (aTrimmed[Len - 1] == ' ' || aTrimmed[Len - 1] == '\t')) {
 		aTrimmed[Len - 1] = '\0';
 		Len--;
 	}
 
-	if(aTrimmed[0] == '\0')
-	{
+	if(aTrimmed[0] == '\0') {
 		TerminalAddLine(">");
 		m_aTerminalInput[0] = '\0';
 		return;
@@ -1105,8 +1172,8 @@ void CMenus::TerminalExecuteCommand()
 
 	if(str_comp_nocase(aTrimmed, "help") == 0 ||
 		str_comp_nocase(aTrimmed, "man") == 0 ||
-		str_comp_nocase(aTrimmed, "commands") == 0)
-	{
+		str_comp_nocase(aTrimmed, "commands") == 0) {
+
 		TerminalAddLine("Available commands:");
 		TerminalAddLine("play/browser/start = open browser");
 		TerminalAddLine("start_server = start sever");
@@ -1121,68 +1188,52 @@ void CMenus::TerminalExecuteCommand()
 		TerminalAddLine("check_update = check there is new version of client");
 		TerminalAddLine("version = write bongure client version in terminal");
 	}
-	else if(str_comp_nocase(aTrimmed, "play") == 0 ||
+	else if (str_comp_nocase(aTrimmed, "play") == 0 ||
 		str_comp_nocase(aTrimmed, "browser") == 0 ||
-		str_comp_nocase(aTrimmed, "start") == 0)
-	{
+		str_comp_nocase(aTrimmed, "start") == 0) {
+
 		SetShowStart(false);
 		SetMenuPage(PAGE_INTERNET);
 		TerminalAddLine("Opening server browser...");
 	}
-	else if(str_comp_nocase(aTrimmed, "start_server") == 0)
-	{
-		if(GameClient()->m_LocalServer.IsServerRunning())
-		{
+	else if (str_comp_nocase(aTrimmed, "start_server") == 0) {
+		if (GameClient()->m_LocalServer.IsServerRunning()) {
 			TerminalAddLine("Local server already running.");
 		}
-		else
-		{
+		else {
 			GameClient()->m_LocalServer.RunServer({});
 			TerminalAddLine("Starting local server...");
 		}
 	}
-	else if(str_comp_nocase(aTrimmed, "demo") == 0)
-	{
+	else if (str_comp_nocase(aTrimmed, "demo") == 0) {
 		SetShowStart(false);
 		SetMenuPage(PAGE_DEMOS);
 		TerminalAddLine("Opening demos...");
 	}
-	else if(str_comp_nocase(aTrimmed, "settings") == 0)
-	{
+	else if (str_comp_nocase(aTrimmed, "settings") == 0) {
 		SetShowStart(false);
 		SetMenuPage(PAGE_SETTINGS);
 		TerminalAddLine("Opening settings...");
 	}
-	else if(str_comp_nocase(aTrimmed, "map_redactor") == 0)
-	{
+	else if (str_comp_nocase(aTrimmed, "map_redactor") == 0) {
 		g_Config.m_ClEditor = 1;
 		Input()->MouseModeRelative();
 		TerminalAddLine("Opening map editor...");
 	}
 	else if (str_comp_nocase(aTrimmed, "clear") == 0 || 
-		str_comp_nocase(aTrimmed, "cls") == 0) 
-	{
-		m_TerminalHistoryCount = 0;
-	}
+		str_comp_nocase(aTrimmed, "cls") == 0) m_TerminalHistoryCount = 0;
 	else if (str_comp_nocase(aTrimmed, "quit") == 0 || 
-		str_comp_nocase(aTrimmed, "exit") == 0) 
-	{
-		Client()->Quit();
-	}
-	else if (str_comp_nocase(aTrimmed, "stop_server") == 0) 
-	{
-		if(!GameClient()->m_LocalServer.IsServerRunning())
-		{
+		str_comp_nocase(aTrimmed, "exit") == 0) Client()->Quit();
+	else if (str_comp_nocase(aTrimmed, "stop_server") == 0) {
+		if(!GameClient()->m_LocalServer.IsServerRunning()) {
 			TerminalAddLine("Local server is not running.");
 		}
-		else
-		{
+		else {
 			GameClient()->m_LocalServer.KillServer();
 			TerminalAddLine("Local server stopped.");
 		}
 	}
-	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) 
-	{
+	else if (str_comp_nocase(aTrimmed, "bongure_settings") == 0) {
 		m_ShowBongureSettings = true;
 	}
 	else if (str_comp_nocase(aTrimmed, "check_update") == 0) {
@@ -1196,8 +1247,7 @@ void CMenus::TerminalExecuteCommand()
 	else if (str_comp_nocase(aTrimmed, "version") == 0) {
 		TerminalAddLine(BONGURE_CLIENT_VERSION);
 	}
-	else
-	{
+	else {
 		char aBuf[320];
 		str_format(aBuf, sizeof(aBuf), "%s%s", Localize("Unknown command: "), aTrimmed);
 		TerminalAddLine(aBuf);
@@ -1208,17 +1258,15 @@ void CMenus::TerminalExecuteCommand()
 	m_TerminalSelectAll = false;
 }
 
-void CMenus::RenderTerminal(CUIRect Screen)
-{
+void CMenus::RenderTerminal(CUIRect Screen) {
 	CUIRect FullScreen = *Ui()->Screen();
 
 	Graphics()->TextureClear();
 	Graphics()->QuadsBegin();
 	Graphics()->SetColor(
-	g_Config.m_BcBongureMenuBgR / 255.0f,
-	g_Config.m_BcBongureMenuBgG / 255.0f,
-	g_Config.m_BcBongureMenuBgB / 255.0f,
-	1.0f);
+		g_Config.m_BcBongureMenuBgR / 255.0f,
+		g_Config.m_BcBongureMenuBgG / 255.0f,
+		g_Config.m_BcBongureMenuBgB / 255.0f, 1.0f);
 	IGraphics::CQuadItem Quad(FullScreen.x, FullScreen.y, FullScreen.w, FullScreen.h);
 	Graphics()->QuadsDrawTL(&Quad, 1);
 	Graphics()->QuadsEnd();
@@ -1226,10 +1274,9 @@ void CMenus::RenderTerminal(CUIRect Screen)
 	Input()->StartTextInput();
 
 	TextRender()->TextColor(
-	g_Config.m_BcBongureMenuTextR / 255.0f,
-	g_Config.m_BcBongureMenuTextG / 255.0f,
-	g_Config.m_BcBongureMenuTextB / 255.0f,
-	1.0f);
+		g_Config.m_BcBongureMenuTextR / 255.0f,
+		g_Config.m_BcBongureMenuTextG / 255.0f,
+		g_Config.m_BcBongureMenuTextB / 255.0f, 1.0f);
 
 	const bool ShowCursor = ((time_get() / (time_freq() / 2)) % 2) == 0;
 
@@ -1237,21 +1284,19 @@ void CMenus::RenderTerminal(CUIRect Screen)
 	char aRight[256];
 	char aInputLine[512];
 
-	if(m_TerminalSelectAll)
-	{
-		if(ShowCursor)
+	if (m_TerminalSelectAll) {
+		if (ShowCursor)
 			str_format(aInputLine, sizeof(aInputLine), "> [%s]_", m_aTerminalInput);
 		else
 			str_format(aInputLine, sizeof(aInputLine), "> [%s]", m_aTerminalInput);
 	}
-	else
-	{
+	else {
 		str_copy(aLeft, m_aTerminalInput, sizeof(aLeft));
 		aLeft[m_TerminalCursorPos] = '\0';
 
 		str_copy(aRight, m_aTerminalInput + m_TerminalCursorPos, sizeof(aRight));
 
-		if(ShowCursor)
+		if (ShowCursor)
 			str_format(aInputLine, sizeof(aInputLine), "> %s_%s", aLeft, aRight);
 		else
 			str_format(aInputLine, sizeof(aInputLine), "> %s%s", aLeft, aRight);
@@ -1266,11 +1311,10 @@ void CMenus::RenderTerminal(CUIRect Screen)
 
 	const int MaxVisibleLines = (int)((FullScreen.h - 10.0f) / LineStep) - 1;
 	int StartLine = 0;
-	if(m_TerminalHistoryCount > MaxVisibleLines)
+	if (m_TerminalHistoryCount > MaxVisibleLines)
 		StartLine = m_TerminalHistoryCount - MaxVisibleLines;
 
-	for(int i = StartLine; i < m_TerminalHistoryCount; i++)
-	{
+	for(int i = StartLine; i < m_TerminalHistoryCount; ++i) {
 		TextRender()->Text(X, CurY, FontSize, Localize(m_aaTerminalHistory[i]), -1.0f);
 		CurY += LineStep;
 	}
@@ -1278,6 +1322,7 @@ void CMenus::RenderTerminal(CUIRect Screen)
 	TextRender()->Text(X, CurY, FontSize, aInputLine, -1.0f);
 	TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
+// Bongure Client }
 
 int CMenus::DoButton_Toggle(const void *pId, int Checked, const CUIRect *pRect, bool Active, const unsigned Flags)
 {
@@ -1475,73 +1520,14 @@ int CMenus::DoButton_CheckBox_Common(const void *pId, const char *pText, const c
 		TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
 	}
 	else
+	{
 		Ui()->DoLabel(&Box, pBoxText, Box.h * CUi::ms_FontmodHeight, TEXTALIGN_MC);
+	}
 
 	TextRender()->SetRenderFlags(0);
 	Ui()->DoLabel(&Label, pText, Box.h * CUi::ms_FontmodHeight, TEXTALIGN_ML);
 
 	return Ui()->DoButtonLogic(pId, 0, pRect, Flags);
-}
-
-void CMenus::DoLaserPreview(const CUIRect *pRect, const ColorHSLA LaserOutlineColor, const ColorHSLA LaserInnerColor, const int LaserType)
-{
-	CUIRect Section = *pRect;
-	vec2 From = vec2(Section.x + 30.0f, Section.y + Section.h / 2.0f);
-	vec2 Pos = vec2(Section.x + Section.w - 20.0f, Section.y + Section.h / 2.0f);
-
-	const ColorRGBA OuterColor = color_cast<ColorRGBA>(ColorHSLA(LaserOutlineColor));
-	const ColorRGBA InnerColor = color_cast<ColorRGBA>(ColorHSLA(LaserInnerColor));
-	const float TicksHead = Client()->GlobalTime() * Client()->GameTickSpeed();
-
-	// Use better laser rendering with glow intensity
-
-	GameClient()->m_Items.RenderLaser(From, Pos, OuterColor, InnerColor, 4.0f, TicksHead, LaserType, g_Config.m_RiLaserGlowIntensity);
-
-	switch(LaserType)
-	{
-	case LASERTYPE_RIFLE:
-		Graphics()->TextureSet(GameClient()->m_GameSkin.m_SpriteWeaponLaser);
-		Graphics()->SelectSprite(SPRITE_WEAPON_LASER_BODY);
-		Graphics()->QuadsBegin();
-		Graphics()->QuadsSetSubset(0, 0, 1, 1);
-		Graphics()->DrawSprite(Section.x + 30.0f, Section.y + Section.h / 2.0f, 60.0f);
-		Graphics()->QuadsEnd();
-		break;
-	case LASERTYPE_SHOTGUN:
-		Graphics()->TextureSet(GameClient()->m_GameSkin.m_SpriteWeaponShotgun);
-		Graphics()->SelectSprite(SPRITE_WEAPON_SHOTGUN_BODY);
-		Graphics()->QuadsBegin();
-		Graphics()->QuadsSetSubset(0, 0, 1, 1);
-		Graphics()->DrawSprite(Section.x + 30.0f, Section.y + Section.h / 2.0f, 60.0f);
-		Graphics()->QuadsEnd();
-		break;
-	case LASERTYPE_DRAGGER:
-	{
-		CTeeRenderInfo TeeRenderInfo;
-		TeeRenderInfo.Apply(GameClient()->m_Skins.Find(g_Config.m_ClPlayerSkin));
-		TeeRenderInfo.ApplyColors(g_Config.m_ClPlayerUseCustomColor, g_Config.m_ClPlayerColorBody, g_Config.m_ClPlayerColorFeet);
-		TeeRenderInfo.m_Size = 64.0f;
-		RenderTools()->RenderTee(CAnimState::GetIdle(), &TeeRenderInfo, EMOTE_NORMAL, vec2(-1, 0), Pos);
-		break;
-	}
-	case LASERTYPE_FREEZE:
-	{
-		CTeeRenderInfo TeeRenderInfo;
-		if(g_Config.m_ClShowNinja)
-			TeeRenderInfo.Apply(GameClient()->m_Skins.Find("x_ninja"));
-		else
-			TeeRenderInfo.Apply(GameClient()->m_Skins.Find(g_Config.m_ClPlayerSkin));
-		TeeRenderInfo.m_TeeRenderFlags = TEE_EFFECT_FROZEN;
-		TeeRenderInfo.m_Size = 64.0f;
-		TeeRenderInfo.m_ColorBody = ColorRGBA(1, 1, 1);
-		TeeRenderInfo.m_ColorFeet = ColorRGBA(1, 1, 1);
-		RenderTools()->RenderTee(CAnimState::GetIdle(), &TeeRenderInfo, EMOTE_PAIN, vec2(1, 0), From);
-		GameClient()->m_Effects.FreezingFlakes(From, vec2(32, 32), 1.0f);
-		break;
-	}
-	default:
-		GameClient()->m_Items.RenderLaser(From, From, OuterColor, InnerColor, 4.0f, TicksHead, LaserType, 100.0f);
-	}
 }
 
 bool CMenus::DoLine_RadioMenu(CUIRect &View, const char *pLabel, std::vector<CButtonContainer> &vButtonContainers, const std::vector<const char *> &vLabels, const std::vector<int> &vValues, int &Value)
@@ -1670,24 +1656,15 @@ int CMenus::DoButton_CheckBox_Number(const void *pId, const char *pText, int Che
 	return DoButton_CheckBox_Common(pId, pText, aBuf, pRect, BUTTONFLAG_LEFT | BUTTONFLAG_RIGHT);
 }
 
-void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
-{
+// This function changed by Bongure Client
+void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState) {
 	CUIRect Button;
 
 	int NewPage = -1;
 	int ActivePage = -1;
-	if(ClientState == IClient::STATE_OFFLINE)
-	{
-		ActivePage = m_MenuPage;
-	}
-	else if(ClientState == IClient::STATE_ONLINE)
-	{
-		ActivePage = m_GamePage;
-	}
-	else
-	{
-		dbg_assert_failed("Client state %d is invalid for RenderMenubar", ClientState);
-	}
+	if(ClientState == IClient::STATE_OFFLINE) ActivePage = m_MenuPage;
+	else if(ClientState == IClient::STATE_ONLINE) ActivePage = m_GamePage;
+	else dbg_assert_failed("Client state %d is invalid for RenderMenubar", ClientState);
 
 	// First render buttons aligned from right side so remaining
 	// width is known when rendering buttons from left side.
@@ -1742,21 +1719,10 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 		Box.VSplitRight(10.0f, &Box, nullptr);
 		Box.VSplitRight(33.0f, &Box, &Button);
 
-		static CButtonContainer s_LaunchClientButton;
-		if(DoButton_MenuTab(&s_LaunchClientButton, FontIcon::SQUARE_PLUS, 0, &Button, IGraphics::CORNER_T, &m_aAnimatorsSmallPage[SMALL_TAB_LAUNCH_CLIENT]))
-		{
-			Console()->ExecuteLine("ri_launch_second_client", IConsole::CLIENT_ID_UNSPECIFIED);
-		}
-		GameClient()->m_Tooltips.DoToolTip(&s_LaunchClientButton, &Button, Localize("Launch another client window. It uses the same config and user files."));
-
-		// Bongure Client settings button
-		Box.VSplitRight(10.0f, &Box, nullptr);
-		Box.VSplitRight(33.0f, &Box, &Button);
-
+		// Bongure Client {
 		static CButtonContainer s_BongureSettingsButton;
-		if (DoButton_MenuTab(&s_BongureSettingsButton, "", 0, &Button, IGraphics::CORNER_T, nullptr)) {
-			m_ShowBongureSettings = true;
-		}
+		if (DoButton_MenuTab(&s_BongureSettingsButton, "", 0, &Button, IGraphics::CORNER_T,
+			nullptr)) m_ShowBongureSettings = true;
 
 		Graphics()->TextureSet(m_BongureSettingsTexture);
 		Graphics()->QuadsBegin();
@@ -1772,7 +1738,7 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 
 		Box.VSplitRight(10.0f, &Box, nullptr);
 		Box.VSplitLeft(33.0f, &Button, &Box);
-		// Bongure Client settings button
+		// Bongure Client }
 
 		bool GotNewsOrUpdate = false;
 
@@ -1833,7 +1799,7 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 		}
 		GameClient()->m_Tooltips.DoToolTip(&s_FavoritesButton, &Button, Localize("Favorites"));
 
-		int MaxPage = PAGE_FAVORITES + ServerBrowser()->FavoriteCommunities().size();
+		const int MaxPage = PAGE_FAVORITES + ServerBrowser()->FavoriteCommunities().size();
 		if(
 			!Ui()->IsPopupOpen() &&
 			CLineInput::GetActiveInput() == nullptr &&
@@ -1922,46 +1888,39 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 			m_ControlPageOpening = true;
 		}
 
-			// Bongure Client settings button
-			{
-    			Box.VSplitLeft(0.0f, nullptr, &Box);
-    			Box.VSplitLeft(33.0f, &Button, &Box);
-    			static CButtonContainer s_BongureSettingsButton;
+		// Bongure Client {
+		Box.VSplitLeft(0.0f, nullptr, &Box);
+		Box.VSplitLeft(33.0f, &Button, &Box);
+		static CButtonContainer s_BongureSettingsButton;
 
-    			const bool BongureHot = Ui()->HotItem() == &s_BongureSettingsButton;
-    			{
-    			    ColorRGBA BtnColor = BongureHot
-    			        ? ms_ColorTabbarHoverIngame
-    			        : ms_ColorTabbarInactiveIngame;
-    			    Button.Draw(BtnColor, IGraphics::CORNER_T, 10.0f);
-    			}
+		const bool BongureHot = Ui()->HotItem() == &s_BongureSettingsButton;
+		{
+			ColorRGBA BtnColor = BongureHot
+				? ms_ColorTabbarHoverIngame
+				: ms_ColorTabbarInactiveIngame;
+			Button.Draw(BtnColor, IGraphics::CORNER_T, 10.0f);
+		}
 
-    			CUIRect IconRect;
-    			Button.Margin(4.0f, &IconRect);
-    			Graphics()->TextureSet(m_BongureSettingsTexture);
-    			Graphics()->WrapClamp();
-    			Graphics()->QuadsBegin();
-    			if(BongureHot)
-    			    Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-    			else
-    			    Graphics()->SetColor(0.7f, 0.7f, 0.7f, 0.8f);
-    			IGraphics::CQuadItem QuadItem(IconRect.x, IconRect.y,
-    			                                IconRect.w, IconRect.h);
-    			Graphics()->QuadsDrawTL(&QuadItem, 1);
-    			Graphics()->QuadsEnd();
-    			Graphics()->WrapNormal();
+		CUIRect IconRect;
+		Button.Margin(4.0f, &IconRect);
+		Graphics()->TextureSet(m_BongureSettingsTexture);
+		Graphics()->WrapClamp();
+		Graphics()->QuadsBegin();
+		if(BongureHot) Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		else           Graphics()->SetColor(0.7f, 0.7f, 0.7f, 0.8f);
+		IGraphics::CQuadItem QuadItem(IconRect.x, IconRect.y,
+										IconRect.w, IconRect.h);
+		Graphics()->QuadsDrawTL(&QuadItem, 1);
+		Graphics()->QuadsEnd();
+		Graphics()->WrapNormal();
 
-    			GameClient()->m_Tooltips.DoToolTip(
-        			&s_BongureSettingsButton, &Button,
-        			Localize("Bongure settings"));
+		GameClient()->m_Tooltips.DoToolTip(
+			&s_BongureSettingsButton, &Button,
+			Localize("Bongure settings"));
 
-    			if(Ui()->DoButtonLogic(&s_BongureSettingsButton, 0, &Button,
-        			BUTTONFLAG_LEFT))
-    			{
-        			m_ShowBongureSettings = true;
-    			}
-			}
-			// Bongure Client settings button
+		if(Ui()->DoButtonLogic(&s_BongureSettingsButton, 0, &Button,
+			BUTTONFLAG_LEFT)) m_ShowBongureSettings = true;
+		// Bongure Client }
 
 		if(Box.w >= 10.0f + 33.0f + 10.0f)
 		{
@@ -1976,19 +1935,7 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 				NewPage = PAGE_DEMOS;
 			}
 			GameClient()->m_Tooltips.DoToolTip(&s_DemoButton, &Button, Localize("Demos"));
-
-			if(Box.w >= 10.0f + 33.0f + 10.0f)
-			{
-				Box.VSplitRight(10.0f, &Box, nullptr);
-				Box.VSplitRight(33.0f, &Box, &Button);
-				static CButtonContainer s_LaunchClientButton;
-				if(DoButton_MenuTab(&s_LaunchClientButton, FontIcon::SQUARE_PLUS, 0, &Button, IGraphics::CORNER_T, &m_aAnimatorsSmallPage[SMALL_TAB_LAUNCH_CLIENT]))
-				{
-					Console()->ExecuteLine("ri_launch_second_client", IConsole::CLIENT_ID_UNSPECIFIED);
-				}
-				GameClient()->m_Tooltips.DoToolTip(&s_LaunchClientButton, &Button, Localize("Launch another client window."));
-				Box.VSplitRight(10.0f, &Box, nullptr);
-			}
+			Box.VSplitRight(10.0f, &Box, nullptr);
 
 			TextRender()->SetRenderFlags(0);
 			TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
@@ -2004,18 +1951,20 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 	}
 }
 
-void CMenus::RenderLoading(const char *pCaption, const char *pContent, int IncreaseCounter)
+void CMenus::RenderLoadingDirect(const char *pCaption, const char *pContent, std::optional<float> Progress)
 {
 	// TODO: not supported right now due to separate render thread
 
-	const int CurLoadRenderCount = m_LoadingState.m_Current;
-	m_LoadingState.m_Current += IncreaseCounter;
-	dbg_assert(m_LoadingState.m_Current <= m_LoadingState.m_Total, "Invalid progress for RenderLoading");
-
 	// make sure that we don't render for each little thing we load
 	// because that will slow down loading if we have vsync
+	// make sure we otherwise update the progressbar if we have one for a smoother animation
 	const std::chrono::nanoseconds Now = time_get_nanoseconds();
-	if(Now - m_LoadingState.m_LastRender < std::chrono::nanoseconds(1s) / 60l)
+
+	/* Limit FPS to something reasonable. Ideally the values would just be stored and the rendering would be on a **consistent** timer with 60Hz
+	 * Waiting for calls of this function makes the rendering stutter, which you can notice with the background
+	 */
+	int RefreshRate = g_Config.m_GfxVsync || !Progress.has_value() ? 60 : (in_range(g_Config.m_GfxRefreshRate, 1, 300) ? g_Config.m_GfxRefreshRate : 300);
+	if(RefreshRate > 0 && Now - m_LoadingState.m_LastRender < std::chrono::nanoseconds(1s) / RefreshRate)
 		return;
 
 	// need up date this here to get correct
@@ -2023,14 +1972,14 @@ void CMenus::RenderLoading(const char *pCaption, const char *pContent, int Incre
 
 	Ui()->MapScreen();
 
-	if(!g_Config.m_RiUiCustomBg && GameClient()->m_MenuBackground.IsLoading())
+	if(GameClient()->m_MenuBackground.IsLoading())
 	{
 		// Avoid rendering while loading the menu background as this would otherwise
 		// cause the regular menu background to be rendered for a few frames while
 		// the menu background is not loaded yet.
 		return;
 	}
-	if(g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render())
+	if(!GameClient()->m_MenuBackground.Render())
 	{
 		RenderBackground();
 	}
@@ -2040,7 +1989,6 @@ void CMenus::RenderLoading(const char *pCaption, const char *pContent, int Incre
 	CUIRect Box;
 	Ui()->Screen()->Margin(160.0f, &Box);
 
-	Graphics()->BlendNormal();
 	Graphics()->TextureClear();
 	Box.Draw(ColorRGBA(0.0f, 0.0f, 0.0f, 0.5f), IGraphics::CORNER_ALL, 15.0f);
 	Box.Margin(20.0f, &Box);
@@ -2053,18 +2001,28 @@ void CMenus::RenderLoading(const char *pCaption, const char *pContent, int Incre
 	Box.HSplitTop(24.0f, &Label, &Box);
 	Ui()->DoLabel(&Label, pContent, 20.0f, TEXTALIGN_MC);
 
-	if(m_LoadingState.m_Total > 0)
+	if(Progress.has_value())
 	{
 		CUIRect ProgressBar;
 		Box.HSplitBottom(30.0f, &Box, nullptr);
 		Box.HSplitBottom(25.0f, &Box, &ProgressBar);
 		ProgressBar.VMargin(20.0f, &ProgressBar);
-		Ui()->RenderProgressBar(ProgressBar, CurLoadRenderCount / (float)m_LoadingState.m_Total);
+		Ui()->RenderProgressBar(ProgressBar, std::clamp(Progress.value(), 0.0f, 1.0f));
 	}
 
 	Graphics()->SetColor(1.0, 1.0, 1.0, 1.0);
 
 	Client()->UpdateAndSwap();
+}
+
+void CMenus::RenderLoading(const char *pCaption, const char *pContent, int IncreaseCounter)
+{
+	// does not support multithreading
+
+	const int CurLoadRenderCount = m_LoadingState.m_Current;
+	m_LoadingState.m_Current += IncreaseCounter;
+	dbg_assert(m_LoadingState.m_Current <= m_LoadingState.m_Total, "Invalid progress for RenderLoading");
+	RenderLoadingDirect(pCaption, pContent, m_LoadingState.m_Total > 0 ? std::make_optional(CurLoadRenderCount / (float)m_LoadingState.m_Total) : std::nullopt);
 }
 
 void CMenus::FinishLoading()
@@ -2111,12 +2069,12 @@ void CMenus::OnInterfacesInit(CGameClient *pClient)
 	m_MenusIngameTouchControls.OnInterfacesInit(pClient);
 	m_MenusSettingsControls.OnInterfacesInit(pClient);
 	m_MenusStart.OnInterfacesInit(pClient);
-	m_MenusStartRClient.OnInterfacesInit(pClient);
 	m_CommunityIcons.OnInterfacesInit(pClient);
 }
 
-void CMenus::OnInit()
-{
+// This function changed by Bongure Client
+void CMenus::OnInit() {
+	// Bongure Client {
 	m_BongureSettingsTexture = Graphics()->LoadTexture(
     	"bongure_images/bongure_settings.png", IStorage::TYPE_ALL);
 
@@ -2125,9 +2083,9 @@ void CMenus::OnInit()
 
 	m_SmilePlus = Graphics()->LoadTexture(
 		"bongure_images/smile_plus.png", IStorage::TYPE_ALL);
-	
-	if(g_Config.m_ClShowWelcome)
-	{
+	// Bongure Client }
+
+	if(g_Config.m_ClShowWelcome) {
 		m_Popup = POPUP_LANGUAGE;
 		m_CreateDefaultFavoriteCommunities = true;
 	}
@@ -2224,6 +2182,8 @@ void CMenus::UpdateMusicState()
 		GameClient()->m_Sounds.Enqueue(CSounds::CHN_MUSIC, SOUND_MENU);
 	else if(!ShouldPlay && GameClient()->m_Sounds.IsPlaying(SOUND_MENU))
 		GameClient()->m_Sounds.Stop(SOUND_MENU);
+	if(!ShouldPlay)
+		GameClient()->m_MapSounds.StopAll();
 }
 
 void CMenus::PopupMessage(const char *pTitle, const char *pMessage, const char *pButtonLabel, int NextPopup, FPopupButtonCallback pfnButtonCallback)
@@ -2280,8 +2240,8 @@ bool CMenus::CanDisplayWarning() const
 	return m_Popup == POPUP_NONE;
 }
 
-void CMenus::Render()
-{
+//This function changed by Bongure Client
+void CMenus::Render() {
 	Ui()->MapScreen();
 	Ui()->SetMouseSlow(false);
 
@@ -2340,6 +2300,7 @@ void CMenus::Render()
 		ms_ColorTabbarHover = ms_ColorTabbarHoverIngame;
 	}
 	else {
+		// Bongure Client {
 		if (g_Config.m_BcEnableMenu == 1) {
 			const bool UseTerminalBackground =
 				(ClientState == IClient::STATE_OFFLINE && m_ShowStart) ||
@@ -2356,11 +2317,12 @@ void CMenus::Render()
 				Graphics()->QuadsDrawTL(&Quad, 1);
 				Graphics()->QuadsEnd();
 			}
-			else if (g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render()) {
+			else if (!GameClient()->m_MenuBackground.Render()) {
 				RenderBackground();
 			}
 		}
-		else if (g_Config.m_RiUiCustomBg || !GameClient()->m_MenuBackground.Render()) {
+		// Bongure Client }
+		else if (!GameClient()->m_MenuBackground.Render()) {
 			RenderBackground();
 		}
 
@@ -2384,6 +2346,7 @@ void CMenus::Render()
 
 	case IClient::STATE_CONNECTING:
 	{
+		// Bongure Client {
 		if (g_Config.m_BcEnableMenu == 1) {
 			CUIRect FullScreen = *Ui()->Screen();
 			Graphics()->TextureClear();
@@ -2393,6 +2356,7 @@ void CMenus::Render()
 			Graphics()->QuadsDrawTL(&Quad, 1);
 			Graphics()->QuadsEnd();
 		}
+		// Bongure Client }
 
 		RenderPopupConnecting(Screen);
 		break;
@@ -2400,6 +2364,7 @@ void CMenus::Render()
 
 	case IClient::STATE_LOADING:
 	{
+		// Bongure Client {
 		if (g_Config.m_BcEnableMenu == 1) {
 			CUIRect FullScreen = *Ui()->Screen();
 			Graphics()->TextureClear();
@@ -2409,26 +2374,23 @@ void CMenus::Render()
 			Graphics()->QuadsDrawTL(&Quad, 1);
 			Graphics()->QuadsEnd();
 		}
-	
+		// Bongure Client }
+
 		RenderPopupLoading(Screen);
 		break;
 	}
 
 	case IClient::STATE_OFFLINE:
-		if(m_Popup != POPUP_NONE)
-		{
+		if(m_Popup != POPUP_NONE) {
 			RenderPopupFullscreen(Screen);
 		}
 		else if(m_ShowStart) {
-			if (g_Config.m_BcEnableMenu == 1) {
-				RenderTerminal(Screen);
-			}
-			else {
-				if (!g_Config.m_RiUiNewMenu) m_MenusStart.RenderStartMenu(Screen);
-				else m_MenusStartRClient.RenderStartMenu(Screen);
-			}
+			// Bongure Client {
+			if (g_Config.m_BcEnableMenu == 1) RenderTerminal(Screen);
+			else m_MenusStart.RenderStartMenu(Screen);
 
 			if (g_Config.m_BcFirstLaunch == 1) CMenus::FirstLaunch();
+			// Bongure Client }
 		}
 		else
 		{
@@ -2639,34 +2601,6 @@ void CMenus::RenderPopupFullscreen(CUIRect Screen)
 	{
 		pTitle = Localize("Save skin");
 		pExtraText = Localize("Are you sure you want to save your skin? If a skin with this name already exists, it will be replaced.");
-	}
-	else if(m_Popup == POPUP_BONGURE_SETTINGS) 
-	{
-		CUIRect Box, Title, Content, ButtonBar, Button;
-
-		Screen.Draw(ColorRGBA(0.0f, 0.0f, 0.0f, 0.85f), IGraphics::CORNER_ALL, 0.0f);
-
-		Box = Screen;
-		Box.VMargin(200.0f, &Box);
-		Box.HMargin(120.0f, &Box);
-		Box.Draw(ColorRGBA(0.05f, 0.05f, 0.05f, 1.0f), IGraphics::CORNER_ALL, 10.0f);
-
-		Box.Margin(20.0f, &Box);
-
-		Box.HSplitTop(40.0f, &Title, &Content);
-		Ui()->DoLabel(&Title, "Bongure Settings", 24.0f, TEXTALIGN_MC);
-
-		Content.HSplitBottom(50.0f, &Content, &ButtonBar);
-
-		Ui()->DoLabel(&Content, "Empty for now", 18.0f, TEXTALIGN_MC);
-
-		ButtonBar.VSplitMid(&Button, nullptr);
-
-		static CButtonContainer s_CloseButton;
-		if(DoButton_Menu(&s_CloseButton, "Close", 0, &Button, BUTTONFLAG_LEFT, nullptr, IGraphics::CORNER_ALL, 5.0f, 0.0f, ColorRGBA(0.1f, 0.1f, 0.1f, 1.0f)))
-		{
-			m_Popup = POPUP_NONE;
-		}
 	}
 
 	CUIRect Box, Part;
@@ -3128,6 +3062,7 @@ void CMenus::RenderPopupFullscreen(CUIRect Screen)
 		if(DoButton_Menu(&s_SkipTutorialButton, Localize("Skip Tutorial"), 0, &Skip) || Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE))
 		{
 			Client()->RequestDDNetInfo();
+			m_JoinTutorial.m_Queued = false;
 			m_Popup = g_Config.m_BrIndicateFinished ? POPUP_POINTS : POPUP_NONE;
 		}
 
@@ -3557,7 +3492,7 @@ void CMenus::RenderPopupLoading(CUIRect Screen)
 
 		str_format(aLabel1, sizeof(aLabel1), Localize("%d/%d KiB (%.1f KiB/s)"), Client()->MapDownloadAmount() / 1024, Client()->MapDownloadTotalsize() / 1024, m_DownloadSpeed / 1024.0f);
 
-		const int SecondsLeft = maximum(1, m_DownloadSpeed > 0.0f ? static_cast<int>((Client()->MapDownloadTotalsize() - Client()->MapDownloadAmount()) / m_DownloadSpeed) : 1);
+		const int SecondsLeft = std::max(1, m_DownloadSpeed > 0.0f ? static_cast<int>((Client()->MapDownloadTotalsize() - Client()->MapDownloadAmount()) / m_DownloadSpeed) : 1);
 		const int MinutesLeft = SecondsLeft / 60;
 		if(MinutesLeft > 0)
 		{
@@ -3662,78 +3597,6 @@ void CMenus::PopupConfirmDemoReplaceVideo()
 }
 #endif
 
-void CMenus::RenderThemeSelection(CUIRect MainView)
-{
-	const std::vector<CTheme> &vThemes = GameClient()->m_MenuBackground.GetThemes();
-
-	int SelectedTheme = -1;
-	for(int i = 0; i < (int)vThemes.size(); i++)
-	{
-		if(str_comp(vThemes[i].m_Name.c_str(), g_Config.m_ClMenuMap) == 0)
-		{
-			SelectedTheme = i;
-			break;
-		}
-	}
-	const int OldSelected = SelectedTheme;
-
-	static CListBox s_ListBox;
-	s_ListBox.DoHeader(&MainView, Localize("Theme"), 20.0f);
-	s_ListBox.DoStart(20.0f, vThemes.size(), 1, 3, SelectedTheme);
-
-	for(int i = 0; i < (int)vThemes.size(); i++)
-	{
-		const CTheme &Theme = vThemes[i];
-		const CListboxItem Item = s_ListBox.DoNextItem(&Theme.m_Name, i == SelectedTheme);
-
-		if(!Item.m_Visible)
-			continue;
-
-		CUIRect Icon, Label;
-		Item.m_Rect.VSplitLeft(Item.m_Rect.h * 2.0f, &Icon, &Label);
-
-		// draw icon if it exists
-		if(Theme.m_IconTexture.IsValid())
-		{
-			Icon.VMargin(6.0f, &Icon);
-			Icon.HMargin(3.0f, &Icon);
-			Graphics()->TextureSet(Theme.m_IconTexture);
-			Graphics()->QuadsBegin();
-			Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-			IGraphics::CQuadItem QuadItem(Icon.x, Icon.y, Icon.w, Icon.h);
-			Graphics()->QuadsDrawTL(&QuadItem, 1);
-			Graphics()->QuadsEnd();
-		}
-
-		char aName[128];
-		if(Theme.m_Name.empty())
-			str_copy(aName, "(none)");
-		else if(str_comp(Theme.m_Name.c_str(), "auto") == 0)
-			str_copy(aName, "(seasons)");
-		else if(str_comp(Theme.m_Name.c_str(), "rand") == 0)
-			str_copy(aName, "(random)");
-		else if(Theme.m_HasDay && Theme.m_HasNight)
-			str_copy(aName, Theme.m_Name.c_str());
-		else if(Theme.m_HasDay && !Theme.m_HasNight)
-			str_format(aName, sizeof(aName), "%s (day)", Theme.m_Name.c_str());
-		else if(!Theme.m_HasDay && Theme.m_HasNight)
-			str_format(aName, sizeof(aName), "%s (night)", Theme.m_Name.c_str());
-		else // generic
-			str_copy(aName, Theme.m_Name.c_str());
-
-		Ui()->DoLabel(&Label, aName, 16.0f * CUi::ms_FontmodHeight, TEXTALIGN_ML);
-	}
-
-	SelectedTheme = s_ListBox.DoEnd();
-
-	if(OldSelected != SelectedTheme)
-	{
-		const CTheme &Theme = vThemes[SelectedTheme];
-		str_copy(g_Config.m_ClMenuMap, Theme.m_Name.c_str());
-		GameClient()->m_MenuBackground.LoadMenuBackground(Theme.m_HasDay, Theme.m_HasNight);
-	}
-}
-
 void CMenus::SetActive(bool Active)
 {
 	if(Active != m_MenuActive)
@@ -3767,10 +3630,6 @@ void CMenus::SetActive(bool Active)
 	}
 }
 
-void CMenus::OnReset()
-{
-}
-
 void CMenus::OnShutdown()
 {
 	m_CommunityIcons.Shutdown();
@@ -3787,8 +3646,9 @@ bool CMenus::OnCursorMove(float x, float y, IInput::ECursorType CursorType)
 	return true;
 }
 
-bool CMenus::OnInput(const IInput::CEvent &Event)
-{
+// This function changed by Bongure Client
+bool CMenus::OnInput(const IInput::CEvent &Event) {
+	//Bongure Client {
 	if(m_ShowBongureSettings) {
 		if ((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE) {
 			m_ShowBongureSettings = false;
@@ -3799,11 +3659,9 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 		return true;
 	}
 
-	if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart)
-	{
+	if(Client()->State() == IClient::STATE_OFFLINE && m_ShowStart) {
 		if((Event.m_Flags & IInput::FLAG_TEXT) && g_Config.m_BcEnableMenu == 1) {
-			if(m_TerminalSelectAll)
-			{
+			if(m_TerminalSelectAll) {
 				str_copy(m_aTerminalInput, Event.m_aText, sizeof(m_aTerminalInput));
 				m_TerminalCursorPos = str_length(m_aTerminalInput);
 				m_TerminalSelectAll = false;
@@ -3813,8 +3671,7 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 			const int Len = str_length(m_aTerminalInput);
 			const int InsertLen = str_length(Event.m_aText);
 
-			if(Len + InsertLen < (int)sizeof(m_aTerminalInput))
-			{
+			if(Len + InsertLen < (int)sizeof(m_aTerminalInput)) {
 				mem_move(
 					m_aTerminalInput + m_TerminalCursorPos + InsertLen,
 					m_aTerminalInput + m_TerminalCursorPos,
@@ -3832,16 +3689,14 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 
 		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_BACKSPACE &&
 			g_Config.m_BcEnableMenu == 1) {
-			if(m_TerminalSelectAll)
-			{
+			if(m_TerminalSelectAll) {
 				m_aTerminalInput[0] = '\0';
 				m_TerminalCursorPos = 0;
 				m_TerminalSelectAll = false;
 				return true;
 			}
 
-			if(m_TerminalCursorPos > 0)
-			{
+			if(m_TerminalCursorPos > 0) {
 				const int Len = str_length(m_aTerminalInput);
 				mem_move(
 					m_aTerminalInput + m_TerminalCursorPos - 1,
@@ -3855,8 +3710,7 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 
 		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_LEFT &&
 			g_Config.m_BcEnableMenu == 1) {
-			if(m_TerminalCursorPos > 0)
-			{
+			if(m_TerminalCursorPos > 0) {
 				m_TerminalCursorPos--;
 				m_TerminalSelectAll = false;
 			}
@@ -3866,8 +3720,7 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_RIGHT &&
 			g_Config.m_BcEnableMenu == 1) {
 			const int Len = str_length(m_aTerminalInput);
-			if(m_TerminalCursorPos < Len)
-			{
+			if(m_TerminalCursorPos < Len) {
 				m_TerminalCursorPos++;
 				m_TerminalSelectAll = false;
 			}
@@ -3876,14 +3729,15 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 
 		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_UP &&
 			g_Config.m_BcEnableMenu == 1) {
-			if(m_TerminalCommandHistoryCount > 0)
-			{
+			if(m_TerminalCommandHistoryCount > 0) {
 				if(m_TerminalCommandHistoryIndex < 0)
 					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount - 1;
 				else if(m_TerminalCommandHistoryIndex > 0)
 					m_TerminalCommandHistoryIndex--;
 
-				str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+				str_copy(m_aTerminalInput,
+					m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex],
+					sizeof(m_aTerminalInput));
 				m_TerminalCursorPos = str_length(m_aTerminalInput);
 				m_TerminalSelectAll = false;
 			}
@@ -3892,17 +3746,18 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 
 		if((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_DOWN &&
 			g_Config.m_BcEnableMenu == 1) {
-			if(m_TerminalCommandHistoryCount > 0)
-			{
-				if(m_TerminalCommandHistoryIndex >= 0 && m_TerminalCommandHistoryIndex < m_TerminalCommandHistoryCount - 1)
-				{
+			if(m_TerminalCommandHistoryCount > 0) {
+				if(m_TerminalCommandHistoryIndex >= 0 &&
+					m_TerminalCommandHistoryIndex < m_TerminalCommandHistoryCount - 1) {
+
 					m_TerminalCommandHistoryIndex++;
-					str_copy(m_aTerminalInput, m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex], sizeof(m_aTerminalInput));
+					str_copy(m_aTerminalInput,
+						m_aaTerminalCommandHistory[m_TerminalCommandHistoryIndex],
+						sizeof(m_aTerminalInput));
 					m_TerminalCursorPos = str_length(m_aTerminalInput);
 					m_TerminalSelectAll = false;
 				}
-				else
-				{
+				else {
 					m_TerminalCommandHistoryIndex = m_TerminalCommandHistoryCount;
 					m_aTerminalInput[0] = '\0';
 					m_TerminalCursorPos = 0;
@@ -3912,8 +3767,9 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 			return true;
 		}
 
-		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() && Event.m_Key == KEY_A &&
-			g_Config.m_BcEnableMenu == 1) {
+		if((Event.m_Flags & IInput::FLAG_PRESS) && Input()->ModifierIsPressed() &&
+			Event.m_Key == KEY_A && g_Config.m_BcEnableMenu == 1) {
+
 			m_TerminalSelectAll = true;
 			m_TerminalCursorPos = str_length(m_aTerminalInput);
 			return true;
@@ -3989,13 +3845,14 @@ bool CMenus::OnInput(const IInput::CEvent &Event)
 
 		return true;
 	}
+	//Bongure Client }
 
 	// Escape key is always handled to activate/deactivate menu
-	if(((Event.m_Flags & IInput::FLAG_PRESS) && Event.m_Key == KEY_ESCAPE) || IsActive()) {
+	if((Event.m_Flags & IInput::FLAG_PRESS && Event.m_Key == KEY_ESCAPE) || IsActive())
+	{
 		Ui()->OnInput(Event);
 		return true;
 	}
-
 	return false;
 }
 
@@ -4021,7 +3878,9 @@ void CMenus::OnStateChange(int NewState, int OldState)
 				Ui()->SetActiveItem(&m_PasswordInput);
 			}
 			else
+			{
 				m_Popup = POPUP_DISCONNECTED;
+			}
 		}
 	}
 	else if(NewState == IClient::STATE_LOADING)
@@ -4045,19 +3904,22 @@ void CMenus::OnWindowResize()
 	TextRender()->DeleteTextContainer(m_MotdTextContainerIndex);
 }
 
+// This function changed by Bongure Client
 void CMenus::OnRender() {
-	if(Client()->State() != IClient::STATE_ONLINE && Client()->State() != IClient::STATE_DEMOPLAYBACK)
-		SetActive(true);
+	if(Client()->State() != IClient::STATE_ONLINE &&
+		Client()->State() != IClient::STATE_DEMOPLAYBACK) SetActive(true);
 
-	if(Client()->State() == IClient::STATE_ONLINE && GameClient()->m_ServerMode == CGameClient::SERVERMODE_PUREMOD)
-	{
+	if(Client()->State() == IClient::STATE_ONLINE &&
+		GameClient()->m_ServerMode == CGameClient::SERVERMODE_PUREMOD) {
+
 		Client()->Disconnect();
 		SetActive(true);
-		PopupMessage(Localize("Disconnected"), Localize("The server is running a non-standard tuning on a pure game type."), Localize("Ok"));
+		PopupMessage(Localize("Disconnected"),
+			Localize("The server is running a non-standard tuning on a pure game type."),
+			Localize("Ok"));
 	}
 
-	if(!IsActive())
-	{
+	if(!IsActive()) {
 		if(Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE))
 		{
 			SetActive(true);
@@ -4072,20 +3934,19 @@ void CMenus::OnRender() {
 	Ui()->StartCheck();
 	UpdateColors();
 
-	const bool UseWindowAspectForUi = GameClient()->IsAspectRatioBlockedByFng() ||
-		g_Config.m_BcCustomAspectRatioApplyMode != 1;
-	Ui()->SetUseGraphicsScreenAspect(!UseWindowAspectForUi);
-
 	Ui()->Update();
+
+	if(IsActive())
+		Ui()->DoBackButton();
 
 	Render();
 
-	if(m_ShowBongureSettings) RenderBongureSettings(*Ui()->Screen());
-
+	if (m_ShowBongureSettings) RenderBongureSettings(*Ui()->Screen());
 	Ui()->RenderPopupMenus();
 
 	if(IsActive())
 	{
+		Ui()->RenderBackButton();
 		RenderTools()->RenderCursor(Ui()->MousePos(), 24.0f);
 	}
 
@@ -4093,18 +3954,11 @@ void CMenus::OnRender() {
 	if(g_Config.m_Debug)
 		Ui()->DebugRender(2.0f, Ui()->Screen()->h - 12.0f);
 
-    if(Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE)) {
-		if (m_ShowBongureSettings) {
-			m_ShowBongureSettings = false;
-		}
-        else {
-			SetActive(false);
-		}
-	}
-	
+	if(Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE))
+		SetActive(false);
+
 	Ui()->FinishCheck();
 	Ui()->ClearHotkeys();
-	Ui()->SetUseGraphicsScreenAspect(true);
 }
 
 void CMenus::UpdateColors()
@@ -4135,153 +3989,9 @@ void CMenus::UpdateColors()
 
 void CMenus::RenderBackground()
 {
-	Graphics()->BlendNormal();
-
 	const float ScreenHeight = 300.0f;
 	const float ScreenWidth = ScreenHeight * Graphics()->ScreenAspect();
-	Graphics()->MapScreen(0.0f, 0.0f, ScreenWidth, ScreenHeight);
-
-	if(g_Config.m_RiUiCustomBg)
-	{
-		Graphics()->TextureClear();
-		Graphics()->QuadsBegin();
-		Graphics()->SetColor4(
-			ColorRGBA(0.05f, 0.07f, 0.11f, 1.0f),
-			ColorRGBA(0.10f, 0.08f, 0.13f, 1.0f),
-			ColorRGBA(0.01f, 0.02f, 0.05f, 1.0f),
-			ColorRGBA(0.04f, 0.03f, 0.08f, 1.0f));
-		const IGraphics::CQuadItem BackgroundQuadItem = IGraphics::CQuadItem(0, 0, ScreenWidth, ScreenHeight);
-		Graphics()->QuadsDrawTL(&BackgroundQuadItem, 1);
-		Graphics()->QuadsEnd();
-
-		const float GlobalTime = Client()->GlobalTime();
-		const float GridSize = 22.0f;
-		const float GridMovement = GlobalTime * 10.0f;
-		const float GridOffset = std::fmod(GridMovement, GridSize);
-		CSkins::CSkinList &SkinList = GameClient()->m_Skins.SkinList();
-		const CSkin *pDefaultSkin = GameClient()->m_Skins.Find("default");
-		std::vector<CSkins::CSkinListEntry *> vpSkinEntries;
-		vpSkinEntries.reserve(SkinList.Skins().size());
-		for(CSkins::CSkinListEntry &SkinEntry : SkinList.Skins())
-		{
-			const CSkins::CSkinContainer *pSkinContainer = SkinEntry.SkinContainer();
-			if(pSkinContainer == nullptr)
-				continue;
-
-			vpSkinEntries.push_back(&SkinEntry);
-		}
-
-		if(!vpSkinEntries.empty())
-		{
-			const CAnimState *pIdleState = CAnimState::GetIdle();
-			const float CellTeeSize = GridSize * 0.68f;
-			const float TeeScreenPadding = CellTeeSize;
-			const vec2 MousePos(
-				Ui()->MousePos().x * ScreenWidth / Ui()->Screen()->w,
-				Ui()->MousePos().y * ScreenHeight / Ui()->Screen()->h);
-			CTeeRenderInfo BaseSkinInfo;
-			BaseSkinInfo.Apply(GameClient()->m_Skins.Find(g_Config.m_ClPlayerSkin));
-			BaseSkinInfo.ApplyColors(g_Config.m_ClPlayerUseCustomColor, g_Config.m_ClPlayerColorBody, g_Config.m_ClPlayerColorFeet);
-			BaseSkinInfo.m_Size = CellTeeSize;
-			const auto HashCell = [](int CellX, int CellY) {
-				unsigned Hash = 2166136261u;
-				Hash = (Hash ^ (unsigned)CellX) * 16777619u;
-				Hash = (Hash ^ (unsigned)CellY) * 16777619u;
-				Hash ^= Hash >> 16;
-				Hash *= 0x7feb352du;
-				Hash ^= Hash >> 15;
-				return Hash;
-			};
-
-			const int StartWorldCellX = (int)std::floor(GridMovement / GridSize) - 1;
-			const int StartWorldCellY = (int)std::floor(-GridMovement / GridSize) - 1;
-			for(int WorldCellY = StartWorldCellY;; WorldCellY++)
-			{
-				const float CenterY = WorldCellY * GridSize + GridSize * 0.5f + GridMovement;
-				if(CenterY >= ScreenHeight + TeeScreenPadding)
-					break;
-				if(CenterY < -TeeScreenPadding)
-					continue;
-
-				for(int WorldCellX = StartWorldCellX;; WorldCellX++)
-				{
-					const float CenterX = WorldCellX * GridSize + GridSize * 0.5f - GridMovement;
-					if(CenterX >= ScreenWidth + TeeScreenPadding)
-						break;
-					if(CenterX < -TeeScreenPadding)
-						continue;
-
-					const unsigned CellHash = HashCell(WorldCellX, WorldCellY);
-					if(CellHash % 11u != 0)
-						continue;
-
-					CSkins::CSkinListEntry *pSkinEntry = vpSkinEntries[CellHash % vpSkinEntries.size()];
-					pSkinEntry->RequestLoad();
-
-					const CSkins::CSkinContainer *pSkinContainer = pSkinEntry->SkinContainer();
-					const CSkin *pSkin = pSkinContainer != nullptr && pSkinContainer->State() == CSkins::CSkinContainer::EState::LOADED ? pSkinContainer->Skin().get() : pDefaultSkin;
-					CTeeRenderInfo TeeInfo = BaseSkinInfo;
-					TeeInfo.Apply(pSkin);
-
-					vec2 TeeOffsetToMid;
-					CRenderTools::GetRenderTeeOffsetToRenderedTee(pIdleState, &TeeInfo, TeeOffsetToMid);
-					const float FloatOffset = sinf(GlobalTime * 0.8f + (float)(CellHash % 360u)) * 0.6f;
-					const vec2 TeePos(CenterX, CenterY + TeeOffsetToMid.y + FloatOffset);
-					const vec2 DeltaPosition = MousePos - TeePos;
-					const float Distance = length(DeltaPosition);
-					const float InteractionDistance = CellTeeSize * 0.45f;
-					const vec2 TeeDir = Distance < InteractionDistance ? normalize(vec2(DeltaPosition.x, maximum(DeltaPosition.y, 0.5f))) : normalize(DeltaPosition);
-					const int TeeEmote = Distance < InteractionDistance ? EMOTE_HAPPY : g_Config.m_ClPlayerDefaultEyes;
-					RenderTools()->RenderTee(pIdleState, &TeeInfo, TeeEmote, TeeDir, TeePos);
-				}
-			}
-		}
-
-		Graphics()->TextureClear();
-		Graphics()->QuadsBegin();
-		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 0.035f);
-		IGraphics::CQuadItem aGridItems[128];
-		const int MaxGridItems = static_cast<int>(std::size(aGridItems));
-		int NumGridItems = 0;
-		for(float x = -GridOffset; x < ScreenWidth + GridSize; x += GridSize)
-		{
-			aGridItems[NumGridItems++] = IGraphics::CQuadItem(x, 0.0f, 1.0f, ScreenHeight);
-			if(NumGridItems == MaxGridItems)
-			{
-				Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
-				NumGridItems = 0;
-			}
-		}
-		for(float y = GridOffset - GridSize; y < ScreenHeight + GridSize; y += GridSize)
-		{
-			aGridItems[NumGridItems++] = IGraphics::CQuadItem(0.0f, y, ScreenWidth, 1.0f);
-			if(NumGridItems == MaxGridItems)
-			{
-				Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
-				NumGridItems = 0;
-			}
-		}
-		if(NumGridItems > 0)
-			Graphics()->QuadsDrawTL(aGridItems, NumGridItems);
-		Graphics()->QuadsEnd();
-
-		Graphics()->TextureClear();
-		Graphics()->QuadsBegin();
-		const IGraphics::CQuadItem TopTintQuad = IGraphics::CQuadItem(0.0f, 0.0f, ScreenWidth, ScreenHeight * 0.28f);
-		Graphics()->SetColor4(
-			ColorRGBA(0.05f, 0.24f, 0.28f, 0.08f),
-			ColorRGBA(0.26f, 0.08f, 0.17f, 0.08f),
-			ColorRGBA(0.05f, 0.24f, 0.28f, 0.0f),
-			ColorRGBA(0.26f, 0.08f, 0.17f, 0.0f));
-		Graphics()->QuadsDrawTL(&TopTintQuad, 1);
-		Graphics()->SetColor(0.01f, 0.02f, 0.05f, 0.20f);
-		const IGraphics::CQuadItem VignetteQuad = IGraphics::CQuadItem(-100.0f, -100.0f, ScreenWidth + 200.0f, ScreenHeight + 200.0f);
-		Graphics()->QuadsDrawTL(&VignetteQuad, 1);
-		Graphics()->QuadsEnd();
-
-		Ui()->MapScreen();
-		return;
-	}
+	Graphics()->MapScreenToSize(ScreenWidth, ScreenHeight);
 
 	// render background color
 	Graphics()->TextureClear();
@@ -4359,17 +4069,13 @@ int CMenus::MenuImageScan(const char *pName, int IsDir, int DirType, void *pUser
 	CImageInfo Info;
 	if(!pSelf->Graphics()->LoadPng(Info, aPath, DirType))
 	{
-		char aError[IO_MAX_PATH_LENGTH + 64];
-		str_format(aError, sizeof(aError), "Failed to load menu image from '%s'", aPath);
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "menus", aError);
+		log_error("menus", "Failed to load menu image from '%s'", aPath);
 		return 0;
 	}
 	if(Info.m_Format != CImageInfo::FORMAT_RGBA)
 	{
 		Info.Free();
-		char aError[IO_MAX_PATH_LENGTH + 64];
-		str_format(aError, sizeof(aError), "Failed to load menu image from '%s': must be an RGBA image", aPath);
-		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_ADDINFO, "menus", aError);
+		log_error("menus", "Failed to load menu image from '%s': must be an RGBA image", aPath);
 		return 0;
 	}
 

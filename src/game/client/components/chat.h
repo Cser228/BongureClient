@@ -15,13 +15,17 @@
 #include <game/client/component.h>
 #include <game/client/lineinput.h>
 #include <game/client/render.h>
+// Bongure Client {
 #include <game/client/ui.h>
+// Bongure Client }
 
+// Bongure Client {
 #include <vector>
 #include <string>
 #include <map>
 #include <mutex>
 #include <queue>
+// Bongure Client }
 
 class CTranslateResponse
 {
@@ -33,20 +37,19 @@ public:
 
 constexpr auto SAVES_FILE = "ddnet-saves.txt";
 
-enum
-{
-	MAX_LINES = 256,
-	MAX_LINE_LENGTH = 256
-};
-
+// This class changed by Bongure Client
 class CChat : public CComponent
 {
 	static constexpr float CHAT_HEIGHT_FULL = 200.0f;
 	static constexpr float CHAT_HEIGHT_MIN = 50.0f;
 	static constexpr float CHAT_FONTSIZE_WIDTH_RATIO = 2.5f;
-	static constexpr int CHAT_HISTORY_LINES_NO_SCROLLBAR = 64;
 
-	CLineInputBuffered<MAX_LINE_LENGTH> m_Input;
+	enum
+	{
+		MAX_LINES = 64,
+	};
+
+	CLineInputBuffered<MAX_CHAT_LENGTH> m_Input;
 	class CLine
 	{
 	public:
@@ -62,7 +65,7 @@ class CChat : public CComponent
 		bool m_Whisper;
 		int m_NameColor;
 		char m_aName[64];
-		char m_aText[MAX_LINE_LENGTH];
+		char m_aText[MAX_CHAT_LENGTH];
 		bool m_Friend;
 		bool m_Highlighted;
 		std::optional<ColorRGBA> m_CustomColor;
@@ -77,12 +80,6 @@ class CChat : public CComponent
 		int m_TimesRepeated;
 
 		std::shared_ptr<CTranslateResponse> m_pTranslateResponse;
-
-		//RClient chat utils
-		float m_BackgroundWidth;
-		time_t m_UnixTimestamp;
-		uint64_t m_Serial;
-		int64_t m_AppearTime;
 	};
 
 	bool m_PrevScoreBoardShowed;
@@ -90,10 +87,6 @@ class CChat : public CComponent
 
 	CLine m_aLines[MAX_LINES];
 	int m_CurrentLine;
-	int m_NumLines = 0;
-
-	//RClient chat utils
-	uint64_t m_NextLineSerial = 0;
 
 	enum
 	{
@@ -121,10 +114,10 @@ class CChat : public CComponent
 	bool m_Show;
 	bool m_CompletionUsed;
 	int m_CompletionChosen;
-	char m_aCompletionBuffer[MAX_LINE_LENGTH];
+	char m_aCompletionBuffer[MAX_CHAT_LENGTH];
 	int m_PlaceholderOffset;
 	int m_PlaceholderLength;
-	static char ms_aDisplayText[MAX_LINE_LENGTH];
+	static char ms_aDisplayText[MAX_CHAT_LENGTH];
 	class CRateablePlayer
 	{
 	public:
@@ -167,39 +160,10 @@ class CChat : public CComponent
 	int64_t m_LastChatSend;
 	int64_t m_aLastSoundPlayed[CHAT_NUM];
 	bool m_IsInputCensored;
-	char m_aCurrentInputText[MAX_LINE_LENGTH];
+	char m_aCurrentInputText[MAX_CHAT_LENGTH];
 	bool m_EditingNewLine;
-	vec2 m_LastMousePos{};
-	bool m_HasLastMousePos = false;
 
 	bool m_ServerSupportsCommandInfo;
-
-	// RClient chat utls
-	bool m_LastCursorLeftPressed = false;
-	int m_MessageScrollOffset = 0;
-	bool m_ScrollbarDragging = false;
-	float m_ScrollbarDragOffset = 0.0f;
-	class CChatLinePopupContext : public SPopupMenuId
-	{
-	public:
-		static constexpr float POPUP_WIDTH = 110.0f;
-		static constexpr float POPUP_OUTER_MARGIN = 10.0f;
-		static constexpr float POPUP_INNER_MARGIN = 5.0f;
-		static constexpr float ITEM_SPACING = 2.0f;
-		static constexpr float BUTTON_SIZE = 17.5f;
-		static constexpr float FONT_SIZE = 12.0f;
-
-		CChat *m_pChat = nullptr;
-		CButtonContainer m_CopyButton;
-		CButtonContainer m_CopyMsgButton;
-		CButtonContainer m_ReplyButton;
-		CButtonContainer m_WhisperButton;
-		CButtonContainer m_CopyFullButton;
-		int m_LineIndex = -1;
-		uint64_t m_LineSerial = 0;
-
-		static CUi::EPopupMenuFunctionResult Render(void *pContext, CUIRect View, bool Active);
-	} m_LinePopupContext;
 
 	static void ConSay(IConsole::IResult *pResult, void *pUserData);
 	static void ConSayTeam(IConsole::IResult *pResult, void *pUserData);
@@ -212,20 +176,15 @@ class CChat : public CComponent
 	static void ConchainChatFontSize(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	static void ConchainChatWidth(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 
+	bool LineShouldHighlight(const char *pLine, const char *pName);
 	void StoreSave(const char *pText);
-	void SetUiMousePos(vec2 Pos);
-	const CCommand *FindCommand(const char *pName) const;
-	bool TryTranslateCommand(const char *pLine, char *pLineBuf, size_t LineBufSize) const;
 
 	friend class CBindChat;
 	friend class CTranslate;
 	friend class CTClient;
-	friend class CChatBubbles;
 
 public:
-	std::mutex m_TranslateMutex;
-	std::queue<std::string> m_vPendingTranslations;
-
+	// Bongure Client {
 	void LoadSmilesDB();
 	std::map<std::string, std::string> smile_db;
 	bool smile_window_open;
@@ -233,11 +192,7 @@ public:
 	float smile_texts_y;
 	std::string smile_show;
 	unsigned short smile_window_offset;
-
-	// Private helper method for filtering text
-	const char *FilterText(const char *pMessage, int ClientId = -2, bool IsChat = false);
-
-	bool LineShouldHighlight(const char *pLine, const char *pName); //Rclient
+	// Bongure Client }
 
 	CChat();
 	int Sizeof() const override { return sizeof(*this); }
@@ -261,7 +216,6 @@ public:
 	void OnRelease() override;
 	void OnMessage(int MsgType, void *pRawMsg) override;
 	bool OnInput(const IInput::CEvent &Event) override;
-	bool OnCursorMove(float x, float y, IInput::ECursorType CursorType) override;
 	void OnInit() override;
 
 	void RebuildChat();
@@ -269,10 +223,6 @@ public:
 
 	void EnsureCoherentFontSize() const;
 	void EnsureCoherentWidth() const;
-	int HistoryLineLimit() const { return g_Config.m_RiChatScrollbar ? MAX_LINES : CHAT_HISTORY_LINES_NO_SCROLLBAR; }
-	int RenderHistoryLimit() const { return HasMouseCursor() && g_Config.m_RiChatScrollbar ? MAX_LINES : CHAT_HISTORY_LINES_NO_SCROLLBAR; }
-	bool HasMouseCursor() const { return IsActive() && g_Config.m_RiChatShowCursor; }
-	vec2 MouseCursorPos() const;
 
 	float FontSize() const { return g_Config.m_ClChatFontSize / 10.0f; }
 	float MessagePaddingX() const { return FontSize() * (5 / 6.f); }
@@ -296,34 +246,5 @@ public:
 	//
 	// It uses team or public chat depending on m_Mode.
 	void SendChatQueued(const char *pLine);
-
-	//Rcleint
-	bool LineHighlighted(int ClientId, const char *pLine);
-private:
-	struct CAutoMuteTracker
-	{
-		char m_aName[MAX_NAME_LENGTH];
-		char m_aLastMessage[512];
-		int m_RepeatCount;
-		bool m_Muted;
-		int64_t m_FirstMsgTime;
-
-		void Reset()
-		{
-			m_aName[0] = '\0';
-			m_aLastMessage[0] = '\0';
-			m_RepeatCount = 0;
-			m_Muted = false;
-			m_FirstMsgTime = 0;
-		}
-	};
-
-	CAutoMuteTracker m_aAutoMuteTrackers[MAX_CLIENTS];
-
-	void CheckAutoMute(int ClientId, const char *pMessage);
-	void ResetAutoMuteTrackers();
-
-	static void ConAutoMuteReset(IConsole::IResult *pResult, void *pUserData);
-	static void ConTranslate(IConsole::IResult *pResult, void *pUserData);
 };
 #endif

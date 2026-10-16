@@ -6,6 +6,7 @@
 #include "render.h"
 
 #include <base/color.h>
+#include <base/types.h>
 #include <base/vmath.h>
 
 #include <engine/client.h>
@@ -67,20 +68,8 @@
 #include "components/statboard.h"
 
 //Bongure Client
-#include "components/bongureclient/voice_assistant.h"
-#include "components/bongureclient/cloud_input.h"
-
-//Rclient
-#include "components/rclient/adminpanel.h"
-#include "components/rclient/bindwheel.h"
-#include "components/rclient/chat_bubbles.h"
-#include "components/rclient/edgehelper.h"
-#include "components/rclient/menus_rclient_clickgui.h"
-#include "components/rclient/music_island.h"
-#include "components/rclient/rclient.h"
-#include "components/rclient/rclient_indicator.h"
-#include "components/rclient/playermenu.h"
-#include "components/rclient/settingsprofiles.h"
+#include "components/bongure_client/voice_assistant.h"
+#include "components/bongure_client/cloud_input.h"
 
 //Tater
 #include "components/tclient/bg_draw.h"
@@ -160,6 +149,14 @@ public:
 	bool m_DDRaceTeam;
 
 	bool m_PredictEvents;
+
+	bool m_OldLaser;
+
+	// zero if the server does not send them
+	int m_MinTeamSize;
+	int m_MaxTeamSize;
+
+	int m_NumDDRaceTeams;
 };
 
 class CSnapEntities
@@ -176,11 +173,11 @@ enum class EClientIdFormat
 	INDENT_FORCE, // for rendering settings preview
 };
 
+// This class changed by Bongure Client
 class CGameClient : public IGameClient
 {
 public:
 	friend class CTClient;
-	friend class CRClient;
 
 	// all components
 	CInfoMessages m_InfoMessages;
@@ -235,7 +232,6 @@ public:
 
 	// TClient Components
 	CSkinProfiles m_SkinProfiles;
-	CRushieSettingsProfiles m_RushieSettingsProfiles;
 	CStatusBar m_StatusBar;
 	CBindChat m_BindChat;
 	CBindWheel m_BindWheel;
@@ -252,28 +248,16 @@ public:
 	CScripting m_Scripting;
 	CMod m_Mod;
 	CCustomCommunities m_CustomCommunities;
-	CMovingTiles m_MovingTilesBackground = CMovingTiles{ false };
-	CMovingTiles m_MovingTilesForeground = CMovingTiles{ true };
+	CMovingTiles m_MovingTilesBackground = CMovingTiles{false};
+	CMovingTiles m_MovingTilesForeground = CMovingTiles{true};
 
-	// RClient Components
-	CChatBubbles m_ChatBubbles;
-	CRClient m_RClient;
-	CBindWheelSpec m_BindWheelSpec;
-	CAdminPanel m_AdminPanelRi;
-	CEdgeHelper m_EdgeHelper;
-	CMusicIsland m_MusicIsland;
-	CRClientIndicator m_RClientIndicator;
-	CPlayerMenu m_RiPlayerMenu;
-	
-	//Bongure Components
+	// Bongure Client {
+	// Bongure Components
 	CVoiceAssistant m_VoiceAssistant;
 	CCloudInput m_CloudInput;
-	CMenusRClientClickGui m_RClientClickGui;
+	// Bongure Client }
 
 private:
-	// Bongure Client
-	bool EdgeHelperPrevState;
-
 	std::vector<class CComponent *> m_vpAll;
 	std::vector<class CComponent *> m_vpInput;
 	CNetObjHandler m_NetObjHandler;
@@ -328,8 +312,9 @@ private:
 	static void ConKill(IConsole::IResult *pResult, void *pUserData);
 	static void ConReadyChange7(IConsole::IResult *pResult, void *pUserData);
 
-	// Bongure client
+	// Bongure Client {
 	void RenderEyeComfortOverlay();
+	// Bongure Client }
 
 	static void ConchainLanguageUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	static void ConchainSpecialInfoupdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
@@ -415,8 +400,15 @@ public:
 
 	vec2 m_LocalCharacterPos;
 
-	// predicted players
+	/**
+	 * Our prediction for the local character at tick
+	 * `IClient::PredGameTick() - 1`.
+	 */
 	CCharacterCore m_PredictedPrevChar;
+	/**
+	 * Our prediction for the local character at tick
+	 * `IClient::PredGameTick()`.
+	 */
 	CCharacterCore m_PredictedChar;
 
 	// snap pointers
@@ -443,8 +435,6 @@ public:
 		const CNetObj_PlayerInfo *m_apInfoByName[MAX_CLIENTS];
 		const CNetObj_PlayerInfo *m_apInfoByDDTeamScore[MAX_CLIENTS];
 		const CNetObj_PlayerInfo *m_apInfoByDDTeamName[MAX_CLIENTS];
-		// RClient
-		const CNetObj_PlayerInfo *m_apInfoByIdTeams[MAX_CLIENTS];
 
 		int m_LocalClientId;
 		int m_NumPlayers;
@@ -535,6 +525,9 @@ public:
 
 		char m_aName[MAX_NAME_LENGTH];
 		char m_aClan[MAX_CLAN_LENGTH];
+		/**
+		 * Country code in ISO 3166-1 numeric.
+		 */
 		int m_Country;
 		char m_aSkinName[MAX_SKIN_LENGTH];
 		int m_Team;
@@ -684,6 +677,8 @@ public:
 	CRenderTools m_RenderTools;
 	CRenderMap m_RenderMap;
 
+	bool m_BackButtonHandledKeyBind = false;
+
 	void OnReset();
 
 	size_t ComponentCount() const { return m_vpAll.size(); }
@@ -700,12 +695,12 @@ public:
 	template<typename T>
 	void ApplySkin7InfoFromGameMsg(const T *pMsg, int ClientId, int Conn);
 	void ApplySkin7InfoFromSnapObj(const protocol7::CNetObj_De_ClientInfo *pObj, int ClientId) override;
-	int OnDemoRecSnap7(class CSnapshot *pFrom, class CSnapshot *pTo, int Conn) override;
+	int OnDemoRecSnap7(CSnapshot *pFrom, CSnapshotBuffer *pTo, int Conn) override;
 	void *TranslateGameMsg(int *pMsgId, CUnpacker *pUnpacker, int Conn);
-	int TranslateSnap(CSnapshot *pSnapDstSix, CSnapshot *pSnapSrcSeven, int Conn, bool Dummy) override;
+	int TranslateSnap(CSnapshotBuffer *pSnapDstSix, CSnapshot *pSnapSrcSeven, int Conn, bool Dummy) override;
 	void OnMessage(int MsgId, CUnpacker *pUnpacker, int Conn, bool Dummy) override;
 	void InvalidateSnapshot() override;
-	void OnNewSnapshot() override;
+	void OnNewSnapshot(bool DummySwapped) override;
 	void OnPredict() override;
 	void OnActivateEditor() override;
 	void OnDummySwap() override;
@@ -754,19 +749,20 @@ public:
 	void SendSkinChange7(bool Dummy);
 	// Returns true if the requested skin change got applied by the server
 	bool GotWantedSkin7(bool Dummy);
-	void SendInfo(bool Start) override;
+	void SendInfo(bool Start);
 	void SendDummyInfo(bool Start) override;
 	void SendKill() const;
-	void SendReadyChange7();
+	void SendReadyChange7(); // NOLINT(readability-make-member-function-const)
 
 	void ApplyPreInputs(int Tick, bool Direct, CGameWorld &GameWorld);
 	bool GetDummyFastInput(CNetObj_PlayerInput &DummyFastInput, const CNetObj_PlayerInput *pDummyInputData, const class CCharacter *pDummyChar, int LocalTee, int DummyTee) const;
 
 	int m_aNextChangeInfo[NUM_DUMMIES];
 
-	// Bongure Client
+	// Bongure Client {
 	bool IsCloudInputMode() const;
 	bool IsFastInputLocalClient(int ClientId) const;
+	// Bongure Client }
 
 	// DDRace
 
@@ -778,21 +774,27 @@ public:
 	bool m_ReceivedDDNetPlayerFinishTimes;
 	bool m_ReceivedDDNetPlayerFinishTimesMillis;
 
-	class CTeamsCore m_Teams;
+	CTeamsCore m_Teams;
 
 	int IntersectCharacter(vec2 HookPos, vec2 NewPos, vec2 &NewPos2, int OwnId, vec2 *pPlayerPosition = nullptr);
 
 	int LastRaceTick() const;
 	int CurrentRaceTime() const;
 
-	bool IsTeamPlay() const { return m_Snap.m_pGameInfoObj && m_Snap.m_pGameInfoObj->m_GameFlags & GAMEFLAG_TEAMS; }
+	bool IsTeamPlay() const;
+	int MinTeamSize() const;
+	int MaxTeamSize() const;
+	bool IsWorldPaused() const;
+	bool IsDemoPlaybackPaused() const;
+	float GetAnimationPlaybackSpeed() const;
 
-	bool AntiPingPlayers() const { return g_Config.m_ClAntiPing && g_Config.m_ClAntiPingPlayers && !m_Snap.m_SpecInfo.m_Active && Client()->State() != IClient::STATE_DEMOPLAYBACK; }
-	bool AntiPingGrenade() const { return g_Config.m_ClAntiPing && g_Config.m_ClAntiPingGrenade && !m_Snap.m_SpecInfo.m_Active && Client()->State() != IClient::STATE_DEMOPLAYBACK; }
-	bool AntiPingWeapons() const { return g_Config.m_ClAntiPing && g_Config.m_ClAntiPingWeapons && !m_Snap.m_SpecInfo.m_Active && Client()->State() != IClient::STATE_DEMOPLAYBACK; }
-	bool AntiPingGunfire() const { return AntiPingGrenade() && AntiPingWeapons() && g_Config.m_ClAntiPingGunfire; }
+	int AntiPingPlayers() const;
+	bool AntiPingGrenade() const;
+	bool AntiPingWeapons() const;
+	bool AntiPingGunfire() const;
 	bool Predict() const;
-	bool PredictDummy() const { return g_Config.m_ClPredictDummy && Client()->DummyConnected() && m_Snap.m_LocalClientId >= 0 && m_aLocalIds[!g_Config.m_ClDummy] >= 0 && !m_aClients[m_aLocalIds[!g_Config.m_ClDummy]].m_Paused; }
+	bool PredictDummy() const;
+
 	const CTuningParams *GetTuning(int i) const { return &m_aTuningList[i]; }
 	ColorRGBA GetDDTeamColor(int DDTeam, float Lightness = 0.5f) const;
 	void FormatClientId(int ClientId, char (&aClientId)[16], EClientIdFormat Format) const;
@@ -807,9 +809,6 @@ public:
 	// TClient
 	CGameWorld m_ExtraPredictedWorld;
 	CGameWorld m_PredSmoothingWorld;
-
-	// RClient
-	void RclientOnDummyChange(bool DummyConnected) override;
 
 	std::vector<SSwitchers> &Switchers() { return m_GameWorld.m_Core.m_vSwitchers; }
 	std::vector<SSwitchers> &PredSwitchers() { return m_PredictedWorld.m_Core.m_vSwitchers; }
@@ -830,7 +829,6 @@ public:
 	void LoadEmoticonsSkin(const char *pPath, bool AsDir = false);
 	void LoadParticlesSkin(const char *pPath, bool AsDir = false);
 	void LoadHudSkin(const char *pPath, bool AsDir = false);
-	void LoadRiHudSkin(const char *pPath, bool AsDir = false);
 	void LoadExtrasSkin(const char *pPath, bool AsDir = false);
 
 	struct SClientGameSkin
@@ -984,15 +982,6 @@ public:
 	SClientHudSkin m_HudSkin;
 	bool m_HudSkinLoaded = false;
 
-	struct SClientRiHudSkin
-	{
-		IGraphics::CTextureHandle m_SpriteHudDummyResetOnSwitch;
-		IGraphics::CTextureHandle m_SpriteHudDummyControl;
-	};
-
-	SClientRiHudSkin m_RiHudSkin;
-	bool m_RiHudSkinLoaded = false;
-
 	struct SClientExtrasSkin
 	{
 		IGraphics::CTextureHandle m_SpriteParticleSnowflake;
@@ -1034,6 +1023,19 @@ private:
 	int m_aShowOthers[NUM_DUMMIES];
 	int m_aEnableSpectatorCount[NUM_DUMMIES]; // current setting as sent to the server, -1 if not yet sent
 
+	class CImageAsset
+	{
+	public:
+		bool IsLoaded() const { return m_ImageInfo.m_pData != nullptr; }
+
+		char m_aPath[IO_MAX_PATH_LENGTH];
+		bool m_IsDefault;
+		CImageInfo m_ImageInfo;
+		std::optional<CImageInfo> m_FallbackImageInfo;
+	};
+
+	CImageAsset LoadAssetFromPath(const char *pPath, bool AsDir, int AssetId, const char *pDirectory) const;
+
 	std::vector<std::shared_ptr<CManagedTeeRenderInfo>> m_vpManagedTeeRenderInfos;
 	void UpdateManagedTeeRenderInfos();
 
@@ -1042,6 +1044,8 @@ private:
 	void UpdateSpectatorCursor();
 	void UpdateRenderedCharacters();
 	void HandlePredictedEvents(int Tick);
+
+	void OnInput(const IInput::CEvent &Event);
 
 	int m_aLastUpdateTick[MAX_CLIENTS] = {0};
 	void DetectStrongHook();
@@ -1064,10 +1068,10 @@ private:
 	float m_LastFollowFactor;
 	bool m_LastDummyConnected;
 
+	bool InitMultiView(int Team);
 	void HandleMultiView();
 	bool IsMultiViewIdSet();
 	void CleanMultiViewIds();
-	bool InitMultiView(int Team);
 	float CalculateMultiViewMultiplier(vec2 TargetPos);
 	float CalculateMultiViewZoom(vec2 MinPos, vec2 MaxPos, float Vel);
 	float MapValue(float MaxValue, float MinValue, float MaxRange, float MinRange, float Value);
@@ -1091,9 +1095,12 @@ private:
 	void StoreSave(const char *pTeamMembers, const char *pGeneratedCode) const;
 
 public:
-	// Bongure Client
+	// Bongure Client {
 	int m_aCloudSmoothTick[2] = {};
 	float m_aCloudSmoothIntraTick[2] = {};
+
+	bool IsAspectRatioBlockedByFng() const;
+	// Bongure Client }
 
 	// TClient
 	int m_SmoothTick = 0;
@@ -1101,8 +1108,6 @@ public:
 	bool CheckNewInput() override;
 	std::optional<CServerInfo> m_ConnectServerInfo = std::nullopt;
 	void SetConnectInfo(const NETADDR *pAddress) override;
-
-	bool IsAspectRatioBlockedByFng() const;
 };
 
 ColorRGBA CalculateNameColor(ColorHSLA TextColorHSL);

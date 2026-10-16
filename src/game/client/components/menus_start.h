@@ -6,17 +6,23 @@
 #include <game/client/component.h>
 #include <game/client/ui_rect.h>
 
+// This class changed by Bongure Client
 class CMenusStart : public CComponentInterfaces
 {
 public:
 	void RenderStartMenu(CUIRect MainView);
+
+	// Bongure Client {
 	void RenderBongureclientStartMenu(CUIRect MainView);
 	void RenderStandardStartMenu(CUIRect MainView);
+	// Bongure Client }
 
 private:
 	bool CheckHotKey(int Key) const;
 
+	// Bongure Client {
 	char m_aTerminalInput[256] = {0};
+	// Bongure Client }
 };
 
 #endif

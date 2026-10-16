@@ -1,0 +1,72 @@
+# This file will be configured to contain variables for CPack. These variables
+# should be set in the CMake list file of the project before CPack module is
+# included. The list of available CPACK_xxx variables and their associated
+# documentation may be obtained using
+#  cpack --help-variable-list
+#
+# Some variables are common to all generators (e.g. CPACK_PACKAGE_NAME)
+# and some are specific to a generator
+# (e.g. CPACK_NSIS_EXTRA_INSTALL_COMMANDS). The generator specific variables
+# usually begin with CPACK_<GENNAME>_xxxx.
+
+
+set(CPACK_ARCHIVE_COMPONENT_INSTALL "ON")
+set(CPACK_ARCHIVE_GID "-1")
+set(CPACK_ARCHIVE_PORTABLE_FILE_NAME "TClient-10.9-linux_x86_64")
+set(CPACK_ARCHIVE_UID "-1")
+set(CPACK_BUILD_SOURCE_DIRS "/home/cser228/programming/BongureClientFromTater;/home/cser228/programming/BongureClientFromTater/build")
+set(CPACK_CMAKE_GENERATOR "Ninja")
+set(CPACK_COMPONENTS_ALL "portable")
+set(CPACK_COMPONENTS_ALL_SET_BY_USER "TRUE")
+set(CPACK_COMPONENT_UNSPECIFIED_HIDDEN "TRUE")
+set(CPACK_COMPONENT_UNSPECIFIED_REQUIRED "TRUE")
+set(CPACK_DEFAULT_PACKAGE_DESCRIPTION_FILE "/usr/share/cmake/Templates/CPack.GenericDescription.txt")
+set(CPACK_DEFAULT_PACKAGE_DESCRIPTION_SUMMARY "TClient built using CMake")
+set(CPACK_GENERATOR "TGZ;TXZ")
+set(CPACK_INNOSETUP_ARCHITECTURE "x64")
+set(CPACK_INSTALL_CMAKE_PROJECTS "/home/cser228/programming/BongureClientFromTater/build;TClient;ALL;/")
+set(CPACK_INSTALL_PREFIX "/usr/local")
+set(CPACK_MODULE_PATH "/home/cser228/programming/BongureClientFromTater/cmake")
+set(CPACK_NSIS_DISPLAY_NAME "TClient 10.9")
+set(CPACK_NSIS_INSTALLER_ICON_CODE "")
+set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "")
+set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
+set(CPACK_NSIS_PACKAGE_NAME "TClient 10.9")
+set(CPACK_NSIS_UNINSTALL_NAME "Uninstall")
+set(CPACK_OBJCOPY_EXECUTABLE "/usr/bin/objcopy")
+set(CPACK_OBJDUMP_EXECUTABLE "/usr/bin/objdump")
+set(CPACK_OUTPUT_CONFIG_FILE "/home/cser228/programming/BongureClientFromTater/build/CPackConfig.cmake")
+set(CPACK_PACKAGE_DEFAULT_LOCATION "/")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "/usr/share/cmake/Templates/CPack.GenericDescription.txt")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TClient built using CMake")
+set(CPACK_PACKAGE_FILE_NAME "TClient-10.9-linux_x86_64")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "TClient 10.9")
+set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "TClient 10.9")
+set(CPACK_PACKAGE_NAME "TClient")
+set(CPACK_PACKAGE_RELOCATABLE "true")
+set(CPACK_PACKAGE_VENDOR "Humanity")
+set(CPACK_PACKAGE_VERSION "10.9")
+set(CPACK_PACKAGE_VERSION_MAJOR "10")
+set(CPACK_PACKAGE_VERSION_MINOR "9")
+set(CPACK_READELF_EXECUTABLE "/usr/bin/readelf")
+set(CPACK_RESOURCE_FILE_LICENSE "/usr/share/cmake/Templates/CPack.GenericLicense.txt")
+set(CPACK_RESOURCE_FILE_README "/usr/share/cmake/Templates/CPack.GenericDescription.txt")
+set(CPACK_RESOURCE_FILE_WELCOME "/usr/share/cmake/Templates/CPack.GenericWelcome.txt")
+set(CPACK_SET_DESTDIR "OFF")
+set(CPACK_SOURCE_GENERATOR "ZIP;TGZ;TBZ2;TXZ")
+set(CPACK_SOURCE_IGNORE_FILES "\\.pyc$;/\\.git;/__pycache__/;/home/cser228/programming/BongureClientFromTater/([^CRcdddllmosssuv]|$);/home/cser228/programming/BongureClientFromTater/C([^M]|$);/home/cser228/programming/BongureClientFromTater/R([^E]|$);/home/cser228/programming/BongureClientFromTater/c([^m]|$);/home/cser228/programming/BongureClientFromTater/d([^aad]|$);/home/cser228/programming/BongureClientFromTater/l([^is]|$);/home/cser228/programming/BongureClientFromTater/m([^e]|$);/home/cser228/programming/BongureClientFromTater/o([^t]|$);/home/cser228/programming/BongureClientFromTater/s([^crt]|$);/home/cser228/programming/BongureClientFromTater/u([^b]|$);/home/cser228/programming/BongureClientFromTater/v([^a]|$);/home/cser228/programming/BongureClientFromTater/CM([^a]|$);/home/cser228/programming/BongureClientFromTater/RE([^A]|$);/home/cser228/programming/BongureClientFromTater/cm([^a]|$);/home/cser228/programming/BongureClientFromTater/da([^tt]|$);/home/cser228/programming/BongureClientFromTater/dd([^n]|$);/home/cser228/programming/BongureClientFromTater/li([^c]|$);/home/cser228/programming/BongureClientFromTater/ls([^a]|$);/home/cser228/programming/BongureClientFromTater/me([^m]|$);/home/cser228/programming/BongureClientFromTater/ot([^h]|$);/home/cser228/programming/BongureClientFromTater/sc([^r]|$);/home/cser228/programming/BongureClientFromTater/sr([^c]|$);/home/cser228/programming/BongureClientFromTater/st([^o]|$);/home/cser228/programming/BongureClientFromTater/ub([^s]|$);/home/cser228/programming/BongureClientFromTater/va([^l]|$);/home/cser228/programming/BongureClientFromTater/CMa([^k]|$);/home/cser228/programming/BongureClientFromTater/REA([^D]|$);/home/cser228/programming/BongureClientFromTater/cma([^k]|$);/home/cser228/programming/BongureClientFromTater/dat([^aa]|$);/home/cser228/programming/BongureClientFromTater/ddn([^e]|$);/home/cser228/programming/BongureClientFromTater/lic([^e]|$);/home/cser228/programming/BongureClientFromTater/lsa([^n]|$);/home/cser228/programming/BongureClientFromTater/mem([^c]|$);/home/cser228/programming/BongureClientFromTater/oth([^e]|$);/home/cser228/programming/BongureClientFromTater/scr([^i]|$);/home/cser228/programming/BongureClientFromTater/src([^/]|$);/home/cser228/programming/BongureClientFromTater/sto([^r]|$);/home/cser228/programming/BongureClientFromTater/ubs([^a]|$);/home/cser228/programming/BongureClientFromTater/val([^g]|$);/home/cser228/programming/BongureClientFromTater/CMak([^e]|$);/home/cser228/programming/BongureClientFromTater/READ([^M]|$);/home/cser228/programming/BongureClientFromTater/cmak([^e]|$);/home/cser228/programming/BongureClientFromTater/data([^/s]|$);/home/cser228/programming/BongureClientFromTater/ddne([^t]|$);/home/cser228/programming/BongureClientFromTater/lice([^n]|$);/home/cser228/programming/BongureClientFromTater/lsan([^.]|$);/home/cser228/programming/BongureClientFromTater/memc([^h]|$);/home/cser228/programming/BongureClientFromTater/othe([^r]|$);/home/cser228/programming/BongureClientFromTater/scri([^p]|$);/home/cser228/programming/BongureClientFromTater/stor([^a]|$);/home/cser228/programming/BongureClientFromTater/ubsa([^n]|$);/home/cser228/programming/BongureClientFromTater/valg([^r]|$);/home/cser228/programming/BongureClientFromTater/CMake([^L]|$);/home/cser228/programming/BongureClientFromTater/READM([^E]|$);/home/cser228/programming/BongureClientFromTater/cmake([^/]|$);/home/cser228/programming/BongureClientFromTater/datas([^r]|$);/home/cser228/programming/BongureClientFromTater/ddnet([^-]|$);/home/cser228/programming/BongureClientFromTater/licen([^s]|$);/home/cser228/programming/BongureClientFromTater/lsan\\.([^s]|$);/home/cser228/programming/BongureClientFromTater/memch([^e]|$);/home/cser228/programming/BongureClientFromTater/other([^/]|$);/home/cser228/programming/BongureClientFromTater/scrip([^t]|$);/home/cser228/programming/BongureClientFromTater/stora([^g]|$);/home/cser228/programming/BongureClientFromTater/ubsan([^.]|$);/home/cser228/programming/BongureClientFromTater/valgr([^i]|$);/home/cser228/programming/BongureClientFromTater/CMakeL([^i]|$);/home/cser228/programming/BongureClientFromTater/README([^.]|$);/home/cser228/programming/BongureClientFromTater/datasr([^c]|$);/home/cser228/programming/BongureClientFromTater/ddnet-([^l]|$);/home/cser228/programming/BongureClientFromTater/licens([^e]|$);/home/cser228/programming/BongureClientFromTater/lsan\\.s([^u]|$);/home/cser228/programming/BongureClientFromTater/memche([^c]|$);/home/cser228/programming/BongureClientFromTater/script([^s]|$);/home/cser228/programming/BongureClientFromTater/storag([^e]|$);/home/cser228/programming/BongureClientFromTater/ubsan\\.([^s]|$);/home/cser228/programming/BongureClientFromTater/valgri([^n]|$);/home/cser228/programming/BongureClientFromTater/CMakeLi([^s]|$);/home/cser228/programming/BongureClientFromTater/README\\.([^m]|$);/home/cser228/programming/BongureClientFromTater/datasrc([^/]|$);/home/cser228/programming/BongureClientFromTater/ddnet-l([^i]|$);/home/cser228/programming/BongureClientFromTater/license([^.]|$);/home/cser228/programming/BongureClientFromTater/lsan\\.su([^p]|$);/home/cser228/programming/BongureClientFromTater/memchec([^k]|$);/home/cser228/programming/BongureClientFromTater/scripts([^/]|$);/home/cser228/programming/BongureClientFromTater/storage([^.]|$);/home/cser228/programming/BongureClientFromTater/ubsan\\.s([^u]|$);/home/cser228/programming/BongureClientFromTater/valgrin([^d]|$);/home/cser228/programming/BongureClientFromTater/CMakeLis([^t]|$);/home/cser228/programming/BongureClientFromTater/README\\.m([^d]|$);/home/cser228/programming/BongureClientFromTater/ddnet-li([^b]|$);/home/cser228/programming/BongureClientFromTater/license\\.([^t]|$);/home/cser228/programming/BongureClientFromTater/lsan\\.sup([^p]|$);/home/cser228/programming/BongureClientFromTater/memcheck([^.]|$);/home/cser228/programming/BongureClientFromTater/storage\\.([^c]|$);/home/cser228/programming/BongureClientFromTater/ubsan\\.su([^p]|$);/home/cser228/programming/BongureClientFromTater/valgrind([^.]|$);/home/cser228/programming/BongureClientFromTater/CMakeList([^s]|$);/home/cser228/programming/BongureClientFromTater/ddnet-lib([^s]|$);/home/cser228/programming/BongureClientFromTater/license\\.t([^x]|$);/home/cser228/programming/BongureClientFromTater/memcheck\\.([^s]|$);/home/cser228/programming/BongureClientFromTater/storage\\.c([^f]|$);/home/cser228/programming/BongureClientFromTater/ubsan\\.sup([^p]|$);/home/cser228/programming/BongureClientFromTater/valgrind\\.([^s]|$);/home/cser228/programming/BongureClientFromTater/CMakeLists([^.]|$);/home/cser228/programming/BongureClientFromTater/ddnet-libs([^/]|$);/home/cser228/programming/BongureClientFromTater/license\\.tx([^t]|$);/home/cser228/programming/BongureClientFromTater/memcheck\\.s([^u]|$);/home/cser228/programming/BongureClientFromTater/storage\\.cf([^g]|$);/home/cser228/programming/BongureClientFromTater/valgrind\\.s([^u]|$);/home/cser228/programming/BongureClientFromTater/CMakeLists\\.([^t]|$);/home/cser228/programming/BongureClientFromTater/memcheck\\.su([^p]|$);/home/cser228/programming/BongureClientFromTater/valgrind\\.su([^p]|$);/home/cser228/programming/BongureClientFromTater/CMakeLists\\.t([^x]|$);/home/cser228/programming/BongureClientFromTater/memcheck\\.sup([^p]|$);/home/cser228/programming/BongureClientFromTater/valgrind\\.sup([^p]|$);/home/cser228/programming/BongureClientFromTater/CMakeLists\\.tx([^t]|$)")
+set(CPACK_SOURCE_OUTPUT_CONFIG_FILE "/home/cser228/programming/BongureClientFromTater/build/CPackSourceConfig.cmake")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "TClient-10.9-src")
+set(CPACK_STRIP_FILES "TRUE")
+set(CPACK_SYSTEM_NAME "linux_x86_64")
+set(CPACK_THREADS "1")
+set(CPACK_TOPLEVEL_TAG "linux_x86_64")
+set(CPACK_WIX_SIZEOF_VOID_P "8")
+
+if(NOT CPACK_PROPERTIES_FILE)
+  set(CPACK_PROPERTIES_FILE "/home/cser228/programming/BongureClientFromTater/build/CPackProperties.cmake")
+endif()
+
+if(EXISTS ${CPACK_PROPERTIES_FILE})
+  include(${CPACK_PROPERTIES_FILE})
+endif()

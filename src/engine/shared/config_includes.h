@@ -11,8 +11,7 @@ SET_CONFIG_DOMAIN(ConfigDomain::DDNET)
 SET_CONFIG_DOMAIN(ConfigDomain::TCLIENT)
 #include "config_variables_tclient.h"
 
-SET_CONFIG_DOMAIN(ConfigDomain::RCLIENT)
-#include "config_variables_rclient.h"
-
+// Bongure Client {
 SET_CONFIG_DOMAIN(ConfigDomain::BONGURECLIENT)
-#include "config_variables_bongureclient.h"
+#include "config_variables_bongure_client.h"
+// Bongure Client }

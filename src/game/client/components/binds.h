@@ -8,7 +8,6 @@
 
 #include <game/client/component.h>
 
-#include <string>
 #include <vector>
 
 class IConfigManager;
@@ -78,7 +77,6 @@ public:
 	void UnbindAll();
 	const char *Get(int KeyId, int ModifierCombination) const;
 	const char *Get(const CBindSlot &BindSlot) const;
-	void GetBindCommands(std::vector<std::string> &vCommands) const;
 	void GetKey(const char *pBindStr, char *pBuf, size_t BufSize) const;
 	static int GetModifierMask(IInput *pInput);
 	static int GetModifierMaskOfKey(int Key);

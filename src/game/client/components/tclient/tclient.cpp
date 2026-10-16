@@ -210,8 +210,8 @@ void CTClient::OnMessage(int MsgType, void *pRawMsg)
 			char aReason[VOTE_REASON_LENGTH];
 			str_copy(aDescription, pMsg->m_pDescription);
 			str_copy(aReason, pMsg->m_pReason);
-			bool KickVote = str_startswith(aDescription, "Kick ") != 0 ? true : false;
-			bool SpecVote = str_startswith(aDescription, "Pause ") != 0 ? true : false;
+			bool KickVote = str_startswith(aDescription, "Kick ") != nullptr ? true : false;
+			bool SpecVote = str_startswith(aDescription, "Pause ") != nullptr ? true : false;
 			bool SettingVote = !KickVote && !SpecVote;
 			bool RandomMapVote = SettingVote && str_find_nocase(aDescription, "random");
 			bool MapCoolDown = SettingVote && (str_find_nocase(aDescription, "change map") || str_find_nocase(aDescription, "no not change map"));
@@ -310,74 +310,6 @@ bool CTClient::ChatDoSpecId(const char *pInput)
 		return true;
 
 	SpecId(ClientId);
-	return true;
-}
-
-bool CTClient::ChatDoUnfinishSay(const char *pInput)
-{
-	if(str_comp_nocase(pInput, "/unfinishsay") != 0 &&
-	   str_comp_nocase(pInput, ".unfinishsay") != 0)
-		return false;
-		
-	const int Length = str_length(pInput);
-	CChat::CHistoryEntry *pEntry = GameClient()->m_Chat.m_History.Allocate(sizeof(CChat::CHistoryEntry) + Length);
-	pEntry->m_Team = 0;
-	str_copy(pEntry->m_aText, pInput, Length + 1);
-
-	const char *pSuffix = " КОМУ ФИНИШ | WHOS FINISH";
-	const int SuffixLen = str_length(pSuffix);
-
-	char aMessage[MAX_LINE_LENGTH];
-	aMessage[0] = '\0';
-	int UnfinishedCount = 0;
-
-	for(int i = 0; i < MAX_CLIENTS; i++)
-	{
-		const CNetObj_PlayerInfo *pInfo = GameClient()->m_Snap.m_apPlayerInfos[i];
-		if(!pInfo)
-			continue;
-
-		if(pInfo->m_Score != -9999)
-			continue;
-
-		const char *pName = GameClient()->m_aClients[i].m_aName;
-		if(pName[0] == '\0')
-			continue;
-
-		if(GameClient()->m_aClients[i].m_Team == TEAM_SPECTATORS)
-			continue;
-
-		char aTemp[MAX_LINE_LENGTH];
-		if(UnfinishedCount > 0)
-			str_format(aTemp, sizeof(aTemp), "%s, %s", aMessage, pName);
-		else
-			str_format(aTemp, sizeof(aTemp), "%s", pName);
-
-		if(str_length(aTemp) + SuffixLen >= MAX_LINE_LENGTH - 1)
-		{
-			char aBuf[MAX_LINE_LENGTH];
-			str_format(aBuf, sizeof(aBuf), "%s%s", aMessage, pSuffix);
-			GameClient()->m_Chat.SendChat(0, aBuf);
-
-			str_copy(aMessage, pName, sizeof(aMessage));
-			UnfinishedCount = 1;
-			continue;
-		}
-
-		str_copy(aMessage, aTemp, sizeof(aMessage));
-		UnfinishedCount++;
-	}
-
-	if(UnfinishedCount == 0 && aMessage[0] == '\0')
-	{
-		GameClient()->Echo("All players finished / Все игроки финишировали");
-		return true;
-	}
-
-	char aBuf[MAX_LINE_LENGTH];
-	str_format(aBuf, sizeof(aBuf), "%s%s", aMessage, pSuffix);
-	GameClient()->m_Chat.SendChat(0, aBuf);
-
 	return true;
 }
 
@@ -490,7 +422,7 @@ void CTClient::OnConsoleInit()
 	Console()->Register("emote_cycle", "", CFGFLAG_CLIENT, ConEmoteCycle, this, "Cycle through emotes");
 
 	Console()->Chain(
-		"tc_allow_any_resolution", [](IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData) {
+		"tc_allow_any_res", [](IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData) {
 			pfnCallback(pResult, pCallbackUserData);
 			((CTClient *)pUserData)->SetForcedAspect();
 		},
@@ -500,11 +432,7 @@ void CTClient::OnConsoleInit()
 		"tc_regex_chat_ignore", [](IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData) {
 			if(pResult->NumArguments() == 1)
 			{
-				const char *pRegex = pResult->GetString(0);
-				char aLowerRegex[sizeof(g_Config.m_TcRegexChatIgnore)];
-				str_utf8_tolower(pRegex, aLowerRegex, sizeof(aLowerRegex));
-
-				auto Re = Regex(aLowerRegex, true);
+				auto Re = Regex(pResult->GetString(0));
 				if(!Re.error().empty())
 				{
 					log_error("tclient", "Invalid regex: %s", Re.error().c_str());
@@ -618,9 +546,12 @@ bool CTClient::ServerCommandExists(const char *pCommand)
 	return false;
 }
 
+// This function changed by Bongure Client
 void CTClient::OnRender() {
+	// Bongure Client {
 	SetForcedAspect();
-	
+	// Bongure Client }
+
 	if(m_pTClientInfoTask)
 	{
 		if(m_pTClientInfoTask->State() == EHttpState::DONE)
@@ -643,7 +574,7 @@ void CTClient::ResetTClientInfoTask()
 	if(m_pTClientInfoTask)
 	{
 		m_pTClientInfoTask->Abort();
-		m_pTClientInfoTask = NULL;
+		m_pTClientInfoTask = nullptr;
 	}
 }
 
@@ -673,7 +604,7 @@ static TVersion ToTCVersion(char *pStr)
 			return gs_InvalidTCVersion;
 
 		aVersion[i] = str_toint(p);
-		p = strtok(NULL, ".");
+		p = strtok(nullptr, ".");
 	}
 
 	if(p)
@@ -711,8 +642,8 @@ void CTClient::FinishTClientInfo()
 	json_value_free(pJson);
 }
 
-void CTClient::SetForcedAspect()
-{
+//This function changed by Bongure Client
+void CTClient::SetForcedAspect() {
 	// TODO: Fix flashing on windows
 	int State = Client()->State();
 	bool Force = true;
@@ -723,11 +654,13 @@ void CTClient::SetForcedAspect()
 	else if(State == CClient::EClientState::STATE_ONLINE && GameClient()->m_GameInfo.m_AllowZoom && !GameClient()->m_Menus.IsActive())
 		Force = false;
 
+	// Bongure Client {
 	const bool IsActiveGameplay = State == CClient::EClientState::STATE_ONLINE || State == CClient::EClientState::STATE_DEMOPLAYBACK;
 	const bool AspectBlocked = GameClient()->IsAspectRatioBlockedByFng();
 	const bool ApplyCustomAspect = !AspectBlocked && (g_Config.m_BcCustomAspectRatioApplyMode == 1 || IsActiveGameplay);
 
 	Graphics()->SetForcedAspect(Force, ApplyCustomAspect);
+	// Bongure Client }
 }
 
 void CTClient::OnStateChange(int OldState, int NewState)
@@ -896,17 +829,15 @@ void CTClient::RenderCenterLines()
 
 	Graphics()->TextureClear();
 
-	float X0, Y0, X1, Y1;
-	Graphics()->GetScreen(&X0, &Y0, &X1, &Y1);
-	const float XMid = (X0 + X1) / 2.0f;
-	const float YMid = (Y0 + Y1) / 2.0f;
+	const CScreenRect ScreenRect = Graphics()->GetScreen();
+	const auto ScreenMid = (ScreenRect.m_BottomRight + ScreenRect.m_TopLeft) / 2.0f;
 
 	if(g_Config.m_TcShowCenterWidth == 0)
 	{
 		Graphics()->LinesBegin();
 		IGraphics::CLineItem aLines[2] = {
-			{XMid, Y0, XMid, Y1},
-			{X0, YMid, X1, YMid}};
+			{ScreenMid.x, ScreenRect.m_TopLeft.y, ScreenMid.x, ScreenRect.m_BottomRight.y},
+			{ScreenRect.m_TopLeft.x, ScreenMid.y, ScreenRect.m_BottomRight.x, ScreenMid.y}};
 		Graphics()->SetColor(color_cast<ColorRGBA>(ColorHSLA(g_Config.m_TcShowCenterColor, true)));
 		Graphics()->LinesDraw(aLines, std::size(aLines));
 		Graphics()->LinesEnd();
@@ -914,11 +845,15 @@ void CTClient::RenderCenterLines()
 	else
 	{
 		const float W = g_Config.m_TcShowCenterWidth;
+		const float X0 = ScreenRect.m_TopLeft.x;
+		const float Y0 = ScreenRect.m_TopLeft.y;
+		const float X1 = ScreenRect.m_BottomRight.x;
+		const float Y1 = ScreenRect.m_BottomRight.y;
 		Graphics()->QuadsBegin();
 		IGraphics::CQuadItem aQuads[3] = {
-			{XMid, mix(Y0, Y1, 0.25f) - W / 4.0f, W, (Y1 - Y0 - W) / 2.0f},
-			{XMid, mix(Y0, Y1, 0.75f) + W / 4.0f, W, (Y1 - Y0 - W) / 2.0f},
-			{XMid, YMid, X1 - X0, W}};
+			{ScreenMid.x, mix(Y0, Y1, 0.25f) - W / 4.0f, W, (Y1 - Y0 - W) / 2.0f},
+			{ScreenMid.x, mix(Y0, Y1, 0.75f) + W / 4.0f, W, (Y1 - Y0 - W) / 2.0f},
+			{ScreenMid.x, ScreenMid.y, X1 - X0, W}};
 		Graphics()->SetColor(color_cast<ColorRGBA>(ColorHSLA(g_Config.m_TcShowCenterColor, true)));
 		Graphics()->QuadsDraw(aQuads, std::size(aQuads));
 		Graphics()->QuadsEnd();

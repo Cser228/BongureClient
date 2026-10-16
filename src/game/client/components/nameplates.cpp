@@ -24,22 +24,6 @@ enum class EHookStrongWeakState
 	STRONG
 };
 
-enum EVoiceDisplayState
-{
-	VOICE_DISPLAY_NONE = 0,
-	VOICE_DISPLAY_REMOTE_MUTED,
-	VOICE_DISPLAY_LOCAL_MUTED,
-};
-
-static ColorRGBA VoiceDisplayColor(int State, float Alpha)
-{
-	if(State == VOICE_DISPLAY_LOCAL_MUTED)
-		return ColorRGBA(1.0f, 0.22f, 0.22f, Alpha);
-	if(State == VOICE_DISPLAY_REMOTE_MUTED)
-		return ColorRGBA(1.0f, 0.55f, 0.0f, Alpha);
-	return ColorRGBA(1.0f, 1.0f, 1.0f, Alpha);
-}
-
 class CNamePlateData
 {
 public:
@@ -47,7 +31,7 @@ public:
 	bool m_InGame;
 	ColorRGBA m_Color;
 	bool m_ShowName;
-	char m_aName[std::max<size_t>(MAX_NAME_LENGTH, protocol7::MAX_NAME_ARRAY_SIZE)];
+	char m_aName[std::max((size_t)MAX_NAME_LENGTH, (size_t)protocol7::MAX_NAME_ARRAY_SIZE)];
 	bool m_ShowFriendMark;
 	bool m_ShowClientId;
 	int m_ClientId;
@@ -55,7 +39,7 @@ public:
 	bool m_ClientIdSeparateLine;
 	float m_FontSize;
 	bool m_ShowClan;
-	char m_aClan[std::max<size_t>(MAX_CLAN_LENGTH, protocol7::MAX_CLAN_ARRAY_SIZE)];
+	char m_aClan[std::max((size_t)MAX_CLAN_LENGTH, (size_t)protocol7::MAX_CLAN_ARRAY_SIZE)];
 	float m_FontSizeClan;
 	bool m_ShowDirection;
 	bool m_DirLeft;
@@ -67,20 +51,6 @@ public:
 	bool m_ShowHookStrongWeakId;
 	int m_HookStrongWeakId;
 	float m_FontSizeHookStrongWeak;
-	int m_ShowFireDetection;
-	float m_FontSizeFireDetection;
-	int m_IsFireFireDetection;
-	int m_ShowHookDetection;
-	float m_FontSizeHookDetection;
-	int m_IsHookHookDetection;
-	int m_ShowRClientIndicator;
-	float m_FontSizeRClientIndicator;
-	int m_IsUserRClientIndicator;
-	int m_IsUserRClientVoiceEnabled;
-	int m_ShowVoiceIcon;
-	float m_FontSizeVoiceIcon;
-	int m_IsVoiceActive;
-	int m_VoiceDisplayState;
 };
 
 // Part Types
@@ -140,12 +110,11 @@ public:
 		if(Data.m_InGame)
 		{
 			// Create text at standard zoom
-			float ScreenX0, ScreenY0, ScreenX1, ScreenY1;
-			This.Graphics()->GetScreen(&ScreenX0, &ScreenY0, &ScreenX1, &ScreenY1);
+			CScreenRect ScreenRect = This.Graphics()->GetScreen();
 			This.Graphics()->MapScreenToInterface(This.m_Camera.m_Center.x, This.m_Camera.m_Center.y);
 			This.TextRender()->DeleteTextContainer(m_TextContainerIndex);
 			UpdateText(This, Data);
-			This.Graphics()->MapScreen(ScreenX0, ScreenY0, ScreenX1, ScreenY1);
+			This.Graphics()->MapScreen(ScreenRect);
 		}
 		else
 		{
@@ -299,6 +268,7 @@ public:
 	}
 };
 
+// This class changed by Bongure Client
 class CNamePlatePartClientId : public CNamePlatePartText
 {
 private:
@@ -309,14 +279,15 @@ private:
 	bool m_ClientIdSeparateLine = false;
 
 protected:
-	bool UpdateNeeded(CGameClient &This, const CNamePlateData &Data) override
-	{
+	// Bongure Client {
+	bool UpdateNeeded(CGameClient &This, const CNamePlateData &Data) override {
 		m_Visible = Data.m_ShowClientId && (Data.m_ClientIdSeparateLine == m_ClientIdSeparateLine);
 		if(!m_Visible)
 			return false;
 		m_Color = Data.m_Color;
 		return m_FontSize != Data.m_FontSizeClientId || m_ClientId != Data.m_ClientId;
 	}
+	// Bongure Client }
 	void UpdateText(CGameClient &This, const CNamePlateData &Data) override
 	{
 		m_FontSize = Data.m_FontSizeClientId;
@@ -350,11 +321,11 @@ protected:
 		if(!m_Visible)
 			return false;
 		m_Color.a = Data.m_Color.a;
-		return m_FontSize != Data.m_FontSize * g_Config.m_RiHeartSize / 100.0f;
+		return m_FontSize != Data.m_FontSize;
 	}
 	void UpdateText(CGameClient &This, const CNamePlateData &Data) override
 	{
-		m_FontSize = Data.m_FontSize * g_Config.m_RiHeartSize / 100.0f;
+		m_FontSize = Data.m_FontSize;
 		CTextCursor Cursor;
 		This.TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
 		Cursor.m_FontSize = m_FontSize;
@@ -373,7 +344,7 @@ public:
 class CNamePlatePartName : public CNamePlatePartText
 {
 private:
-	char m_aText[std::max<size_t>(MAX_NAME_LENGTH, protocol7::MAX_NAME_ARRAY_SIZE)] = "";
+	char m_aText[std::max((size_t)MAX_NAME_LENGTH, (size_t)protocol7::MAX_NAME_ARRAY_SIZE)] = "";
 	float m_FontSize = -INFINITY;
 
 protected:
@@ -396,10 +367,7 @@ protected:
 	void UpdateText(CGameClient &This, const CNamePlateData &Data) override
 	{
 		m_FontSize = Data.m_FontSize;
-		if(g_Config.m_RiEnableCensorList)
-			str_copy(m_aText, This.m_Chat.FilterText(Data.m_aName), sizeof(m_aText));
-		else
-			str_copy(m_aText, Data.m_aName, sizeof(m_aText));
+		str_copy(m_aText, Data.m_aName);
 		CTextCursor Cursor;
 		Cursor.m_FontSize = m_FontSize;
 		This.TextRender()->CreateOrAppendTextContainer(m_TextContainerIndex, &Cursor, m_aText);
@@ -413,14 +381,15 @@ public:
 class CNamePlatePartClan : public CNamePlatePartText
 {
 private:
-	char m_aText[std::max<size_t>(MAX_CLAN_LENGTH, protocol7::MAX_CLAN_ARRAY_SIZE)] = "";
+	char m_aText[std::max((size_t)MAX_CLAN_LENGTH, (size_t)protocol7::MAX_CLAN_ARRAY_SIZE)] = "";
 	float m_FontSize = -INFINITY;
 
 protected:
 	bool UpdateNeeded(CGameClient &This, const CNamePlateData &Data) override
 	{
 		m_Visible = Data.m_ShowClan;
-		if(!m_Visible && Data.m_aClan[0] == '\0') return false;
+		if(!m_Visible && Data.m_aClan[0] != '\0')
+			return false;
 		m_Color = Data.m_Color;
 		// TClient
 		if(This.m_WarList.GetWarData(Data.m_ClientId).m_WarClan)
@@ -430,7 +399,7 @@ protected:
 	void UpdateText(CGameClient &This, const CNamePlateData &Data) override
 	{
 		m_FontSize = Data.m_FontSizeClan;
-		str_copy(m_aText, Data.m_aClan, sizeof(m_aText));
+		str_copy(m_aText, Data.m_aClan);
 		CTextCursor Cursor;
 		Cursor.m_FontSize = m_FontSize;
 		This.TextRender()->CreateOrAppendTextContainer(m_TextContainerIndex, &Cursor, m_aText);
@@ -664,7 +633,7 @@ private:
 protected:
 	bool UpdateNeeded(CGameClient &This, const CNamePlateData &Data) override
 	{
-		m_Visible = Data.m_InGame;
+		m_Visible = Data.m_InGame && g_Config.m_TcWarListReason;
 		if(!m_Visible)
 			return false;
 		const char *pReason = This.m_WarList.GetWarData(Data.m_ClientId).m_aReason;
@@ -718,119 +687,6 @@ public:
 		CNamePlatePartText(This) {}
 };
 
-class CNamePlatePartVoice : public CNamePlatePartText
-{
-private:
-	float m_FontSize = -INFINITY;
-
-protected:
-	bool UpdateNeeded(CGameClient &This, const CNamePlateData &Data) override
-	{
-		m_Visible = Data.m_ShowVoiceIcon && (Data.m_IsVoiceActive || Data.m_VoiceDisplayState != VOICE_DISPLAY_NONE);
-		if(!m_Visible)
-			return false;
-		m_Color = VoiceDisplayColor(Data.m_VoiceDisplayState, Data.m_Color.a);
-		return m_FontSize != Data.m_FontSizeVoiceIcon;
-	}
-	void UpdateText(CGameClient &This, const CNamePlateData &Data) override
-	{
-		m_FontSize = Data.m_FontSizeVoiceIcon;
-		CTextCursor Cursor;
-		This.TextRender()->SetFontPreset(EFontPreset::ICON_FONT);
-		Cursor.m_FontSize = m_FontSize;
-		This.TextRender()->CreateOrAppendTextContainer(m_TextContainerIndex, &Cursor, FontIcon::RC_MICROPHONE);
-		This.TextRender()->SetFontPreset(EFontPreset::DEFAULT_FONT);
-	}
-
-public:
-	CNamePlatePartVoice(CGameClient &This) :
-		CNamePlatePartText(This) {}
-};
-
-// ***** RClient Parts *****
-class CNamePlatePartFireDetector : public CNamePlatePartSprite
-{
-protected:
-	void Update(CGameClient &This, const CNamePlateData &Data) override
-	{
-		if(!Data.m_ShowFireDetection)
-		{
-			m_ShiftOnInvis = false;
-			m_Visible = false;
-			return;
-		}
-		m_ShiftOnInvis = !g_Config.m_RiShowFireDynamic; // Only shift (horizontally) the other parts if directions as a whole is visible
-		m_Size = vec2(Data.m_FontSizeFireDetection + DEFAULT_PADDING, Data.m_FontSizeFireDetection + DEFAULT_PADDING);
-		m_Sprite = SPRITE_RI_HAMMER;
-		m_Visible = Data.m_IsFireFireDetection;
-
-		m_Color.a = Data.m_Color.a;
-	}
-
-public:
-	CNamePlatePartFireDetector(CGameClient &This) :
-		CNamePlatePartSprite(This)
-	{
-		m_Texture = g_pData->m_aImages[IMAGE_RIHAMMER].m_Id;
-		m_Padding = vec2(0.0f, 0.0f);
-	}
-};
-class CNamePlatePartHookDetector : public CNamePlatePartSprite
-{
-protected:
-	void Update(CGameClient &This, const CNamePlateData &Data) override
-	{
-		if(!Data.m_ShowHookDetection)
-		{
-			m_ShiftOnInvis = false;
-			m_Visible = false;
-			return;
-		}
-		m_ShiftOnInvis = !g_Config.m_RiShowHookDynamic; // Only shift (horizontally) the other parts if directions as a whole is visible
-		m_Size = vec2(Data.m_FontSizeHookDetection + DEFAULT_PADDING, Data.m_FontSizeHookDetection + DEFAULT_PADDING);
-		m_Sprite = SPRITE_RI_HOOK;
-		m_Visible = Data.m_IsHookHookDetection;
-
-		m_Color.a = Data.m_Color.a;
-	}
-
-public:
-	CNamePlatePartHookDetector(CGameClient &This) :
-		CNamePlatePartSprite(This)
-	{
-		m_Texture = g_pData->m_aImages[IMAGE_RIHOOK].m_Id;
-		m_Padding = vec2(0.0f, 0.0f);
-	}
-};
-class CNamePlatePartRClientIndicator : public CNamePlatePartSprite
-{
-protected:
-	void Update(CGameClient &This, const CNamePlateData &Data) override
-	{
-		if(!Data.m_ShowRClientIndicator)
-		{
-			m_ShiftOnInvis = false;
-			m_Visible = false;
-			return;
-		}
-		m_ShiftOnInvis = !g_Config.m_RiShowIndicatorDynamic; // Only shift (horizontally) the other parts if directions as a whole is visible
-		m_Size = vec2(Data.m_FontSizeRClientIndicator + DEFAULT_PADDING, Data.m_FontSizeRClientIndicator + DEFAULT_PADDING);
-		m_Visible = Data.m_IsUserRClientIndicator;
-		m_Texture = g_pData->m_aImages[IMAGE_RIICON_WHITE].m_Id;
-		m_Sprite = SPRITE_RI_ICON_WHITE;
-		m_Color = Data.m_IsUserRClientVoiceEnabled ?
-			ColorRGBA(0.0f, 165.0f / 255.0f, 250.0f / 255.0f, Data.m_Color.a) :
-			ColorRGBA(1.0f, 0.0f, 0.0f, Data.m_Color.a);
-	}
-
-public:
-	CNamePlatePartRClientIndicator(CGameClient &This) :
-		CNamePlatePartSprite(This)
-	{
-		m_Texture = g_pData->m_aImages[IMAGE_RIICON_WHITE].m_Id;
-		m_Padding = vec2(0.0f, 0.0f);
-	}
-};
 // ***** Name Plates *****
 
 class CNamePlate
@@ -841,7 +697,7 @@ private:
 	PartsVector m_vpParts;
 	void RenderLine(CGameClient &This,
 		vec2 Pos, vec2 Size,
-		PartsVector::iterator Start, PartsVector::iterator End)
+		const PartsVector::iterator &Start, const PartsVector::iterator &End)
 	{
 		Pos.x -= Size.x / 2.0f;
 		for(auto PartIt = Start; PartIt != End; ++PartIt)
@@ -868,19 +724,35 @@ private:
 			return;
 		m_Inited = true;
 
-		// Check if custom scheme is enabled
-		if(str_comp(g_Config.m_RiNamePlateScheme, "") != 0)
-		{
-			ApplyNamePlateScheme(This, g_Config.m_RiNamePlateScheme);
-		}
-		else
-		{
-			ApplyDefaultNamePlateScheme(This);
-		}
+		AddPart<CNamePlatePartCountry>(This); // TClient
+		AddPart<CNamePlatePartPing>(This); // TClient
+		AddPart<CNamePlatePartIgnoreMark>(This); // TClient
+		AddPart<CNamePlatePartFriendMark>(This);
+		AddPart<CNamePlatePartClientId>(This, false);
+		AddPart<CNamePlatePartName>(This);
+		AddPart<CNamePlatePartNewLine>(This);
+
+		AddPart<CNamePlatePartClan>(This);
+		AddPart<CNamePlatePartNewLine>(This);
+
+		AddPart<CNamePlatePartReason>(This); // TClient
+		AddPart<CNamePlatePartNewLine>(This); // TClient
+		AddPart<CNamePlatePartSkin>(This); // TClient
+		AddPart<CNamePlatePartNewLine>(This); // TClient
+
+		AddPart<CNamePlatePartClientId>(This, true);
+		AddPart<CNamePlatePartNewLine>(This);
+
+		AddPart<CNamePlatePartHookStrongWeak>(This);
+		AddPart<CNamePlatePartHookStrongWeakId>(This);
+		AddPart<CNamePlatePartNewLine>(This);
+
+		AddPart<CNamePlatePartDirection>(This, DIRECTION_LEFT);
+		AddPart<CNamePlatePartDirection>(This, DIRECTION_UP);
+		AddPart<CNamePlatePartDirection>(This, DIRECTION_RIGHT);
 	}
 
 public:
-	bool IsInited() const { return m_Inited; }
 	CNamePlate() = default;
 	CNamePlate(CGameClient &This, const CNamePlateData &Data)
 	{
@@ -963,122 +835,6 @@ public:
 		HTotal += LineSize.y;
 		return vec2(WMax, HTotal);
 	}
-
-	void ApplyNamePlateScheme(CGameClient &This, const char *pScheme)
-	{
-		// Clear existing parts
-		for(auto &Part : m_vpParts)
-			Part->Reset(This);
-		m_vpParts.clear();
-
-		// Add parts based on scheme
-		for(int i = 0; pScheme[i] != '\0'; ++i)
-		{
-			char SchemeLetter = pScheme[i];
-
-			// Add parts based on letter
-			switch(SchemeLetter)
-			{
-			case 'C': // County
-				AddPart<CNamePlatePartCountry>(This);
-				break;
-			case 'p': // Ping
-				AddPart<CNamePlatePartPing>(This);
-				break;
-			case 'i': // Ignore
-				AddPart<CNamePlatePartIgnoreMark>(This);
-				break;
-			case 'm': // Mark (Client ID)
-				AddPart<CNamePlatePartClientId>(This, false);
-				break;
-			case 'M': // Mark (Client ID, separate line)
-				AddPart<CNamePlatePartClientId>(This, true);
-				break;
-			case 'n': // Name
-				AddPart<CNamePlatePartName>(This);
-				break;
-			case 'c': // Clan
-				AddPart<CNamePlatePartClan>(This);
-				break;
-			case 'd': // Direction
-				AddPart<CNamePlatePartDirection>(This, DIRECTION_LEFT);
-				AddPart<CNamePlatePartDirection>(This, DIRECTION_UP);
-				AddPart<CNamePlatePartDirection>(This, DIRECTION_RIGHT);
-				break;
-			case 'f': // Friend
-				AddPart<CNamePlatePartFriendMark>(This);
-				break;
-			case 'h': // Hook
-				AddPart<CNamePlatePartHookStrongWeak>(This);
-				AddPart<CNamePlatePartHookStrongWeakId>(This);
-				break;
-			case 'r': // Reason
-				AddPart<CNamePlatePartReason>(This);
-				break;
-			case 's': // Skin
-				AddPart<CNamePlatePartSkin>(This);
-				break;
-			case 'l': // New Line
-				AddPart<CNamePlatePartNewLine>(This);
-				break;
-			case 'H': // Hook Detection
-				AddPart<CNamePlatePartHookDetector>(This);
-				break;
-			case 'F': // Hammer Detection (Fire Detection)
-				AddPart<CNamePlatePartFireDetector>(This);
-				break;
-			case 'I': // RClient Indicator
-				AddPart<CNamePlatePartRClientIndicator>(This);
-				break;
-			case 'V': // Voice
-				AddPart<CNamePlatePartVoice>(This);
-				break;
-			}
-		}
-	}
-
-	void ApplyDefaultNamePlateScheme(CGameClient &This)
-	{
-		for(auto &Part : m_vpParts)
-			Part->Reset(This);
-		m_vpParts.clear();
-		// Default layout (backward compatibility)
-		AddPart<CNamePlatePartRClientIndicator>(This); // Rclient
-		AddPart<CNamePlatePartCountry>(This); // TClient
-		AddPart<CNamePlatePartPing>(This); // TClient
-		AddPart<CNamePlatePartIgnoreMark>(This); // TClient
-		AddPart<CNamePlatePartFriendMark>(This);
-		AddPart<CNamePlatePartClientId>(This, false);
-		AddPart<CNamePlatePartName>(This);
-		AddPart<CNamePlatePartNewLine>(This);
-
-		AddPart<CNamePlatePartClan>(This);
-		AddPart<CNamePlatePartNewLine>(This);
-
-		AddPart<CNamePlatePartReason>(This); // TClient
-		AddPart<CNamePlatePartNewLine>(This); // TClient
-
-		AddPart<CNamePlatePartHookDetector>(This); // RClient
-		AddPart<CNamePlatePartFireDetector>(This); // RClient
-		AddPart<CNamePlatePartNewLine>(This); // TClient
-
-		AddPart<CNamePlatePartSkin>(This); // TClient
-		AddPart<CNamePlatePartNewLine>(This); // TClient
-
-		AddPart<CNamePlatePartClientId>(This, true);
-		AddPart<CNamePlatePartNewLine>(This);
-
-		AddPart<CNamePlatePartHookStrongWeak>(This);
-		AddPart<CNamePlatePartHookStrongWeakId>(This);
-		AddPart<CNamePlatePartNewLine>(This);
-
-		AddPart<CNamePlatePartDirection>(This, DIRECTION_LEFT);
-		AddPart<CNamePlatePartDirection>(This, DIRECTION_UP);
-		AddPart<CNamePlatePartDirection>(This, DIRECTION_RIGHT);
-		AddPart<CNamePlatePartNewLine>(This);
-
-		AddPart<CNamePlatePartVoice>(This);
-	}
 };
 
 class CNamePlates::CNamePlatesData
@@ -1090,14 +846,13 @@ public:
 void CNamePlates::RenderNamePlateGame(vec2 Position, const CNetObj_PlayerInfo *pPlayerInfo, float Alpha)
 {
 	// Get screen edges to avoid rendering offscreen
-	float ScreenX0, ScreenY0, ScreenX1, ScreenY1;
-	Graphics()->GetScreen(&ScreenX0, &ScreenY0, &ScreenX1, &ScreenY1);
+	CScreenRect ScreenRect = Graphics()->GetScreen();
 
 	// Assume that the name plate fits into a 800x800 box placed directly above the tee
-	ScreenX0 -= 400;
-	ScreenX1 += 400;
-	ScreenY1 += 800;
-	if(!(in_range(Position.x, ScreenX0, ScreenX1) && in_range(Position.y, ScreenY0, ScreenY1)))
+	ScreenRect.m_TopLeft.x -= 400;
+	ScreenRect.m_BottomRight.x += 400;
+	ScreenRect.m_BottomRight.y += 800;
+	if(!ScreenRect.Inside(Position))
 		return;
 
 	CNamePlateData Data;
@@ -1123,10 +878,6 @@ void CNamePlates::RenderNamePlateGame(vec2 Position, const CNetObj_PlayerInfo *p
 
 	Data.m_FontSizeHookStrongWeak = 18.0f + 20.0f * g_Config.m_ClNamePlatesStrongSize / 100.0f;
 	Data.m_FontSizeDirection = 18.0f + 20.0f * g_Config.m_ClDirectionSize / 100.0f;
-	Data.m_FontSizeFireDetection = 18.0f + 20.0f * g_Config.m_RiFireDetectionSize / 100.0f;
-	Data.m_FontSizeHookDetection = 18.0f + 20.0f * g_Config.m_RiHookDetectionSize / 100.0f;
-	Data.m_FontSizeRClientIndicator = 18.0f + 20.0f * g_Config.m_RiRclientIndicatorSize / 100.0f;
-	Data.m_FontSizeVoiceIcon = Data.m_FontSize;
 
 	if(g_Config.m_ClNamePlatesAlways == 0)
 		Alpha *= std::clamp(1.0f - std::pow(distance(GameClient()->m_Controls.m_aTargetPos[g_Config.m_ClDummy], Position) / 200.0f, 16.0f), 0.0f, 1.0f);
@@ -1219,7 +970,9 @@ void CNamePlates::RenderNamePlateGame(vec2 Position, const CNetObj_PlayerInfo *p
 			Data.m_HookStrongWeakId = Other.m_ExtendedData.m_StrongWeakId;
 			Data.m_ShowHookStrongWeakId = g_Config.m_Debug || g_Config.m_ClNamePlatesStrong == 2;
 			if(SelectedId == pPlayerInfo->m_ClientId)
+			{
 				Data.m_ShowHookStrongWeak = Data.m_ShowHookStrongWeakId;
+			}
 			else
 			{
 				Data.m_HookStrongWeakState = SelectedStrongWeakId > Other.m_ExtendedData.m_StrongWeakId ? EHookStrongWeakState::STRONG : EHookStrongWeakState::WEAK;
@@ -1227,160 +980,6 @@ void CNamePlates::RenderNamePlateGame(vec2 Position, const CNetObj_PlayerInfo *p
 			}
 		}
 	}
-
-	//RClient
-	int ShowFireDetecitonConfig = g_Config.m_RiShowFire;
-	Data.m_ShowFireDetection = false;
-	Data.m_IsFireFireDetection = false;
-	switch(ShowFireDetecitonConfig)
-	{
-	case 0: // Off
-		Data.m_ShowFireDetection = false;
-		break;
-	case 1: // Only dummy
-		Data.m_ShowFireDetection = pPlayerInfo->m_ClientId == GameClient()->m_aLocalIds[!g_Config.m_ClDummy];
-		break;
-	case 2: // Both
-		Data.m_ShowFireDetection = pPlayerInfo->m_ClientId == GameClient()->m_aLocalIds[!g_Config.m_ClDummy] || pPlayerInfo->m_Local;
-		break;
-	case 3: // Only self
-		Data.m_ShowFireDetection = pPlayerInfo->m_Local;
-		break;
-	default:
-		dbg_assert(false, "ShowFireDetectionConfig invalid");
-		dbg_break();
-	}
-	if(Data.m_ShowFireDetection)
-	{
-		if(Client()->State() != IClient::STATE_DEMOPLAYBACK &&
-			pPlayerInfo->m_ClientId == GameClient()->m_aLocalIds[!g_Config.m_ClDummy])
-		{
-			// Check if this is the dummy and cl_dummy_hammer is enabled
-			if(g_Config.m_ClDummyHammer)
-			{
-				Data.m_IsFireFireDetection = GameClient()->m_HammerInput.m_Fire & 1;
-			}
-			else
-			{
-				const auto &InputData = GameClient()->m_Controls.m_aInputData[!g_Config.m_ClDummy];
-				Data.m_IsFireFireDetection = InputData.m_Fire & 1;
-			}
-		}
-		else if(Client()->State() != IClient::STATE_DEMOPLAYBACK && pPlayerInfo->m_Local) // Always render local input when not in demo playback
-		{
-			const auto &InputData = GameClient()->m_Controls.m_aInputData[g_Config.m_ClDummy];
-			Data.m_IsFireFireDetection = InputData.m_Fire & 1;
-		}
-		else
-		{
-			// For other players, use attack tick to detect recent firing
-			// const auto &Character = GameClient()->m_Snap.m_aCharacters[pPlayerInfo->m_ClientId];
-			// if(Character.m_Active)
-			// {
-			// 	// Show fire detection if player fired within the last few ticks
-			// 	// Use a threshold of 3 ticks (60ms at 50 tick rate) to account for network delay and weapon fire rates
-			// 	int TicksSinceAttack = Client()->GameTick(g_Config.m_ClDummy) - Character.m_Cur.m_AttackTick;
-			// 	Data.m_IsFireFireDetection = TicksSinceAttack >= 0 && TicksSinceAttack <= 3;
-			// }
-			// else
-			// {
-			// 	Data.m_IsFireFireDetection = 0;
-			// }
-			// if(pPlayerInfo->m_ClientId == g_Config.m_RiTestVar)
-			// {
-			// 	dbg_msg("Current tick", "%i", Client()->GameTick(g_Config.m_ClDummy));
-			// 	dbg_msg("Attacktick", "ClientID: %i, Attacktick: %i", pPlayerInfo->m_ClientId, Character.m_Cur.m_AttackTick);
-			// }
-			// if(Client()->GameTick(g_Config.m_ClDummy) == Character.m_Cur.m_AttackTick)
-			// 	Data.m_IsFireFireDetection = true;
-			Data.m_IsFireFireDetection = false;
-		}
-	}
-
-	int ShowHookDetecitonConfig = g_Config.m_RiShowHook;
-	Data.m_ShowHookDetection = false;
-	Data.m_IsHookHookDetection = false;
-	switch(ShowHookDetecitonConfig)
-	{
-	case 0: // Off
-		Data.m_ShowHookDetection = false;
-		break;
-	case 1: // Others
-		Data.m_ShowHookDetection = !pPlayerInfo->m_Local;
-		break;
-	case 2: // Everyone
-		Data.m_ShowHookDetection = true;
-		break;
-	case 3: // Only self
-		Data.m_ShowHookDetection = pPlayerInfo->m_Local;
-		break;
-	default:
-		dbg_assert(false, "ShowFireDetectionConfig invalid");
-		dbg_break();
-	}
-	if(Data.m_ShowHookDetection)
-	{
-		if(Client()->State() != IClient::STATE_DEMOPLAYBACK &&
-			pPlayerInfo->m_ClientId == GameClient()->m_aLocalIds[!g_Config.m_ClDummy])
-		{
-			// Check if this is the dummy and cl_dummy_control + cl_dummy_hook are enabled
-			if(g_Config.m_ClDummyControl && g_Config.m_ClDummyHook)
-			{
-				Data.m_IsHookHookDetection = GameClient()->m_DummyInput.m_Hook & 1;
-			}
-			else
-			{
-				const auto &InputData = GameClient()->m_Controls.m_aInputData[!g_Config.m_ClDummy];
-				Data.m_IsHookHookDetection = InputData.m_Hook & 1;
-			}
-		}
-		else if(Client()->State() != IClient::STATE_DEMOPLAYBACK && pPlayerInfo->m_Local) // Always render local input when not in demo playback
-		{
-			const auto &InputData = GameClient()->m_Controls.m_aInputData[g_Config.m_ClDummy];
-			Data.m_IsHookHookDetection = InputData.m_Hook & 1;
-		}
-		else
-		{
-			const auto &Character = GameClient()->m_Snap.m_aCharacters[pPlayerInfo->m_ClientId];
-			Data.m_IsHookHookDetection = Character.m_Cur.m_HookState & 1;
-		}
-	}
-
-	Data.m_ShowRClientIndicator = false;
-	Data.m_IsUserRClientIndicator = false;
-	Data.m_IsUserRClientVoiceEnabled = false;
-	Data.m_ShowRClientIndicator = g_Config.m_RiShowRclientIndicator;
-	if(g_Config.m_RiShowRclientIndicator)
-	{
-		if(g_Config.m_RiRclientIndicatorAboveSelf)
-			Data.m_ShowRClientIndicator = g_Config.m_RiShowRclientIndicator;
-		else
-			Data.m_ShowRClientIndicator = !pPlayerInfo->m_Local;
-	}
-	if(Data.m_ShowRClientIndicator)
-	{
-		// Check if this player is using RClient
-		Data.m_IsUserRClientIndicator = GameClient()->m_RClientIndicator.IsPlayerRClient(pPlayerInfo->m_ClientId);
-		if(Data.m_IsUserRClientIndicator)
-			Data.m_IsUserRClientVoiceEnabled = GameClient()->m_RClientIndicator.IsPlayerRClientVoiceEnabled(pPlayerInfo->m_ClientId);
-	}
-
-	Data.m_ShowVoiceIcon = g_Config.m_RiVoiceShowIndicator;
-	if(g_Config.m_RiVoiceShowIndicator)
-	{
-		if(g_Config.m_RiVoiceIndicatorAboveSelf)
-			Data.m_ShowVoiceIcon = true;
-		else
-			Data.m_ShowVoiceIcon = !pPlayerInfo->m_Local;
-	}
-	Data.m_IsVoiceActive = GameClient()->m_RClient.IsVoiceActive(pPlayerInfo->m_ClientId);
-	Data.m_VoiceDisplayState = VOICE_DISPLAY_NONE;
-	const bool VoiceMuted = g_Config.m_RiVoiceShowMuted && g_Config.m_RiVoiceShowMutedNameplate && GameClient()->m_RClientIndicator.IsPlayerRClientVoiceMuted(pPlayerInfo->m_ClientId);
-	const bool VoiceLocalMuted = g_Config.m_RiVoiceShowLocalMuted && g_Config.m_RiVoiceShowLocalMutedNameplate && GameClient()->m_RClient.VoiceListHasName(g_Config.m_RiVoiceMute, GameClient()->m_aClients[pPlayerInfo->m_ClientId].m_aName);
-	if(VoiceLocalMuted)
-		Data.m_VoiceDisplayState = VOICE_DISPLAY_LOCAL_MUTED;
-	else if(VoiceMuted)
-		Data.m_VoiceDisplayState = VOICE_DISPLAY_REMOTE_MUTED;
 
 	// TClient
 	if(g_Config.m_TcWarList && g_Config.m_TcWarListShowClan && GameClient()->m_WarList.GetWarData(pPlayerInfo->m_ClientId).m_WarClan)
@@ -1400,9 +999,6 @@ void CNamePlates::RenderNamePlatePreview(vec2 Position, int Dummy)
 
 	const float FontSizeDirection = 18.0f + 20.0f * g_Config.m_ClDirectionSize / 100.0f;
 	const float FontSizeHookStrongWeak = 18.0f + 20.0f * g_Config.m_ClNamePlatesStrongSize / 100.0f;
-	const float FontSizeFireDetection = 18.0f + 20.0f * g_Config.m_RiFireDetectionSize / 100.0f;
-	const float FontSizeHookDetection = 18.0f + 20.0f * g_Config.m_RiHookDetectionSize / 100.0f;
-	const float FontSizeRClientIndicatorDetection = 18.0f + 20.0f * g_Config.m_RiRclientIndicatorSize / 100.0f;
 
 	CNamePlateData Data;
 
@@ -1434,23 +1030,6 @@ void CNamePlates::RenderNamePlatePreview(vec2 Position, int Dummy)
 	Data.m_ShowDirection = g_Config.m_ClShowDirection != 0 ? true : false;
 	Data.m_DirLeft = Data.m_DirJump = Data.m_DirRight = true;
 	Data.m_FontSizeDirection = FontSizeDirection;
-
-	Data.m_FontSizeFireDetection = FontSizeFireDetection;
-	Data.m_FontSizeHookDetection = FontSizeHookDetection;
-	Data.m_FontSizeRClientIndicator = FontSizeRClientIndicatorDetection;
-	Data.m_FontSizeVoiceIcon = FontSize;
-	Data.m_ShowFireDetection = g_Config.m_RiShowFire != 0 ? true : false;
-	Data.m_ShowHookDetection = g_Config.m_RiShowHook != 0 ? true : false;
-	Data.m_ShowRClientIndicator = g_Config.m_RiShowRclientIndicator != 0 ? true : false;
-	Data.m_IsUserRClientIndicator = Data.m_ShowRClientIndicator;
-	Data.m_IsUserRClientVoiceEnabled = g_Config.m_RiVoiceEnable != 0;
-	Data.m_ShowVoiceIcon = false;
-	Data.m_IsVoiceActive = false;
-	Data.m_VoiceDisplayState = VOICE_DISPLAY_NONE;
-	if(g_Config.m_RiVoiceShowLocalMuted && g_Config.m_RiVoiceShowLocalMutedNameplate)
-		Data.m_VoiceDisplayState = VOICE_DISPLAY_LOCAL_MUTED;
-	else if(g_Config.m_RiVoiceShowMuted && g_Config.m_RiVoiceShowMutedNameplate)
-		Data.m_VoiceDisplayState = VOICE_DISPLAY_REMOTE_MUTED;
 
 	Data.m_FontSizeHookStrongWeak = FontSizeHookStrongWeak;
 	Data.m_HookStrongWeakId = Data.m_ClientId;
@@ -1489,7 +1068,7 @@ void CNamePlates::RenderNamePlatePreview(vec2 Position, int Dummy)
 	const vec2 DeltaPosition = Ui()->MousePos() - Position;
 	const float Distance = length(DeltaPosition);
 	const float InteractionDistance = 20.0f;
-	const vec2 TeeDirection = Distance < InteractionDistance ? normalize(vec2(DeltaPosition.x, maximum(DeltaPosition.y, 0.5f))) : normalize(DeltaPosition);
+	const vec2 TeeDirection = Distance < InteractionDistance ? normalize(vec2(DeltaPosition.x, std::max(DeltaPosition.y, 0.5f))) : normalize(DeltaPosition);
 	const int TeeEmote = Distance < InteractionDistance ? EMOTE_HAPPY : (Dummy ? g_Config.m_ClDummyDefaultEyes : g_Config.m_ClPlayerDefaultEyes);
 	RenderTools()->RenderTee(CAnimState::GetIdle(), &TeeRenderInfo, TeeEmote, TeeDirection, Position);
 	Position.y -= (float)g_Config.m_ClNamePlatesOffset;
@@ -1513,7 +1092,7 @@ void CNamePlates::OnRender()
 	if(IVideo::Current())
 		ShowDirection = g_Config.m_ClVideoShowDirection;
 #endif
-	if(!g_Config.m_ClNamePlates && ShowDirection == 0)
+	if(!g_Config.m_ClNamePlates && !g_Config.m_ClNamePlatesOwn && ShowDirection == 0)
 		return;
 
 	for(int i = 0; i < MAX_CLIENTS; i++)
@@ -1553,26 +1132,4 @@ CNamePlates::CNamePlates() :
 CNamePlates::~CNamePlates()
 {
 	delete m_pData;
-}
-
-float CNamePlates::GetNamePlateOffset(int ClientId) const
-{
-	if(!m_pData || ClientId < 0 || ClientId >= MAX_CLIENTS)
-		return 0.0f;
-
-	const CNamePlate &NamePlate = m_pData->m_aNamePlates[ClientId];
-	if(!NamePlate.IsInited())
-		return 0.0f;
-
-	return NamePlate.Size().y;
-}
-
-void CNamePlates::RiResetNameplatesPos(CGameClient &This, const char *pScheme) const
-{
-	if(str_comp(g_Config.m_RiNamePlateScheme, "") != 0)
-		for(int i = 0; i < MAX_CLIENTS; ++i)
-			m_pData->m_aNamePlates[i].ApplyNamePlateScheme(This, pScheme);
-	else
-		for(int i = 0; i < MAX_CLIENTS; ++i)
-			m_pData->m_aNamePlates[i].ApplyDefaultNamePlateScheme(This);
 }

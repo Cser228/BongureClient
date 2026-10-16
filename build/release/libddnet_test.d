@@ -1,0 +1,1 @@
+/home/cser228/programming/BongureClientFromTater/build/release/libddnet_test.rlib: /home/cser228/programming/BongureClientFromTater/src/rust-bridge/test/build.rs /home/cser228/programming/BongureClientFromTater/src/rust-bridge/test/lib.rs

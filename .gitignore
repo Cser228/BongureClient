@@ -14,6 +14,8 @@ BongureRelease-Windows
 UPDATE_MY_DDNET.sh
 UPDATE_RELEASE_LINUX.sh
 UPDATE_RELEASE_WINDOWS.sh
+out/
+build/
 
 .DS_Store
 .ninja_deps

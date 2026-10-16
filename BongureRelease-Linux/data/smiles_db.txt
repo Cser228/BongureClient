@@ -1,0 +1,14 @@
+:angel:=😇
+:detectiv:=🧐
+:dr:=🥳
+:kryt:=😎
+:nyam:=😋
+:plakaet:=😭
+:sad:=☹
+:sila:=💪
+:sliz:=🫠
+:smeh:=🤣
+:smile:=😀
+:voshishenie:=🤩
+:ydivlenie:=😮
+:zloi:=🤬

@@ -3,9 +3,8 @@
 #ifndef GAME_CLIENT_COMPONENTS_MENUS_H
 #define GAME_CLIENT_COMPONENTS_MENUS_H
 
-#include "rclient/menu/menus_start_rclient.h"
-
 #include <base/bytes.h>
+#include <base/str.h>
 #include <base/types.h>
 #include <base/vmath.h>
 
@@ -29,10 +28,10 @@
 #include <game/voting.h>
 
 #include <chrono>
-#include <deque>
 #include <optional>
 #include <vector>
 
+// This class changed by Bongure Client
 class CMenus : public CComponent
 {
 	static ColorRGBA ms_GuiColor;
@@ -47,6 +46,7 @@ class CMenus : public CComponent
 	static ColorRGBA ms_ColorTabbarHover;
 
 public:
+	// Bongure Client {
 	const char *GetTerminalInput() const { return m_aTerminalInput; }
 	void TerminalAddLine(const char *pLine);
 	void TerminalExecuteCommand();
@@ -59,6 +59,7 @@ public:
 	IGraphics::CTextureHandle m_SmilePlus;
 	void RenderBongureSettings(CUIRect Screen);
 	void FirstLaunch();
+	// Bongure Client }
 
 	int DoButton_Toggle(const void *pId, int Checked, const CUIRect *pRect, bool Active, unsigned Flags = BUTTONFLAG_LEFT);
 	int DoButton_Menu(CButtonContainer *pButtonContainer, const char *pText, int Checked, const CUIRect *pRect, unsigned Flags = BUTTONFLAG_LEFT, const char *pImageName = nullptr, int Corners = IGraphics::CORNER_ALL, float Rounding = 5.0f, float FontFactor = 0.0f, ColorRGBA Color = ColorRGBA(1.0f, 1.0f, 1.0f, 0.5f));
@@ -74,88 +75,8 @@ public:
 	bool DoLine_RadioMenu(CUIRect &View, const char *pLabel, std::vector<CButtonContainer> &vButtonContainers, const std::vector<const char *> &vLabels, const std::vector<int> &vValues, int &Value);
 	bool DoLine_KeyReader(CUIRect &View, CButtonContainer &ReaderButton, CButtonContainer &ClearButton, const char *pName, const char *pCommand);
 
-	bool DoFloatScrollBar(const void *pId, int *pOption, const CUIRect *pRect, const char *pStr, int Min, int Max, int DivideBy, const IScrollbarScale *pScale, unsigned Flags, const char *pSuffix);
-
-#define RUSHIE_SETTINGS_SECTION_LIST(X) \
-	X(COPY_SKINS, "Player Inspector", "", FontIcon::RC_MAGNIFYING_GLASS, nullptr, 0, 0, 0) \
-	X(DUMMY_CHANGE_CLAN, "Dummy Change Clan", "", FontIcon::RC_USER_TAG, &g_Config.m_PlayerClanAutoChange, 0, 1, 0) \
-	X(CHAT_FUNCTIONS, "Chat Functions", "", FontIcon::RC_COMMENT_MEDICAL, nullptr, 0, 0, 0) \
-	X(CHAT_FILTER, "Chat Filter", "", FontIcon::RC_FILTER, &g_Config.m_RiEnableCensorList, 0, 1, 0) \
-	X(CHAT_ANIMATE, "Chat Animate", "", FontIcon::RC_BARS_STAGGERED, &g_Config.m_RiChatAnim, 0, 1, 0) \
-	X(CHAT_UTILS, "Chat Utils", "", FontIcon::RC_COMMENT_DOTS, &g_Config.m_RiChatShowCursor, 0, 1, 0) \
-	X(SCOREBOARD_SORT, "Scoreboard Sort", "", FontIcon::RC_ARROW_DOWN_WIDE_SHORT, nullptr, 0, 0, 0) \
-	X(SCOREBOARD_HEART, "Scoreboard Heart", "", FontIcon::HEART, &g_Config.m_RiScoreboardFriendMark, 0, 1, 0) \
-	X(SCOREBOARD_ACTIONS, "Scoreboard Actions", "", FontIcon::RC_USER_GEAR, &g_Config.m_RiScoreboardAlwaysShowQuickActions, 0, 1, 0) \
-	X(CHANGED_TATER, "Changed Tater", "", FontIcon::ARROWS_ROTATE, nullptr, 0, 0, 0) \
-	X(NAMEPLATES_SCHEME, "Nameplates Scheme", "RClient", FontIcon::RC_TABLE_CELLS, nullptr, 0, 0, 0) \
-	X(NAMEPLATES_FIRE, "Nameplates Show Fire", "RClient", FontIcon::RC_FIRE, &g_Config.m_RiShowFire, 0, 2, 0) \
-	X(NAMEPLATES_HOOK, "Nameplates Show Hook", "RClient", FontIcon::RC_LINK, &g_Config.m_RiShowHook, 0, 2, 0) \
-	X(DUMMY_TRACKER, "Dummy Tracker", "", FontIcon::RC_LIST_TRACK, &g_Config.m_RiShowhudDummyPosition, 0, 1, 0) \
-	X(ADVANCED_DUMMY_HUD, "Advanced Dummy Hud", "RClient", FontIcon::ICON_USERS, &g_Config.m_RiAdvancedShowhudDummyActions, 0, 1, 0) \
-	X(TRAILS, "Trails", "", FontIcon::RC_WIND, &g_Config.m_RiShowSparkleTrail, 0, 1, 0) \
-	X(AFK_EMOTE_TEXTURE_IN_MENU, "AFK Emote/Texture In Menu", "", FontIcon::RC_MOON, &g_Config.m_RiShowAfkEmoteInMenu, 0, 1, 0) \
-	X(AFK_EMOTE_TEXTURE_IN_SPEC, "AFK Emote/Texture In Spec", "", FontIcon::RC_MOON, &g_Config.m_RiShowAfkEmoteInSpec, 0, 1, 0) \
-	X(SHOW_FROZEN_FLAKES, "Disable Frozen Flakes", "", FontIcon::RC_SNOWFLAKE, &g_Config.m_RiShowFrozenFlakes, 1, 0, 0) \
-	X(SHOW_HAMMER_HIT, "Hide Hammer Hit", "", FontIcon::RC_GAVEL, &g_Config.m_RiShowHammerHit, 1, 0, 0) \
-	X(SOUND_ON_MOVE, "Sound On Move", "", FontIcon::RC_BELL, &g_Config.m_RiPlayOnMoveNonInactive, 0, 1, 0) \
-	X(MENU, "Menu", "", FontIcon::GEAR, &g_Config.m_RiUiNewMenu, 0, 1, 0) \
-	X(MUSIC_PLAYER, "Music Player", "", FontIcon::MUSIC, &g_Config.m_RiShowMusicIsland, 0, 1, 0) \
-	X(TRACKER, "Tracker", "", FontIcon::RC_LIST_TRACK, nullptr, 0, 0, 1) \
-	X(MILLISECOND_IN_GAME_TIMER, "Millisecond In Game Timer", "", FontIcon::RC_STOPWATCH, &g_Config.m_RiShowMilliSecondsTimer, 0, 1, 1) \
-	X(HEART_SIZE_IN_NAMEPLATE, "Heart Size In Nameplate", "RClient", FontIcon::HEART, nullptr, 0, 0, 1) \
-	X(BINDS, "Binds", "", FontIcon::KEYBOARD, nullptr, 0, 0, 1) \
-	X(BETTER_LASERS, "Better Lasers (Pulse)", "", FontIcon::RC_PERSON_RIFLE, &g_Config.m_RiBetterLasers, 0, 1, 1) \
-	X(SPECTATOR_MOVE, "Spectator Move", "", FontIcon::EYE, &g_Config.m_RiSpectatorMoveEnable, 0, 1, 1) \
-	X(SPECTATOR_SORT, "Spectator Sort", "", FontIcon::RC_ARROW_DOWN_WIDE_SHORT, &g_Config.m_RiSpectatorSortById, 0, 2, 1) \
-	X(FIND_TELEPORT, "Find teleport", "", FontIcon::RC_LOCATION_CROSSHAIRS, nullptr, 0, 0, 1) \
-	X(FIND_FINISH, "Find finish", "", FontIcon::RC_LOCATION_CROSSHAIRS, nullptr, 0, 0, 1) \
-	X(PLAYER_MENU, "Player Menu", "", FontIcon::RC_ADDRESS_CARD, nullptr, 0, 0, 1) \
-	X(CHAT_BUBBLES, "Chat Bubbles (Entity)", "", FontIcon::COMMENT, &g_Config.m_RiChatBubbles, 0, 1, 1) \
-	X(RI_INDICATOR, "RClient User Indicator", "", FontIcon::BOOKMARK, &g_Config.m_RiShowRclientIndicator, 0, 1, 1) \
-	X(EDGE_INFO, "Edge Info", "", FontIcon::RC_BORDER_TOP_LEFT, nullptr, 0, 0, 1) \
-	X(VOICE, "Voice", "", FontIcon::RC_MICROPHONE, &g_Config.m_RiVoiceEnable, 0, 1, 1) \
-	X(RCON, "Admin Panel", "", FontIcon::RC_GAVEL, nullptr, 0, 1, 1) \
-	X(PERCENT_VOTE_BAR, "Percent In Vote Bar", "", FontIcon::RC_BARS_PROGRESS, &g_Config.m_RiShowPercentInVoteBar, 0, 1, 1) \
-	X(SHOW_FIND_CHECKPOINT, "Show/Find Checkpoint", "", FontIcon::RC_LOCATION_DOT, &g_Config.m_RiShowCheckpointInHud, 0, 1, 1) \
-	X(COMPACT_ANGLE_CHECKPOINT, "Compact Angle/Checkpoint", "", FontIcon::RC_COMPASS, &g_Config.m_RiHudOneLine, 0, 1, 1) \
-	X(PLAYER_JOIN_SOUND, "Player Join Sound", "", FontIcon::RC_BELL, &g_Config.m_RiJoinSoundEnable, 0, 1, 1) \
-
-	enum ERushieSettingsSection
-	{
-#define RUSHIE_SETTINGS_SECTION_ENUM(Name, Title, TitleContext, Icon, MainToggle, DisabledValue, EnabledValue, Column) SETTINGS_SECTION_##Name,
-		RUSHIE_SETTINGS_SECTION_LIST(RUSHIE_SETTINGS_SECTION_ENUM)
-#undef RUSHIE_SETTINGS_SECTION_ENUM
-		NUM_RUSHIE_SETTINGS_SECTIONS
-	};
-	struct SRushieSettingsSectionEntry
-	{
-		ERushieSettingsSection m_Section;
-		const char *m_pTitle;
-		const char *m_pTitleContext;
-		const char *m_pIcon;
-		int *m_pMainToggle;
-		int m_MainToggleDisabledValue;
-		int m_MainToggleEnabledValue;
-		int m_Column;
-
-		bool HasMainToggle() const { return m_pMainToggle != nullptr; }
-		bool IsMainToggleEnabled() const { return HasMainToggle() && *m_pMainToggle != m_MainToggleDisabledValue; }
-		void SetMainToggleEnabled(bool Enabled) const
-		{
-			if(HasMainToggle())
-				*m_pMainToggle = Enabled ? m_MainToggleEnabledValue : m_MainToggleDisabledValue;
-		}
-	};
-	static const SRushieSettingsSectionEntry *GetRushieSettingsSectionEntries();
-	static int GetNumRushieSettingsSections();
-	static const SRushieSettingsSectionEntry &GetRushieSettingsSectionEntry(ERushieSettingsSection SectionId);
-	bool IsRushieSettingsSectionVisible(ERushieSettingsSection SectionId) const;
-	void RenderRushieSettingsSection(CUIRect &Column, ERushieSettingsSection SectionId);
-	void RenderRushieVoiceMix(CUIRect MainView);
-	void RenderRushieInfoPanel(CUIRect MainView);
-	void SetRushieVoiceMixTab(int Tab);
-
 private:
+	// Bongure Client {
 	char m_aTerminalInput[256];
 	static constexpr int TERMINAL_HISTORY_LINES = 64;
 	static constexpr int TERMINAL_LINE_LENGTH = 512;
@@ -167,16 +88,15 @@ private:
 	int m_TerminalCommandHistoryIndex;
 	int m_TerminalCursorPos;
 	bool m_TerminalSelectAll;
+	// Bongure Client }
 
 	CUi::SColorPickerPopupContext m_ColorPickerPopupContext;
 	ColorHSLA DoLine_ColorPicker(CButtonContainer *pResetId, float LineSize, float LabelSize, float BottomMargin, CUIRect *pMainRect, const char *pText, unsigned int *pColorValue, ColorRGBA DefaultColor, bool CheckBoxSpacing = true, int *pCheckBoxValue = nullptr, bool Alpha = false);
 	ColorHSLA DoButton_ColorPicker(const CUIRect *pRect, unsigned int *pHslaColor, bool Alpha);
 
-	void DoLaserPreview(const CUIRect *pRect, ColorHSLA OutlineColor, ColorHSLA InnerColor, int LaserType);
 	int DoButton_GridHeader(const void *pId, const char *pText, int Checked, const CUIRect *pRect, int Align = TEXTALIGN_ML);
 	int DoButton_Favorite(const void *pButtonId, const void *pParentId, bool Checked, const CUIRect *pRect);
 
-	bool m_SkinListScrollToSelected = false;
 	std::optional<std::chrono::nanoseconds> m_SkinList7LastRefreshTime;
 	std::optional<std::chrono::nanoseconds> m_SkinPartsList7LastRefreshTime;
 
@@ -356,15 +276,6 @@ protected:
 	bool m_NeedRestartUpdate;
 	bool m_NeedSendinfo;
 	bool m_NeedSendDummyinfo;
-	int m_SettingPlayerPage;
-
-	// 0.7 skins
-	bool m_CustomSkinMenu = false;
-	int m_TeePartSelected = protocol7::SKINPART_BODY;
-	const CSkins7::CSkin *m_pSelectedSkin = nullptr;
-	CLineInputBuffered<protocol7::MAX_SKIN_ARRAY_SIZE, protocol7::MAX_SKIN_LENGTH> m_SkinNameInput;
-	bool m_SkinPartListNeedsUpdate = false;
-	void PopupConfirmDeleteSkin7();
 
 	// for map download popup
 	int64_t m_DownloadLastCheckTime;
@@ -424,10 +335,10 @@ protected:
 
 		bool operator<(const CDemoItem &Other) const
 		{
-			if(!str_comp(m_aFilename, ".."))
-				return true;
 			if(!str_comp(Other.m_aFilename, ".."))
 				return false;
+			if(!str_comp(m_aFilename, ".."))
+				return true;
 			if(m_IsDir && !Other.m_IsDir)
 				return true;
 			if(!m_IsDir && Other.m_IsDir)
@@ -680,30 +591,63 @@ protected:
 	void UpdateCommunityCache(bool Force);
 
 	// found in menus_settings.cpp
-	void RenderLanguageSettings(CUIRect MainView);
-	bool RenderLanguageSelection(CUIRect MainView);
-	void RenderThemeSelection(CUIRect MainView);
-	void RenderSettingsGeneral(CUIRect MainView);
-	void RenderSettingsPlayer(CUIRect MainView);
-	void RenderSettingsTee(CUIRect MainView);
-	void RenderSettingsTee7(CUIRect MainView);
-	void RenderSettingsTeeCustom7(CUIRect MainView);
-	void RenderSkinSelection7(CUIRect MainView);
-	void RenderSkinPartSelection7(CUIRect MainView);
-	void RenderSettingsGraphics(CUIRect MainView);
-	void RenderSettingsSound(CUIRect MainView);
 	void RenderSettings(CUIRect MainView);
-	void RenderSettingsCustom(CUIRect MainView);
+	bool RenderHslaScrollbars(CUIRect *pRect, unsigned int *pColor, bool Alpha, float DarkestLight);
+
+	// found in menus_settings_assets.cpp
+	void RenderSettingsAssets(CUIRect MainView);
+
+	// found in menus_settings_appearance.cpp
+	void RenderSettingsAppearance(CUIRect MainView);
+	void DoLaserPreview(const CUIRect *pRect, ColorHSLA OutlineColor, ColorHSLA InnerColor, int LaserType);
 
 	// found in menus_settings_controls.cpp
 	// TODO: Change PopupConfirm to avoid using a function pointer to a CMenus
 	//       member function, to move this function to CMenusSettingsControls
 	void ResetSettingsControls();
 
+	// found in menus_settings_credits.cpp
+	void RenderSettingsCredits(CUIRect MainView);
+
+	// found in menus_settings_ddnet.cpp
+	void RenderSettingsDDNet(CUIRect MainView);
+
+	// found in menus_settings_general.cpp
+	void RenderSettingsGeneral(CUIRect MainView);
+	void RenderThemeSelection(CUIRect MainView);
+
+	// found in menus_settings_graphics.cpp
+	void RenderSettingsGraphics(CUIRect MainView);
+
+	// found in menus_settings_language.cpp
+	void RenderLanguageSettings(CUIRect MainView);
+	bool RenderLanguageSelection(CUIRect MainView);
+
+	// found in menus_settings_player.cpp
+	void RenderSettingsPlayer(CUIRect MainView);
+
+	// found in menus_settings_sound.cpp
+	void RenderSettingsSound(CUIRect MainView);
+
+	// found in menus_settings_tee.cpp
+	void RenderSettingsTee(CUIRect MainView);
+	bool m_SkinListScrollToSelected = false;
+
+	// found in menus_settings_tee7.cpp
+	void RenderSettingsTee7(CUIRect MainView);
+	void PopupConfirmDeleteSkin7();
+	void RenderSettingsTeeCustom7(CUIRect MainView);
+	void RenderSkinSelection7(CUIRect MainView);
+	void RenderSkinPartSelection7(CUIRect MainView);
+	bool m_CustomSkinMenu = false;
+	int m_TeePartSelected = protocol7::SKINPART_BODY;
+	const CSkins7::CSkin *m_pSelectedSkin = nullptr;
+	CLineInputBuffered<protocol7::MAX_SKIN_ARRAY_SIZE, protocol7::MAX_SKIN_LENGTH> m_SkinNameInput;
+	bool m_SkinPartListNeedsUpdate = false;
+
 	std::vector<CButtonContainer> m_vButtonContainersNamePlateShow = {{}, {}, {}, {}};
 	std::vector<CButtonContainer> m_vButtonContainersNamePlateKeyPresses = {{}, {}, {}, {}};
-	std::vector<CButtonContainer> m_vButtonContainersNamePlateHookPresses = {{}, {}, {}, {}};
-	std::vector<CButtonContainer> m_vButtonContainersNamePlateFirePresses = {{}, {}, {}, {}};
+	std::vector<CButtonContainer> m_vButtonContainersAntiPingPlayers = {{}, {}, {}};
 
 	class CMapListItem
 	{
@@ -724,10 +668,10 @@ protected:
 
 	static bool CompareFilenameAscending(const CMapListItem Lhs, const CMapListItem Rhs)
 	{
-		if(str_comp(Lhs.m_aFilename, "..") == 0)
-			return true;
 		if(str_comp(Rhs.m_aFilename, "..") == 0)
 			return false;
+		if(str_comp(Lhs.m_aFilename, "..") == 0)
+			return true;
 		if(Lhs.m_IsDirectory != Rhs.m_IsDirectory)
 			return Lhs.m_IsDirectory;
 		return str_comp_filenames(Lhs.m_aFilename, Rhs.m_aFilename) < 0;
@@ -746,6 +690,7 @@ public:
 	CMenus();
 	int Sizeof() const override { return sizeof(*this); }
 
+	void RenderLoadingDirect(const char *pCaption, const char *pContent, std::optional<float> Progress);
 	void RenderLoading(const char *pCaption, const char *pContent, int IncreaseCounter);
 	void FinishLoading();
 
@@ -759,7 +704,6 @@ public:
 
 	void OnStateChange(int NewState, int OldState) override;
 	void OnWindowResize() override;
-	void OnReset() override;
 	void OnRender() override;
 	bool OnInput(const IInput::CEvent &Event) override;
 	bool OnCursorMove(float x, float y, IInput::ECursorType CursorType) override;
@@ -800,11 +744,10 @@ public:
 		SETTINGS_SOUND,
 		SETTINGS_DDNET,
 		SETTINGS_ASSETS,
-		SETTINGS_TCLIENT,
-		SETTINGS_PROFILES,
-		SETTINGS_RUSHIE,
-		SETTINGS_CONFIGS,
-
+		SETTINGS_TCLIENT, // TClient
+		SETTINGS_PROFILES, // TClient
+		SETTINGS_CONFIGS, // TClient
+		SETTINGS_CREDITS,
 		SETTINGS_LENGTH,
 	};
 
@@ -830,7 +773,6 @@ public:
 		SMALL_TAB_QUIT,
 		SMALL_TAB_SETTINGS,
 		SMALL_TAB_EDITOR,
-		SMALL_TAB_LAUNCH_CLIENT,
 		SMALL_TAB_DEMOBUTTON,
 		SMALL_TAB_SERVER,
 		SMALL_TAB_BROWSER_FILTER,
@@ -921,7 +863,6 @@ public:
 		POPUP_RESTART,
 		POPUP_WARNING,
 		POPUP_SAVE_SKIN,
-		POPUP_BONGURE_SETTINGS
 	};
 
 	enum
@@ -945,7 +886,6 @@ private:
 	CMenusSettingsControls m_MenusSettingsControls;
 	friend CMenusSettingsControls;
 	CMenusStart m_MenusStart;
-	CMenusStartRClient m_MenusStartRClient;
 
 	static int GhostlistFetchCallback(const CFsFileInfo *pInfo, int IsDir, int StorageType, void *pUser);
 
@@ -953,11 +893,7 @@ private:
 	void RenderInGameNetwork(CUIRect MainView);
 	void RenderGhost(CUIRect MainView);
 
-	// found in menus_settings.cpp
-	void RenderSettingsDDNet(CUIRect MainView);
-	void RenderSettingsAppearance(CUIRect MainView);
-
-	// found in menus_tclient.cpp
+	// TClient: found in menus_tclient.cpp
 	void RenderSettingsTClient(CUIRect MainView);
 	void RenderSettingsTClientSettings(CUIRect MainView);
 	void RenderSettingsTClientBindWheel(CUIRect MainView);
@@ -969,25 +905,13 @@ private:
 	void RenderSettingsTClientConfigs(CUIRect MainView);
 	void RenderTeeCute(const CAnimState *pAnim, const CTeeRenderInfo *pInfo, int Emote, vec2 Dir, vec2 Pos, bool CuteEyes, float Alpha = 1.0f);
 
-	// Rushie
-	void RenderSettingsRushie(CUIRect MainView);
-	void RenderSettingsRushieSettings(CUIRect MainView);
-	void RenderSettingsRushieNameplatesEditor(CUIRect MainView);
-	void RenderSettingsRushieRCON(CUIRect MainView);
-	void RenderSettingsRushieInfo(CUIRect MainView);
-	void RenderSettingsRushieBindWheelSpec(CUIRect MainView);
-	void RenderSettingsRushieVoiceVolumes(CUIRect MainView);
-	void RenderSettingsRushieProfiles(CUIRect MainView);
-
+	// TClient
 	const CWarType *m_pRemoveWarType = nullptr;
 	void PopupConfirmRemoveWarType();
 	void RenderDevSkin(vec2 RenderPos, float Size, const char *pSkinName, const char *pBackupSkin, bool CustomColors, int FeetColor, int BodyColor, int Emote, bool Rainbow, bool Cute,
 		ColorRGBA ColorFeet = ColorRGBA(0, 0, 0, 0), ColorRGBA ColorBody = ColorRGBA(0, 0, 0, 0));
 	void RenderFontIcon(CUIRect Rect, const char *pText, float Size, int Align);
 	int DoButtonNoRect_FontIcon(CButtonContainer *pButtonContainer, const char *pText, int Checked, const CUIRect *pRect, int Corners = IGraphics::CORNER_ALL);
-
-	ColorHSLA RenderHSLColorPicker(const CUIRect *pRect, unsigned int *pColor, bool Alpha);
-	bool RenderHslaScrollbars(CUIRect *pRect, unsigned int *pColor, bool Alpha, float DarkestLight);
 	int DoButtonLineSize_Menu(CButtonContainer *pButtonContainer, const char *pText, int Checked, const CUIRect *pRect, float ButtonLineSize, bool Fake = false, const char *pImageName = nullptr, int Corners = IGraphics::CORNER_ALL, float Rounding = 5.0f, float FontFactor = 0.0f, ColorRGBA Color = ColorRGBA(1.0f, 1.0f, 1.0f, 0.5f));
 };
 #endif

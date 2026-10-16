@@ -1,7 +1,6 @@
 #include "bindchat.h"
 
 #include <base/log.h>
-#include <base/system.h>
 
 #include <engine/shared/config.h>
 #include <engine/shared/localization.h>
@@ -109,12 +108,6 @@ void CBindChat::ConBindchatDefaults(IConsole::IResult *pResult, void *pUserData)
 {
 	CBindChat *pThis = static_cast<CBindChat *>(pUserData);
 
-	for(const CBindRclient &BindDefault : s_aDefaultBindChatRclientFindSkin)
-		pThis->AddBind(BindDefault.m_Bind);
-	for(const CBindRclient &BindDefault : s_aDefaultBindChatRclientChat)
-		pThis->AddBind(BindDefault.m_Bind);
-	for(const CBindRclient &BindDefault : s_aDefaultBindChatRclientTracker)
-		pThis->AddBind(BindDefault.m_Bind);
 	for(const auto &[_, vBindDefaults] : CBindChat::BIND_DEFAULTS)
 		for(const CBindChat::CBindDefault &BindDefault : vBindDefaults)
 			pThis->AddBind(BindDefault.m_Bind);
@@ -124,20 +117,6 @@ void CBindChat::AddBind(const CBind &Bind)
 {
 	RemoveBind(Bind.m_aName); // Prevent duplicates
 	m_vBinds.push_back(Bind);
-}
-
-void CBindChat::RemoveBindCommand(const char *pCommand)
-{
-	if(pCommand[0] == '\0')
-		return;
-	for(auto It = m_vBinds.begin(); It != m_vBinds.end(); ++It)
-	{
-		if(str_comp(It->m_aCommand, pCommand) == 0)
-		{
-			m_vBinds.erase(It);
-			return;
-		}
-	}
 }
 
 bool CBindChat::RemoveBind(const char *pName)
@@ -281,7 +260,7 @@ bool CBindChat::ChatDoAutocomplete(bool ShiftPressed)
 	// insert the command
 	if(pCompletionBind)
 	{
-		char aBuf[MAX_LINE_LENGTH];
+		char aBuf[MAX_CHAT_LENGTH];
 		// add part before the name
 		str_truncate(aBuf, sizeof(aBuf), Chat.m_Input.GetString(), Chat.m_PlaceholderOffset);
 

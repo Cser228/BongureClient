@@ -23,10 +23,6 @@ public:
 	void OnRender() override;
 	CNamePlates();
 	~CNamePlates() override;
-
-	// R-Client
-	float GetNamePlateOffset(int ClientId) const;
-	void RiResetNameplatesPos(CGameClient &This, const char *pScheme) const;
 };
 
 #endif

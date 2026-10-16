@@ -1,14 +1,17 @@
 #include "android_main.h"
 
+#include <base/fs.h>
 #include <base/hash.h>
+#include <base/io.h>
 #include <base/log.h>
-#include <base/system.h>
+#include <base/str.h>
 
 #include <engine/shared/linereader.h>
 
 #include <SDL.h>
 #include <jni.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -286,11 +289,6 @@ bool StartAndroidServer(const char **ppArguments, size_t NumArguments)
 	pEnv->DeleteLocalRef(ActivityClass);
 
 	return true;
-}
-
-bool RequestAndroidAudioRecordPermission()
-{
-	return SDL_AndroidRequestPermission("android.permission.RECORD_AUDIO") == SDL_TRUE;
 }
 
 void ExecuteAndroidServerCommand(const char *pCommand)

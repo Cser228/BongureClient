@@ -55,8 +55,6 @@ class CGameConsole : public CComponent
 		bool m_MouseIsPress = false;
 		vec2 m_MousePress = vec2(0.0f, 0.0f);
 		vec2 m_MouseRelease = vec2(0.0f, 0.0f);
-		bool m_ScrollbarDragging = false;
-		float m_ScrollbarDragOffset = 0.0f;
 		int m_CurSelStart = 0;
 		int m_CurSelEnd = 0;
 		bool m_HasSelection = false;
@@ -117,7 +115,6 @@ class CGameConsole : public CComponent
 
 		bool OnInput(const IInput::CEvent &Event);
 		void PrintLine(const char *pLine, int Len, ColorRGBA PrintColor) REQUIRES(!m_BacklogPendingLock);
-		int TotalBacklogLines();
 		int GetLinesToScroll(int Direction, int LinesToScroll);
 		void ScrollToCenter(int StartLine, int EndLine);
 		void Dump() REQUIRES(!m_BacklogPendingLock);
@@ -136,8 +133,6 @@ class CGameConsole : public CComponent
 		 * @param aCmd the command the cursor is at
 		 */
 		void GetCommand(const char *pInput, char (&aCmd)[IConsole::CMDLINE_LENGTH]);
-		static void PossibleCommandsCompleteCallback(int Index, const char *pStr, void *pUser);
-		static void PossibleArgumentsCompleteCallback(int Index, const char *pStr, void *pUser);
 
 		void UpdateEntryTextAttributes(CBacklogEntry *pEntry) const;
 
@@ -168,6 +163,11 @@ class CGameConsole : public CComponent
 
 	bool m_WantsSelectionCopy = false;
 	CUi::CTouchState m_TouchState;
+
+	vec2 m_ButtonPressPosition = vec2(0.0f, 0.0f);
+	bool m_ButtonPressed = false;
+
+	bool DoButton(const CUIRect &Rect, const char *pIcon, vec2 MousePosition, bool Released);
 
 	static constexpr ColorRGBA ms_SearchHighlightColor = ColorRGBA(1.0f, 0.0f, 0.0f, 1.0f);
 	static constexpr ColorRGBA ms_SearchSelectedColor = ColorRGBA(1.0f, 1.0f, 0.0f, 1.0f);

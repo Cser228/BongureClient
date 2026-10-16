@@ -46,7 +46,6 @@ public:
 	bool IsActive() const { return m_Active; }
 
 	friend class CBindWheel;
-	friend class CBindWheelSpec;
 };
 
 #endif

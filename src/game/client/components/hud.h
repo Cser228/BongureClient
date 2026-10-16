@@ -42,12 +42,7 @@ struct SScoreInfo
 	bool m_Initialized;
 };
 
-typedef struct {
-	float x, y;
-	float w, h;
-	float r, g, b, a;
-} AnyHud;
-
+// This class changed by Bongure Client
 class CHud : public CComponent
 {
 	float m_Width, m_Height;
@@ -58,10 +53,6 @@ class CHud : public CComponent
 	STextContainerIndex m_DDRaceEffectsTextContainerIndex;
 	STextContainerIndex m_PlayerAngleTextContainerIndex;
 	float m_PlayerPrevAngle;
-	//RCLIENT CHECKPOINT START
-	STextContainerIndex m_PlayerCheckpointTextContainerIndex;
-	int m_PlayerPrevCheckpoint;
-	//RCLIENT CHECKPOINT END
 	STextContainerIndex m_aPlayerSpeedTextContainers[2];
 	float m_aPlayerPrevSpeed[2];
 	int m_aPlayerSpeed[2];
@@ -74,10 +65,6 @@ class CHud : public CComponent
 	ESpeedChange m_aLastPlayerSpeedChange[2];
 	STextContainerIndex m_aPlayerPositionContainers[2];
 	float m_aPlayerPrevPosition[2];
-	STextContainerIndex m_aTargetPositionContainers[2];
-	float m_aTargetPrevPosition[2];
-	STextContainerIndex m_aDummyPositionContainers[2];
-	float m_aDummyPrevPosition[2];
 
 	void RenderCursor();
 
@@ -97,7 +84,6 @@ class CHud : public CComponent
 	void RenderMovementInformation();
 
 	void UpdateMovementInformationTextContainer(STextContainerIndex &TextContainer, float FontSize, float Value, float &PrevValue);
-	void UpdateMovementInformationTextContainer(STextContainerIndex &TextContainer, float FontSize, int Value, int &PrevValue);
 	void RenderMovementInformationTextContainer(STextContainerIndex &TextContainer, const ColorRGBA &Color, float X, float Y);
 
 	class CMovementInformation
@@ -109,14 +95,6 @@ class CHud : public CComponent
 	};
 	class CMovementInformation GetMovementInformation(int ClientId, int Conn) const;
 
-	// Target info
-	vec2 m_Lastpostarget[MAX_CLIENTS];
-	CMovementInformation Targetinfo[MAX_CLIENTS];
-
-	// Dummy info
-	vec2 m_LastposDummy;
-	CMovementInformation Dummyinfo;
-
 	void RenderGameTimer();
 	void RenderPauseNotification();
 	void RenderSuddenDeath();
@@ -127,36 +105,17 @@ class CHud : public CComponent
 	void RenderSpectatorHud();
 	void RenderWarmupTimer();
 	void RenderLocalTime(float x);
-	void RenderVoiceIndicator();
-	void RenderVoiceSpeakerOverlay();
 
 	static constexpr float MOVEMENT_INFORMATION_LINE_HEIGHT = 8.0f;
 
 public:
-	//
-	float player_stats_jumps_x_standart = 5.0f;
-	float player_stats_jumps_y_standart = 29.0f;
-
-	float ninja_bar_x_standart = 125.0f;
-	float ninja_bar_y_standart = 5.0f;
-	float ninja_bar_w_standart = 6.0f;
-	float ninja_bar_h_standart = 24.0f;
-
-	float any_weapon_x_standart = 5.0f;
-	float any_weapon_y_standart = 5.0f;
-
-	float health_y_standart = 5.0f;
-	float armor_y_standart = 17.0f;
-
-	float spectators_count_h_standart = 14.0f;
-
-	float pos_standart_none = 90900;
-	//
-
-
+	// Bongure Client {
 	void RenderBongaDebugWindow();
 
-
+	IGraphics::CTextureHandle m_DummyArrowTexture;
+	vec2 m_LastDummyPos;
+	bool m_HasLastDummyPos;
+	// Bongure Client }
 
 	CHud();
 	int Sizeof() const override { return sizeof(*this); }
@@ -167,9 +126,6 @@ public:
 	void OnRender() override;
 	void OnInit() override;
 	void OnNewSnapshot() override;
-	IGraphics::CTextureHandle m_DummyArrowTexture;
-	vec2 m_LastDummyPos;
-	bool m_HasLastDummyPos;
 
 	// DDRace
 
@@ -177,9 +133,12 @@ public:
 	void RenderNinjaBarPos(float x, float y, float Width, float Height, float Progress, float Alpha = 1.0f);
 
 private:
+	//Bongure Client {
+	void RenderDummyIndicator();
+	//Bongure Client }
+
 	void RenderRecord();
 	void RenderDDRaceEffects();
-	void RenderDummyIndicator();
 	float m_TimeCpDiff;
 	float m_aPlayerRecord[NUM_DUMMIES];
 	float m_FinishTimeDiff;
@@ -220,8 +179,6 @@ private:
 	int m_LiveFrozenOffset;
 	int m_DummyHammerOffset;
 	int m_DummyCopyOffset;
-	int m_DummyResetOnSwitchOffset;
-	int m_DummyControlOffset;
 	int m_PracticeModeOffset;
 	int m_Team0ModeOffset;
 	int m_LockModeOffset;
