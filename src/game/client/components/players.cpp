@@ -1150,7 +1150,7 @@ void CPlayers::OnRender() {
 			Frozen = GameClient()->m_aClients[i].m_Predicted.m_FreezeEnd != 0;
 			// TClient
 			// Bongure Client {
-			if(g_Config.m_BcFastInputs != BC_INPUTS_OFF)
+			if(g_Config.m_BcFastInputEnabled == 1)
 				Frozen = GameClient()->m_aClients[i].m_RegularPredicted.m_FreezeEnd != 0;
 			// Bongure Client }
 		}

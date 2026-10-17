@@ -927,6 +927,10 @@ public:
 	void MapScreen(const CScreenRect &ScreenRect) override;
 	void MapScreen(float TopLeftX, float TopLeftY, float BottomRightX, float BottomRightY) override;
 	CScreenRect GetScreen() const override;
+	// Bongure Client {
+	void GetScreen(float *pTopLeftX, float *pTopLeftY, float *pBottomRightX,
+		float *pBottomRightY) const override;
+	// Bongure Client }
 
 	void LinesBegin() override;
 	void LinesEnd() override;

@@ -351,6 +351,10 @@ public:
 	void MapScreenToSize(float Width, float Height);
 
 	virtual CScreenRect GetScreen() const = 0;
+	// Bongure Client {
+	virtual void GetScreen(float *pTopLeftX, float *pTopLeftY, float *pBottomRightX,
+		float *pBottomRightY) const = 0;
+	// Bongure Client }
 
 	// TODO: These should perhaps not be virtuals
 	virtual void BlendNone() = 0;

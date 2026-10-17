@@ -1,6 +1,7 @@
 #ifndef ENGINE_FONT_ICONS_H
 #define ENGINE_FONT_ICONS_H
 
+// This namespace changed by Bongure Client
 namespace FontIcon
 {
 	// Each font icon is named according to its official name in Font Awesome.
@@ -91,6 +92,11 @@ namespace FontIcon
 	inline const char *const USER = "\uF007";
 	inline const char *const VIDEO = "\uF03D";
 	inline const char *const XMARK = "\uF00D";
+
+	// Bongure Client {
+	inline const char *const BC_ANGLE_UP = "\uF106";
+	inline const char *const BC_ANGLES_UP = "\uF102";
+	// Bongure Client }
 
 	// TClient
 	inline const char *const ICON_USERS = "\xEF\x83\x80";

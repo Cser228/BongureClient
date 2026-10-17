@@ -220,6 +220,17 @@ CScreenRect CGraphics_Threaded::GetScreen() const
 	return CScreenRect(m_State.m_ScreenTL, m_State.m_ScreenBR);
 }
 
+// Bongure Client {
+void CGraphics_Threaded::GetScreen(float *pTopLeftX, float *pTopLeftY, float *pBottomRightX,
+	float *pBottomRightY) const {
+
+	*pTopLeftX = m_State.m_ScreenTL.x;
+	*pTopLeftY = m_State.m_ScreenTL.y;
+	*pBottomRightX = m_State.m_ScreenBR.x;
+	*pBottomRightY = m_State.m_ScreenBR.y;
+}
+// Bongure Client }
+
 void CGraphics_Threaded::LinesBegin()
 {
 	dbg_assert(m_Drawing == EDrawing::NONE, "called Graphics()->LinesBegin twice");

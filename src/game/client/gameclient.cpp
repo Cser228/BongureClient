@@ -188,6 +188,9 @@ void CGameClient::OnConsoleInit()
 					      &m_ImportantAlert,
 					      &m_DebugHud,
 					      &m_TouchControls,
+						  // Bongure Client {
+						  &m_EdgeInfo,
+						  // Bongure Client {
 					      &m_Scoreboard,
 					      &m_Statboard,
 					      &m_Motd,
@@ -2882,7 +2885,7 @@ void CGameClient::OnPredict() {
 			pInputData = CloudInputMode ? &m_CloudInput.Input(LocalTee) :
 				&m_Controls.m_aFastInput[LocalTee];
 			
-			if (g_Config.m_BcFastInputs != BC_INPUTS_SAIKO && GetDummyFastInput(DummyFastInput,
+			if (g_Config.m_BcFastInput != BC_INPUTS_SAIKO && GetDummyFastInput(DummyFastInput,
 				pDummyInputData, pDummyChar, LocalTee, DummyTee)) pDummyInputData = &DummyFastInput;
 		}
 		// Bongure Client }
@@ -4359,7 +4362,7 @@ void CGameClient::UpdateRenderedCharacters() {
 				// Bongure Client {
 				if (HasFastInputOthers && BcInputs::ImmediateOthers()) Pos = GetFastInputPos(i);
 				else if (g_Config.m_TcAntiPingImproved && (CloudInputMode ||
-					g_Config.m_BcFastInputs == BC_INPUTS_SAIKO || m_aClients[i].m_ValidAntipingSmooth)) {
+					g_Config.m_BcFastInput == BC_INPUTS_SAIKO || m_aClients[i].m_ValidAntipingSmooth)) {
 					
 					Pos = mix(m_aClients[i].m_PrevImprovedPredPos, m_aClients[i].m_ImprovedPredPos,
 						Client()->PredIntraGameTick(g_Config.m_ClDummy));
@@ -4552,7 +4555,7 @@ vec2 CGameClient::GetSmoothPos(int ClientId) {
 	const bool FastInputOthers = BcInputs::AnyOthers();
 	const int FastInputTicksClient = ClientId == m_Snap.m_LocalClientId ? FastInputTicks :
 		(FastInputOthers ? BcInputs::PredictionTicksOthers(FastInputOffsetTicks) : 0);
-	const bool BestInputInterpolationEnabled = g_Config.m_BcFastInputs == BC_INPUTS_BEST &&
+	const bool BestInputInterpolationEnabled = g_Config.m_BcFastInput == BC_INPUTS_BEST &&
 		FastInputTicksClient > 0 && (ClientId == m_Snap.m_LocalClientId || FastInputOthers);
 
 	if (ClientId != m_Snap.m_LocalClientId && FastInputTicksClient > 0 && BcInputs::ImmediateOthers())
@@ -4594,7 +4597,7 @@ vec2 CGameClient::GetFastInputPos(int ClientId) {
 
 	// Bongure Client {
 	// F: original fclient fast-input algorithm, ported as-is (velocity extrapolation with exponential smoothing).
-	if(g_Config.m_BcFastInputs == BC_INPUTS_F) {
+	if(g_Config.m_BcFastInput == BC_INPUTS_F) {
 		static vec2 s_OffsetSmooth[MAX_CLIENTS];
 		static bool s_OffsetInit[MAX_CLIENTS];
 		static int s_OffsetTick[MAX_CLIENTS];
@@ -4686,7 +4689,7 @@ vec2 CGameClient::GetFastInputPos(int ClientId) {
 	const bool FastInputOthers = BcInputs::AnyOthers();
 	const int FastInputTicksClient = ClientId == m_Snap.m_LocalClientId ? FastInputTicks :
 		(FastInputOthers ? BcInputs::PredictionTicksOthers(FastInputOffsetTicks) : 0);
-	const bool BestInputInterpolationEnabled = g_Config.m_BcFastInputs == BC_INPUTS_BEST &&
+	const bool BestInputInterpolationEnabled = g_Config.m_BcFastInput == BC_INPUTS_BEST &&
 		FastInputTicks > 0;
 	BcInputs::ApplyOffset(FastInputOffsetTicks, PredTick, PredIntraTick);
 
@@ -4810,7 +4813,7 @@ vec2 CGameClient::GetFreezePos(int ClientId) {
 
 	const bool ApplyFastInputLocal = IsLocal && FastInputTicks > 0;
 	const bool ApplyFastInputOthers = !IsLocal && FastInputTicksClient > 0;
-	const bool BestInputInterpolationEnabled = g_Config.m_BcFastInputs == BC_INPUTS_BEST &&
+	const bool BestInputInterpolationEnabled = g_Config.m_BcFastInput == BC_INPUTS_BEST &&
 		(ApplyFastInputLocal || ApplyFastInputOthers);
 	
 	if (ApplyFastInputLocal || ApplyFastInputOthers) {

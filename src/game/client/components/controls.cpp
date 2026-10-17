@@ -514,7 +514,7 @@ float CControls::GetMaxMouseDistance() const
 // This function changed by Bongure Client
 bool CControls::CheckNewInput() {
 	// Bongure Client {
-	if(g_Config.m_BcFastInputs == BC_INPUTS_SAIKO && g_Config.m_BcSaikoFastInputAmount > 0) {
+	if(g_Config.m_BcFastInput == BC_INPUTS_SAIKO && g_Config.m_BcSaikoFastInputAmount > 0) {
 		CNetObj_PlayerInput TestInput = m_aInputData[g_Config.m_ClDummy];
 		const bool LeftPressed = m_aInputDirectionLeft[g_Config.m_ClDummy] != 0;
 		const bool RightPressed = m_aInputDirectionRight[g_Config.m_ClDummy] != 0;

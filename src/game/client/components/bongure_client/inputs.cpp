@@ -11,13 +11,13 @@ namespace
 	// Fast: legacy ms-based prediction (20ms per tick).
 	float FastModeOffsetTicks()
 	{
-		if(g_Config.m_BcFastInputs != BC_INPUTS_FAST || g_Config.m_TcFastInputAmount <= 0) return 0.0f;
+		if(g_Config.m_BcFastInput != BC_INPUTS_FAST || g_Config.m_TcFastInputAmount <= 0) return 0.0f;
 		return g_Config.m_TcFastInputAmount / 20.0f;
 	}
 
 	// Best: tick-based prediction (0.01 ticks) with smoothing and latency compensation.
 	float BestModeOffsetTicks() {
-		if(g_Config.m_BcFastInputs != BC_INPUTS_BEST || g_Config.m_BcBestFastInputAmount <= 0) return 0.0f;
+		if(g_Config.m_BcFastInput != BC_INPUTS_BEST || g_Config.m_BcBestFastInputAmount <= 0) return 0.0f;
 
 		float Offset = g_Config.m_BcBestFastInputAmount / 100.0f;
 
@@ -32,14 +32,14 @@ namespace
 
 	// Saiko: tick-based prediction (0.01 ticks).
 	float SaikoModeOffsetTicks() {
-		if(g_Config.m_BcFastInputs != BC_INPUTS_SAIKO || g_Config.m_BcSaikoFastInputAmount <= 0)
+		if(g_Config.m_BcFastInput != BC_INPUTS_SAIKO || g_Config.m_BcSaikoFastInputAmount <= 0)
 			return 0.0f;
 		return g_Config.m_BcSaikoFastInputAmount / 100.0f;
 	}
 
 	// Delta: tick-based prediction (0.01 ticks).
 	float DeltaModeOffsetTicks() {
-		if(g_Config.m_BcFastInputs != BC_INPUTS_DELTA || g_Config.m_BcDeltaFastInputAmount <= 0)
+		if(g_Config.m_BcFastInput != BC_INPUTS_DELTA || g_Config.m_BcDeltaFastInputAmount <= 0)
 			return 0.0f;
 		return g_Config.m_BcDeltaFastInputAmount / 100.0f;
 	}
@@ -47,7 +47,7 @@ namespace
 	// F: original fclient fast-input prediction (0.001 ticks), see CGameClient::GetFastInputPos for the velocity-extrapolation logic.
 	float FModeOffsetTicks()
 	{
-		if(g_Config.m_BcFastInputs != BC_INPUTS_F || g_Config.m_BcFFastInputAmount <= 0)
+		if(g_Config.m_BcFastInput != BC_INPUTS_F || g_Config.m_BcFFastInputAmount <= 0)
 			return 0.0f;
 		return g_Config.m_BcFFastInputAmount / 1000.0f;
 	}
@@ -55,7 +55,7 @@ namespace
 
 float BcInputs::EffectiveOffsetTicks()
 {
-	switch(g_Config.m_BcFastInputs)
+	switch(g_Config.m_BcFastInput)
 	{
 	case BC_INPUTS_FAST: return FastModeOffsetTicks();
 	case BC_INPUTS_BEST: return BestModeOffsetTicks();
@@ -70,7 +70,7 @@ int BcInputs::PredictionTicks(float OffsetTicks)
 {
 	if(OffsetTicks <= 0.0f)
 		return 0;
-	if(g_Config.m_BcFastInputs == BC_INPUTS_SAIKO)
+	if(g_Config.m_BcFastInput == BC_INPUTS_SAIKO)
 		return (int)std::ceil(OffsetTicks + 1.0f);
 	return (int)std::ceil(OffsetTicks);
 }
@@ -79,7 +79,7 @@ int BcInputs::PredictionTicksOthers(float OffsetTicks)
 {
 	if(OffsetTicks <= 0.0f)
 		return 0;
-	if(g_Config.m_BcFastInputs == BC_INPUTS_SAIKO)
+	if(g_Config.m_BcFastInput == BC_INPUTS_SAIKO)
 		return (int)std::ceil(OffsetTicks);
 	return PredictionTicks(OffsetTicks);
 }
@@ -130,32 +130,32 @@ float BcInputs::BestInterpolate(float PrevPos, float CurPos, float Fraction, boo
 
 bool BcInputs::FastOthers()
 {
-	return g_Config.m_BcFastInputs == BC_INPUTS_FAST && g_Config.m_TcFastInputOthers != 0;
+	return g_Config.m_BcFastInput == BC_INPUTS_FAST && g_Config.m_TcFastInputOthers != 0;
 }
 
 bool BcInputs::BestOthers()
 {
-	return g_Config.m_BcFastInputs == BC_INPUTS_BEST && g_Config.m_BcBestFastInputOthers != 0;
+	return g_Config.m_BcFastInput == BC_INPUTS_BEST && g_Config.m_BcBestFastInputOthers != 0;
 }
 
 bool BcInputs::SaikoOthers()
 {
-	return g_Config.m_BcFastInputs == BC_INPUTS_SAIKO && g_Config.m_BcSaikoFastInputOthers != 0;
+	return g_Config.m_BcFastInput == BC_INPUTS_SAIKO && g_Config.m_BcSaikoFastInputOthers != 0;
 }
 
 bool BcInputs::DeltaOthers()
 {
-	return g_Config.m_BcFastInputs == BC_INPUTS_DELTA && g_Config.m_BcDeltaFastInputOthers != 0;
+	return g_Config.m_BcFastInput == BC_INPUTS_DELTA && g_Config.m_BcDeltaFastInputOthers != 0;
 }
 
 bool BcInputs::FOthers()
 {
-	return g_Config.m_BcFastInputs == BC_INPUTS_F && g_Config.m_BcFFastInputOthers != 0;
+	return g_Config.m_BcFastInput == BC_INPUTS_F && g_Config.m_BcFFastInputOthers != 0;
 }
 
 bool BcInputs::CloudOthers()
 {
-	return g_Config.m_BcFastInputs == BC_INPUTS_CLOUD && g_Config.m_BcCloudFastInputOthers != 0;
+	return g_Config.m_BcFastInput == BC_INPUTS_CLOUD && g_Config.m_BcCloudFastInputOthers != 0;
 }
 
 bool BcInputs::AnyOthers()

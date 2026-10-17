@@ -67,9 +67,11 @@
 #include "components/spectator.h"
 #include "components/statboard.h"
 
-//Bongure Client
-#include "components/bongure_client/voice_assistant.h"
+// Bongure Client {
 #include "components/bongure_client/cloud_input.h"
+#include "components/bongure_client/edgeinfo.h"
+#include "components/bongure_client/voice_assistant.h"
+// Bongure Client }
 
 //Tater
 #include "components/tclient/bg_draw.h"
@@ -252,9 +254,9 @@ public:
 	CMovingTiles m_MovingTilesForeground = CMovingTiles{true};
 
 	// Bongure Client {
-	// Bongure Components
-	CVoiceAssistant m_VoiceAssistant;
 	CCloudInput m_CloudInput;
+	CEdgeInfo m_EdgeInfo;
+	CVoiceAssistant m_VoiceAssistant;
 	// Bongure Client }
 
 private:

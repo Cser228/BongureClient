@@ -1476,7 +1476,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/bin/cmake --regenerate-during-build -S/home/cser228/programming/BongureClientFromTater -B/home/cser228/programming/BongureClientFromTater/build
+  command = /usr/bin/cmake --regenerate-during-build -S/home/cser228/programming/BongureClient -B/home/cser228/programming/BongureClient/build
   description = Re-running CMake...
   generator = 1
 

@@ -18,10 +18,6 @@ MACRO_CONFIG_INT(BcDummyPointerColorG, bc_dummy_pointer_color_g, 255, 0, 255, CF
 MACRO_CONFIG_INT(BcDummyPointerColorB, bc_dummy_pointer_color_b, 255, 0, 255, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy arrow pointor color blue")
 //Dummy arrow
 
-//Edge info by 1 0
-MACRO_CONFIG_INT(BcEdgeInfo, bc_edgeinfo, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Rushie edge info only by toggle, its 1 0")
-//Edge info by 1 0
-
 // Auto-mute system
 MACRO_CONFIG_INT(BcAutoMute, bc_auto_mute, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Auto-mute players repeating the same message")
 MACRO_CONFIG_INT(BcAutoMuteTimes, bc_auto_mute_times, 3, 2, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "How many repeated messages before auto-mute")
@@ -66,8 +62,9 @@ MACRO_CONFIG_INT(BcEyeComfortStrength, bc_eye_comfort_strength, 35, 0, 100, CFGF
 MACRO_CONFIG_INT(BcDisableTextures, bc_disable_textures, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Disable textures for optimization")
 // Optimization
 
-// Fast inputs
-MACRO_CONFIG_INT(BcFastInputs, bc_fast_inputs, 0, 0, 6, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Input prediction mode (0 = off, 1 = fast, 2 = best, 3 = saiko, 4 = delta, 5 = f, 6 = cloud)")
+// Fast Inputs
+MACRO_CONFIG_INT(BcFastInputEnabled, bc_fast_input_enabled, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Fast Input enabled state")
+MACRO_CONFIG_INT(BcFastInput, bc_fast_input, 1, 1, 6, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Input prediction mode (1 = fast, 2 = best, 3 = saiko, 4 = delta, 5 = f, 6 = cloud)")
 MACRO_CONFIG_INT(BcBestFastInputAmount, bc_best_fast_input_amount, 0, 0, 1000, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Best input prediction amount in 0.01 ticks")
 MACRO_CONFIG_INT(BcBestFastInputSmoothing, bc_best_fast_input_smoothing, 0, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Best input smoothing amount (0-100%)")
 MACRO_CONFIG_INT(BcBestFastInputLatencyComp, bc_best_fast_input_latency_comp, 0, 0, 50, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Best input latency compensation (0-50%)")
@@ -82,3 +79,14 @@ MACRO_CONFIG_INT(BcFFastInputOthers, bc_f_fast_input_others, 0, 0, 1, CFGFLAG_CL
 MACRO_CONFIG_INT(BcCloudFastInputAmount, bc_cloud_fast_input_amount, 0, 0, 500, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Cloud input amount in 0.01 ticks")
 MACRO_CONFIG_INT(BcCloudFastInputOthers, bc_cloud_fast_input_others, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Apply cloud input to other tees")
 // Fast inputs
+
+// Edge Info
+MACRO_CONFIG_INT(BcEdgeInfo, bc_edge_info, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Switch off or on edge info")
+MACRO_CONFIG_COL(BcEdgeInfoColorFreeze, bc_edge_info_color_freeze, 9930605, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Freeze color in edge info")
+MACRO_CONFIG_COL(BcEdgeInfoColorKill, bc_edge_info_color_kill, 65461, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Kill color in edge info")
+MACRO_CONFIG_COL(BcEdgeInfoColorSafe, bc_edge_info_color_safe, 5594535, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Safe color in edge info")
+MACRO_CONFIG_INT(BcEdgeInfoCords, bc_edge_info_cords, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show upper panel of edge info")
+MACRO_CONFIG_INT(BcEdgeInfoJump, bc_edge_info_jump, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show lower panel of edge info")
+MACRO_CONFIG_INT(BcEdgeInfoPosX, bc_edge_info_pos_x, 50, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change edge info pos x")
+MACRO_CONFIG_INT(BcEdgeInfoPosY, bc_edge_info_pos_y, 56, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change edge info pos y")
+// Edge Info

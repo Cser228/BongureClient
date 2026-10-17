@@ -26,6 +26,6 @@ namespace BcInputs
 	bool CloudOthers();
 	bool AnyOthers();
 	bool ImmediateOthers();
-} // namespace BcFastInputs
+} // namespace BcFastInput
 
 #endif

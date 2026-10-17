@@ -1,7 +1,7 @@
 {
 	"InstallScripts" : 
 	[
-		"/home/cser228/programming/BongureClientFromTater/build/cmake_install.cmake"
+		"/home/cser228/programming/BongureClient/build/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

@@ -323,6 +323,13 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
     Screen.VMargin(20.0f, &Main);
     Screen.HMargin(10.0f, &Main);
 
+	static CScrollRegion s_ScrollRegion;
+	CScrollRegionParams ScrollParams;
+	ScrollParams.m_ScrollUnit = 60.0f;
+	ScrollParams.m_ForceShowScrollbar = true;
+	ScrollParams.m_ScrollbarMargin = 5.0f;
+	s_ScrollRegion.Begin(&Main, &ScrollParams);
+
     Main.HSplitTop(35.0f, &TitleRow, &Main);
     TextRender()->TextColor(TextColor);
     Ui()->DoLabel(&TitleRow, Localize("Bongure Client Settings"), 22.0f, TEXTALIGN_MC);
@@ -1035,106 +1042,528 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 		}
 		//Disable textures
 	}
-
 	Main.HSplitTop(5.0f, nullptr, &Main);
-	// Optimization
 
-	// Fast inputs
+	// Fast Input
 	Main.HSplitTop(20.0f, &Row, &Main);
 
-	static bool s_show_fast_inputs_block = false;
+	CUIRect FastInputsLeft, FastInputsRight;
+	Row.VSplitLeft(200.0f, &FastInputsLeft, &FastInputsRight);
+
+	static bool s_HideFastInputs = true;
+
 	TextRender()->TextColor(TextColor);
-	if (DoButton_CheckBox(&s_show_fast_inputs_block, Localize("Fast input (this is a hide button)"),
-		s_show_fast_inputs_block, &Row)) {
+	if (DoButton_CheckBox(&g_Config.m_BcFastInputEnabled, Localize("Fast Input"),
+		g_Config.m_BcFastInputEnabled, &FastInputsLeft)) g_Config.m_BcFastInputEnabled ^= 1;
 
-		s_show_fast_inputs_block = !s_show_fast_inputs_block;
-	}
+	TextRender()->TextColor(TextColor);
+	if (DoButton_CheckBox(&s_HideFastInputs, Localize("Hide"), s_HideFastInputs, &FastInputsRight))
+		s_HideFastInputs ^= 1;
 
-	if (s_show_fast_inputs_block) {
-        Main.HSplitTop(5.0f, nullptr, &Main);
-        Main.HSplitTop(20.0f, &Row, &Main);
+	if (!s_HideFastInputs) {
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
 
-		static bool s_enable_fast_input = false;
-		CUIRect Row20 = Row;
-			Row20.x += 20.0f;
+		//Lable
+		CUIRect FastInputLabelRect = Row;
+			FastInputLabelRect.x += 20.0f;
+		//Lable
 
-		if (DoButton_CheckBox(&s_enable_fast_input, Localize("Enable fast input"), s_enable_fast_input,
-			&Row20)) {
-			
-			s_enable_fast_input = !s_enable_fast_input;
+		//DropDown
+		CUIRect FastInputDropDownRect = Row;
+			FastInputDropDownRect.x += 350.0f;
+			FastInputDropDownRect.w = 250.0f;
+
+		//
+
+		static CUi::SDropDownState s_FastInputDropDownState;
+		static CScrollRegion s_FastInputDropDownScrollRegion;
+		s_FastInputDropDownState.m_SelectionPopupContext.m_pScrollRegion =
+			&s_FastInputDropDownScrollRegion;
+
+		//
+
+		const char *apFastInputDropDownModes[] = {
+			"Fast",
+			"Best",
+			"Saiko",
+			"Delta",
+			"F",
+			"Cloud"
+		};
+		static const int s_apFastInputDropDownModes_len = std::size(apFastInputDropDownModes);
+		static const std::array<int, s_apFastInputDropDownModes_len> s_aAspectFastInputValues =
+			{BC_INPUTS_FAST, BC_INPUTS_BEST, BC_INPUTS_SAIKO, BC_INPUTS_DELTA, BC_INPUTS_F,
+			BC_INPUTS_CLOUD};
+
+		//
+
+		int CurrentFastInput = 0;
+		for (size_t i = 0; i < s_apFastInputDropDownModes_len; ++i) {
+			if (s_aAspectFastInputValues[i] == g_Config.m_BcFastInput) {
+				CurrentFastInput = i;
+			}
 		}
+		//DropDown
 
-		if (s_enable_fast_input) {
+		//Render
+
+		TextRender()->TextColor(TextColor);
+		Ui()->DoLabel(&FastInputLabelRect, Localize("Type of Fast Input:"), 14.0f, TEXTALIGN_ML);
+		TextRender()->TextColor(TextRender()->DefaultTextColor());
+
+		const int NewFastInput =
+			Ui()->DoDropDown(&FastInputDropDownRect, CurrentFastInput, apFastInputDropDownModes,
+			s_apFastInputDropDownModes_len, s_FastInputDropDownState);
+
+
+		//Logic
+		if (CurrentFastInput != NewFastInput) {
+			g_Config.m_BcFastInput = s_aAspectFastInputValues[NewFastInput];
+		}
+		//Logic
+
+		if (g_Config.m_BcFastInput == BC_INPUTS_BEST) {
+			// Margin
 			Main.HSplitTop(5.0f, nullptr, &Main);
 			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+			
+			// Int input
+			static CLineInputBuffered<8> s_BestFastInputAmountInput;
+			CUIRect SliderArea, EditArea;
+			Row.VSplitRight(50.0f, &SliderArea, &EditArea);
 
-			//Lable
-			CUIRect FastInputLabelRect = Row;
-				FastInputLabelRect.x += 40.0f;
-			//Lable
-
-			//DropDown
-			CUIRect FastInputDropDownRect = Row;
-				FastInputDropDownRect.x += 200.0f;
-				FastInputDropDownRect.w = 250.0f;
-
-			//
-
-			static CUi::SDropDownState s_FastInputDropDownState;
-			static CScrollRegion s_FastInputDropDownScrollRegion;
-			s_FastInputDropDownState.m_SelectionPopupContext.m_pScrollRegion =
-				&s_FastInputDropDownScrollRegion;
-
-			//
-
-			const char *apFastInputDropDownModes[] = {
-				"Fast",
-				"Best",
-				"Saiko",
-				"Delta",
-				"F",
-				"Cloud"
-			};
-			static const int s_apFastInputDropDownModes_len = std::size(apFastInputDropDownModes);
-			static const std::array<int, s_apFastInputDropDownModes_len> s_aAspectFastInputValues =
-				{BC_INPUTS_FAST, BC_INPUTS_BEST, BC_INPUTS_SAIKO, BC_INPUTS_DELTA, BC_INPUTS_F,
-				BC_INPUTS_CLOUD};
-
-			//
-
-			int CurrentFastInput = 0;
-			for (size_t i = 0; i < s_apFastInputDropDownModes_len; ++i) {
-				if (s_aAspectFastInputValues[i] == g_Config.m_BcFastInputs) {
-					CurrentFastInput = i;
-				}
+			bool BestFastInputAmountEditActive = Ui()->HotItem() == &s_BestFastInputAmountInput ||
+				Ui()->ActiveItem() == &s_BestFastInputAmountInput;
+			if (!BestFastInputAmountEditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", g_Config.m_BcBestFastInputAmount);
+				s_BestFastInputAmountInput.Set(aTmp);
 			}
-			//DropDown
+			
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(&g_Config.m_BcBestFastInputAmount,
+				&g_Config.m_BcBestFastInputAmount, &SliderArea,
+				Localize("Prediction amount in 0.01 ticks"), 0, 1000,
+				&CUi::ms_LinearScrollbarScale, 0u);
+			TextRender()->TextColor(TextColor);
+			if (Ui()->DoEditBox(&s_BestFastInputAmountInput, &EditArea, 14.0f)) {
+				const int P = str_toint(s_BestFastInputAmountInput.GetString());
+				if (P >= 0 && P <= 1000) g_Config.m_BcBestFastInputAmount = P;
+			}
+			// Int input
 
-			//Render
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
 
-			Ui()->DoLabel(&FastInputLabelRect, Localize("Fast input"), 14.0f, TEXTALIGN_ML);
-			TextRender()->TextColor(TextRender()->DefaultTextColor());
+			// Int input
+			static CLineInputBuffered<8> s_BestFastInputSmoothingInput;
+			Row.VSplitRight(50.0f, &SliderArea, &EditArea);
 
-			const int NewFastInput =
-				Ui()->DoDropDown(&FastInputDropDownRect, CurrentFastInput, apFastInputDropDownModes,
-				s_apFastInputDropDownModes_len, s_FastInputDropDownState);
+			bool BestFastInputSmoothingEditActive = Ui()->HotItem() ==
+				&s_BestFastInputSmoothingInput || Ui()->ActiveItem() ==
+				&s_BestFastInputSmoothingInput;
+			if (!BestFastInputSmoothingEditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", g_Config.m_BcBestFastInputSmoothing);
+				s_BestFastInputSmoothingInput.Set(aTmp);
+			}
+			
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(&g_Config.m_BcBestFastInputSmoothing,
+				&g_Config.m_BcBestFastInputSmoothing, &SliderArea,
+				Localize("Smoothing amount (0-100%)"), 0, 100,
+				&CUi::ms_LinearScrollbarScale, 0u);
+			TextRender()->TextColor(TextColor);
+			if (Ui()->DoEditBox(&s_BestFastInputSmoothingInput, &EditArea, 14.0f)) {
+				const int P = str_toint(s_BestFastInputSmoothingInput.GetString());
+				if (P >= 0 && P <= 100) g_Config.m_BcBestFastInputSmoothing = P;
+			}
+			// Int input
+
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// Int input
+			static CLineInputBuffered<8> s_BestFastInputLatencyCompInput;
+			Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+			bool BestFastInputLatencyCompEditActive = Ui()->HotItem() ==
+				&s_BestFastInputLatencyCompInput || Ui()->ActiveItem() ==
+				&s_BestFastInputLatencyCompInput;
+			if (!BestFastInputLatencyCompEditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", g_Config.m_BcBestFastInputLatencyComp);
+				s_BestFastInputLatencyCompInput.Set(aTmp);
+			}
+			
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(&g_Config.m_BcBestFastInputLatencyComp,
+				&g_Config.m_BcBestFastInputLatencyComp, &SliderArea,
+				Localize("Latency compensation (0-50%)"), 0, 50,
+				&CUi::ms_LinearScrollbarScale, 0u);
+			TextRender()->TextColor(TextColor);
+			if (Ui()->DoEditBox(&s_BestFastInputLatencyCompInput, &EditArea, 14.0f)) {
+				const int P = str_toint(s_BestFastInputLatencyCompInput.GetString());
+				if (P >= 0 && P <= 50) g_Config.m_BcBestFastInputLatencyComp = P;
+			}
+			// Int input
+
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			// Margin
+
+			// Drop Down
+			CUIRect BestFastInputInterpolationLabelRect = Row;
+				BestFastInputInterpolationLabelRect.x += 20.0f;
+
+			CUIRect BestFastInputInterpolationDropDownRect = Row;
+				BestFastInputInterpolationDropDownRect.x += 350.0f;
+				BestFastInputInterpolationDropDownRect.w = 250.0f;
+
+			static CUi::SDropDownState s_BestFastInputInterpolationDropDownState;
+			static CScrollRegion s_BestFastInputInterpolationScrollRegion;
+			s_BestFastInputInterpolationDropDownState.m_SelectionPopupContext.m_pScrollRegion =
+				&s_BestFastInputInterpolationScrollRegion;
+
+			const char *apBestFastInputInterpolationDropDownModes[] = {
+				"Linear",
+				"Cubic",
+				"Smooth"
+			};
+			static const int s_apBestFastInputInterpolationDropDownModes_len =
+				std::size(apBestFastInputInterpolationDropDownModes);
+			static const std::array<int, s_apBestFastInputInterpolationDropDownModes_len>
+				s_aAspectBestFastInputInterpolationValues = {1, 2, 3};
+
+			int CurrentBestFastInputInterpolation = 0;
+			for (size_t i = 0; i < s_apBestFastInputInterpolationDropDownModes_len; ++i) {
+				if (s_aAspectBestFastInputInterpolationValues[i] ==
+					g_Config.m_BcBestFastInputInterpolation) CurrentBestFastInputInterpolation = i;
+			}
 
 			TextRender()->TextColor(TextColor);
+			Ui()->DoLabel(&BestFastInputInterpolationLabelRect,
+				Localize("Interpolation mode"), 14.0f, TEXTALIGN_ML);
+			TextRender()->TextColor(TextRender()->DefaultTextColor());
 
+			const int NewBestFastInputInterpolation =
+				Ui()->DoDropDown(&BestFastInputInterpolationDropDownRect,
+				CurrentBestFastInputInterpolation, apBestFastInputInterpolationDropDownModes,
+				s_apBestFastInputInterpolationDropDownModes_len,
+				s_BestFastInputInterpolationDropDownState);
 
-			//Logic
-
-			if (CurrentFastInput != NewFastInput) {
-				g_Config.m_BcFastInputs = s_aAspectFastInputValues[NewFastInput];
+			if (CurrentBestFastInputInterpolation != NewBestFastInputInterpolation) {
+				g_Config.m_BcBestFastInputInterpolation =
+					s_aAspectBestFastInputInterpolationValues[NewBestFastInputInterpolation];
 			}
+			// Drop Down
+
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// CheckBox
+			TextRender()->TextColor(TextColor);
+			if (DoButton_CheckBox(&g_Config.m_BcBestFastInputOthers,
+				Localize("Apply to other tees"), g_Config.m_BcBestFastInputOthers,
+				&Row)) g_Config.m_BcBestFastInputOthers ^= 1;
+			// CheckBox
 		}
-		else {
-			g_Config.m_BcFastInputs = BC_INPUTS_OFF;
+		else if (g_Config.m_BcFastInput == BC_INPUTS_SAIKO) {
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// Int input
+			static CLineInputBuffered<8> s_SaikoFastInputAmountInput;
+			CUIRect SliderArea, EditArea;
+			Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+			bool SaikoFastInputAmountEditActive = Ui()->HotItem() ==
+				&s_SaikoFastInputAmountInput || Ui()->ActiveItem() ==
+				&s_SaikoFastInputAmountInput;
+			if (!SaikoFastInputAmountEditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", g_Config.m_BcSaikoFastInputAmount);
+				s_SaikoFastInputAmountInput.Set(aTmp);
+			}
+			
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(&g_Config.m_BcSaikoFastInputAmount,
+				&g_Config.m_BcSaikoFastInputAmount, &SliderArea,
+				Localize("Prediction amount in 0.01 ticks"), 0, 500,
+				&CUi::ms_LinearScrollbarScale, 0u);
+			TextRender()->TextColor(TextColor);
+			if (Ui()->DoEditBox(&s_SaikoFastInputAmountInput, &EditArea, 14.0f)) {
+				const int P = str_toint(s_SaikoFastInputAmountInput.GetString());
+				if (P >= 0 && P <= 500) g_Config.m_BcSaikoFastInputAmount = P;
+			}
+			// Int input
+
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// CheckBox
+			TextRender()->TextColor(TextColor);
+			if (DoButton_CheckBox(&g_Config.m_BcSaikoFastInputOthers,
+				Localize("Apply to other tees"), g_Config.m_BcSaikoFastInputOthers,
+				&Row)) g_Config.m_BcSaikoFastInputOthers ^= 1;
+			// CheckBox
+		}
+		else if (g_Config.m_BcFastInput == BC_INPUTS_DELTA) {
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// Int input
+			static CLineInputBuffered<8> s_DeltaFastInputAmountInput;
+			CUIRect SliderArea, EditArea;
+			Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+			bool DeltaFastInputAmountEditActive = Ui()->HotItem() ==
+				&s_DeltaFastInputAmountInput || Ui()->ActiveItem() ==
+				&s_DeltaFastInputAmountInput;
+			if (!DeltaFastInputAmountEditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", g_Config.m_BcDeltaFastInputAmount);
+				s_DeltaFastInputAmountInput.Set(aTmp);
+			}
+			
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(&g_Config.m_BcDeltaFastInputAmount,
+				&g_Config.m_BcDeltaFastInputAmount, &SliderArea,
+				Localize("Prediction amount in 0.01 ticks"), 0, 500,
+				&CUi::ms_LinearScrollbarScale, 0u);
+			TextRender()->TextColor(TextColor);
+			if (Ui()->DoEditBox(&s_DeltaFastInputAmountInput, &EditArea, 14.0f)) {
+				const int P = str_toint(s_DeltaFastInputAmountInput.GetString());
+				if (P >= 0 && P <= 500) g_Config.m_BcDeltaFastInputAmount = P;
+			}
+			// Int input
+
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// CheckBox
+			TextRender()->TextColor(TextColor);
+			if (DoButton_CheckBox(&g_Config.m_BcDeltaFastInputOthers,
+				Localize("Apply to other tees"), g_Config.m_BcDeltaFastInputOthers,
+				&Row)) g_Config.m_BcDeltaFastInputOthers ^= 1;
+			// CheckBox
+		}
+		else if (g_Config.m_BcFastInput == BC_INPUTS_F) {
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// Int input
+			static CLineInputBuffered<8> s_FFastInputAmountInput;
+			CUIRect SliderArea, EditArea;
+			Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+			bool FFastInputAmountEditActive = Ui()->HotItem() ==
+				&s_FFastInputAmountInput || Ui()->ActiveItem() ==
+				&s_FFastInputAmountInput;
+			if (!FFastInputAmountEditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", g_Config.m_BcFFastInputAmount);
+				s_FFastInputAmountInput.Set(aTmp);
+			}
+			
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(&g_Config.m_BcFFastInputAmount,
+				&g_Config.m_BcFFastInputAmount, &SliderArea,
+				Localize("Units amount in 0.001 tick"), 0, 5000,
+				&CUi::ms_LinearScrollbarScale, 0u);
+			TextRender()->TextColor(TextColor);
+			if (Ui()->DoEditBox(&s_FFastInputAmountInput, &EditArea, 14.0f)) {
+				const int P = str_toint(s_FFastInputAmountInput.GetString());
+				if (P >= 0 && P <= 5000) g_Config.m_BcFFastInputAmount = P;
+			}
+			// Int input
+
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// CheckBox
+			TextRender()->TextColor(TextColor);
+			if (DoButton_CheckBox(&g_Config.m_BcFFastInputOthers,
+				Localize("Apply to other tees"), g_Config.m_BcFFastInputOthers,
+				&Row)) g_Config.m_BcFFastInputOthers ^= 1;
+			// CheckBox
+		}
+		else if (g_Config.m_BcFastInput == BC_INPUTS_CLOUD) {
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// Int input
+			static CLineInputBuffered<8> s_CloudFastInputAmountInput;
+			CUIRect SliderArea, EditArea;
+			Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+			bool CloudFastInputAmountEditActive = Ui()->HotItem() ==
+				&s_CloudFastInputAmountInput || Ui()->ActiveItem() ==
+				&s_CloudFastInputAmountInput;
+			if (!CloudFastInputAmountEditActive) {
+				char aTmp[8];
+				str_format(aTmp, 8, "%d", g_Config.m_BcCloudFastInputAmount);
+				s_CloudFastInputAmountInput.Set(aTmp);
+			}
+			
+			TextRender()->TextColor(TextColor);
+			Ui()->DoScrollbarOption(&g_Config.m_BcCloudFastInputAmount,
+				&g_Config.m_BcCloudFastInputAmount, &SliderArea,
+				Localize("Prediction amount in 0.01 ticks"), 0, 500,
+				&CUi::ms_LinearScrollbarScale, 0u);
+			TextRender()->TextColor(TextColor);
+			if (Ui()->DoEditBox(&s_CloudFastInputAmountInput, &EditArea, 14.0f)) {
+				const int P = str_toint(s_CloudFastInputAmountInput.GetString());
+				if (P >= 0 && P <= 500) g_Config.m_BcCloudFastInputAmount = P;
+			}
+			// Int input
+
+			// Margin
+			Main.HSplitTop(5.0f, nullptr, &Main);
+			Main.HSplitTop(20.0f, &Row, &Main);
+			Row.x += 20.0f;
+			// Margin
+
+			// CheckBox
+			TextRender()->TextColor(TextColor);
+			if (DoButton_CheckBox(&g_Config.m_BcCloudFastInputOthers,
+				Localize("Apply to other tees"), g_Config.m_BcCloudFastInputOthers,
+				&Row)) g_Config.m_BcCloudFastInputOthers ^= 1;
+			// CheckBox
+		}
+	}
+	Main.HSplitTop(5.0f, nullptr, &Main);
+
+	// Edge Info
+	Main.HSplitTop(20.0f, &Row, &Main);
+
+	static bool s_ShowEdgeInfo = false;
+	TextRender()->TextColor(TextColor);
+
+	if (DoButton_CheckBox(&s_ShowEdgeInfo, Localize("Edge Info (hide)"), s_ShowEdgeInfo, &Row))
+		s_ShowEdgeInfo ^= 1;
+
+	if (s_ShowEdgeInfo) {
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// TODO How to change MACRO_CONFIG_COL in the settings
+	
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcEdgeInfoCords, Localize("Show upper panel of Edge Info"),
+			g_Config.m_BcEdgeInfoCords, &Row)) g_Config.m_BcEdgeInfoCords ^= 1;
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcEdgeInfoJump, Localize("Show lower panel of Edge Info"),
+			g_Config.m_BcEdgeInfoJump, &Row)) g_Config.m_BcEdgeInfoJump ^= 1;
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		static CLineInputBuffered<8> s_EdgeInfoPosXInput;
+		CUIRect SliderArea, EditArea;
+		Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+		bool EdgeInfoPosXEditActive = Ui()->HotItem() == &s_EdgeInfoPosXInput ||
+			Ui()->ActiveItem() == &s_EdgeInfoPosXInput;
+		if (!EdgeInfoPosXEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcEdgeInfoPosX);
+			s_EdgeInfoPosXInput.Set(aTmp);
+		}
+		
+		TextRender()->TextColor(TextColor);
+		Ui()->DoScrollbarOption(&g_Config.m_BcEdgeInfoPosX, &g_Config.m_BcEdgeInfoPosX, &SliderArea,
+			Localize("Edge Info X Position"), 0, 100, &CUi::ms_LinearScrollbarScale, 0u);
+		TextRender()->TextColor(TextColor);
+		if (Ui()->DoEditBox(&s_EdgeInfoPosXInput, &EditArea, 14.0f)) {
+			const int P = str_toint(s_EdgeInfoPosXInput.GetString());
+			if (P >= 0 && P <= 100) g_Config.m_BcEdgeInfoPosX = P;
+		}
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		static CLineInputBuffered<8> s_EdgeInfoPosYInput;
+		Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+		bool EdgeInfoPosYEditActive = Ui()->HotItem() == &s_EdgeInfoPosYInput ||
+			Ui()->ActiveItem() == &s_EdgeInfoPosYInput;
+		if (!EdgeInfoPosYEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcEdgeInfoPosY);
+			s_EdgeInfoPosYInput.Set(aTmp);
+		}
+		
+		TextRender()->TextColor(TextColor);
+		Ui()->DoScrollbarOption(&g_Config.m_BcEdgeInfoPosY, &g_Config.m_BcEdgeInfoPosY, &SliderArea,
+			Localize("Edge Info Y Position"), 0, 100, &CUi::ms_LinearScrollbarScale, 0u);
+		TextRender()->TextColor(TextColor);
+		if (Ui()->DoEditBox(&s_EdgeInfoPosYInput, &EditArea, 14.0f)) {
+			const int P = str_toint(s_EdgeInfoPosYInput.GetString());
+			if (P >= 0 && P <= 100) g_Config.m_BcEdgeInfoPosY = P;
 		}
 	}
 
 	Main.HSplitTop(5.0f, nullptr, &Main);
-	// Fast inputs
+
+	// Scroll
+	CUIRect ScrollRegion;
+	ScrollRegion.x = Main.x;
+	ScrollRegion.y = Main.y;
+	ScrollRegion.w = Main.w;
+	ScrollRegion.h = 0.0f;
+	s_ScrollRegion.AddRect(ScrollRegion);
+	s_ScrollRegion.End();
 
     TextRender()->TextColor(TextRender()->DefaultTextColor());
 	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);

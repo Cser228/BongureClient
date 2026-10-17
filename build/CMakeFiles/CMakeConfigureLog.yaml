@@ -222,7 +222,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
       
       The C compiler identification is GNU, found in:
-        /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/4.4.4/CompilerIdC/a.out
+        /home/cser228/programming/BongureClient/build/CMakeFiles/4.4.4/CompilerIdC/a.out
       
   -
     kind: "find-v1"
@@ -1009,7 +1009,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
       
       The CXX compiler identification is GNU, found in:
-        /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/4.4.4/CompilerIdCXX/a.out
+        /home/cser228/programming/BongureClient/build/CMakeFiles/4.4.4/CompilerIdCXX/a.out
       
   -
     kind: "find-v1"
@@ -1184,8 +1184,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-VG28bw"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-VG28bw"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-04lPXn"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-04lPXn"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
@@ -1196,10 +1196,10 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: false
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-VG28bw'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-04lPXn'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_f2e5d
-        [1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/ninja -v cmTC_6b671
+        [1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         Target: x86_64-pc-linux-gnu
@@ -1207,8 +1207,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 16.2.1 20260810 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f2e5d.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_f2e5d.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/cc6WpD0Z.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6b671.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_6b671.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccrrHODe.s
         GNU C23 (GCC) version 16.2.1 20260810 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 16.2.1 20260810, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.4.1, isl version isl-0.28-GMP
         
@@ -1222,13 +1222,13 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: f931fde8682f21d1ebcf65f6b881e532
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f2e5d.dir/'
-         as -v --64 -o CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o /tmp/cc6WpD0Z.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6b671.dir/'
+         as -v --64 -o CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o /tmp/ccrrHODe.s
         GNU assembler version 2.47 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.47
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.'
-        [2/2] : && /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -o cmTC_f2e5d   && :
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.'
+        [2/2] : && /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -o cmTC_6b671   && :
         Using built-in specs.
         COLLECT_GCC=/usr/bin/cc
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper
@@ -1239,12 +1239,12 @@ events:
         gcc version 16.2.1 20260810 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f2e5d' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f2e5d.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccHdSGJJ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f2e5d /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6b671' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_6b671.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccj7ANaz.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6b671 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
         collect2 version 16.2.1 20260810
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccHdSGJJ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f2e5d /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccj7ANaz.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6b671 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.47
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f2e5d' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f2e5d.'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6b671' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_6b671.'
         
       exitCode: 0
   -
@@ -1277,10 +1277,10 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild))("|,| |$)]
-        ignore line: [Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-VG28bw']
+        ignore line: [Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-04lPXn']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_f2e5d]
-        ignore line: [[1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_6b671]
+        ignore line: [[1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -1288,8 +1288,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 16.2.1 20260810 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f2e5d.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_f2e5d.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/cc6WpD0Z.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6b671.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_6b671.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -o /tmp/ccrrHODe.s]
         ignore line: [GNU C23 (GCC) version 16.2.1 20260810 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 16.2.1 20260810  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.4.1  isl version isl-0.28-GMP]
         ignore line: []
@@ -1303,13 +1303,13 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: f931fde8682f21d1ebcf65f6b881e532]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f2e5d.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o /tmp/cc6WpD0Z.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6b671.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o /tmp/ccrrHODe.s]
         ignore line: [GNU assembler version 2.47 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.47]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.']
-        ignore line: [[2/2] : && /usr/bin/cc  -v -Wl -v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -o cmTC_f2e5d   && :]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.']
+        ignore line: [[2/2] : && /usr/bin/cc  -v -Wl -v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -o cmTC_6b671   && :]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/cc]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper]
@@ -1320,13 +1320,13 @@ events:
         ignore line: [gcc version 16.2.1 20260810 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f2e5d' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f2e5d.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccHdSGJJ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f2e5d /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6b671' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_6b671.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccj7ANaz.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6b671 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccHdSGJJ.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccj7ANaz.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s_asneeded] ==> ignore
           arg [-plugin-opt=-pass-through=-latomic_asneeded] ==> ignore
@@ -1342,7 +1342,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_f2e5d] ==> ignore
+          arg [cmTC_6b671] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o]
@@ -1354,7 +1354,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o] ==> ignore
           arg [-lgcc] ==> lib [gcc]
           arg [-lgcc_s_asneeded] ==> lib [gcc_s_asneeded]
           arg [-latomic_asneeded] ==> lib [atomic_asneeded]
@@ -1364,9 +1364,9 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
         ignore line: [collect2 version 16.2.1 20260810]
-        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccHdSGJJ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f2e5d /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker [/usr/bin/ld]
-        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccHdSGJJ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f2e5d /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker architecture flags [-m;elf]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccHdSGJJ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_f2e5d /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f2e5d.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
+        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccj7ANaz.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6b671 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker [/usr/bin/ld]
+        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccj7ANaz.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6b671 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker architecture flags [-m;elf]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccj7ANaz.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_6b671 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6b671.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
         linker tool for 'C': /usr/bin/ld -m;elf
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -1403,8 +1403,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-4LfTSR"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-4LfTSR"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-zz4zlQ"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-zz4zlQ"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -1416,10 +1416,10 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: false
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-4LfTSR'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-zz4zlQ'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_efa11
-        [1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/ninja -v cmTC_93199
+        [1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         Target: x86_64-pc-linux-gnu
@@ -1427,8 +1427,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 16.2.1 20260810 (GCC) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_efa11.dir/'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_efa11.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccIiHmhs.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_93199.dir/'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_93199.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/cc8faZT9.s
         GNU C++20 (GCC) version 16.2.1 20260810 (x86_64-pc-linux-gnu)
         	compiled by GNU C version 16.2.1 20260810, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.4.1, isl version isl-0.28-GMP
         
@@ -1445,13 +1445,13 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: 4e9ac8b201f4ca740be09d0c7a39f82f
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_efa11.dir/'
-         as -v --64 -o CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccIiHmhs.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_93199.dir/'
+         as -v --64 -o CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc8faZT9.s
         GNU assembler version 2.47 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.47
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.'
-        [2/2] : && /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_efa11   && :
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.'
+        [2/2] : && /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_93199   && :
         Using built-in specs.
         COLLECT_GCC=/usr/bin/c++
         COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper
@@ -1462,12 +1462,12 @@ events:
         gcc version 16.2.1 20260810 (GCC) 
         COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_efa11' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_efa11.'
-         /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/cczLHEAZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_efa11 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_93199' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_93199.'
+         /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWe63hu.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_93199 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
         collect2 version 16.2.1 20260810
-        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/cczLHEAZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_efa11 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
+        /usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWe63hu.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_93199 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o
         GNU ld (GNU Binutils) 2.47
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_efa11' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_efa11.'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_93199' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_93199.'
         
       exitCode: 0
   -
@@ -1506,10 +1506,10 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild))("|,| |$)]
-        ignore line: [Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-4LfTSR']
+        ignore line: [Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-zz4zlQ']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_efa11]
-        ignore line: [[1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/ninja -v cmTC_93199]
+        ignore line: [[1/2] /usr/bin/c++   -v -o CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [Target: x86_64-pc-linux-gnu]
@@ -1517,8 +1517,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 16.2.1 20260810 (GCC) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_efa11.dir/']
-        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_efa11.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/ccIiHmhs.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_93199.dir/']
+        ignore line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_93199.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -o /tmp/cc8faZT9.s]
         ignore line: [GNU C++20 (GCC) version 16.2.1 20260810 (x86_64-pc-linux-gnu)]
         ignore line: [	compiled by GNU C version 16.2.1 20260810  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.4.1  isl version isl-0.28-GMP]
         ignore line: []
@@ -1535,13 +1535,13 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: 4e9ac8b201f4ca740be09d0c7a39f82f]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_efa11.dir/']
-        ignore line: [ as -v --64 -o CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccIiHmhs.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_93199.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc8faZT9.s]
         ignore line: [GNU assembler version 2.47 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.47]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [[2/2] : && /usr/bin/c++  -v -Wl -v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_efa11   && :]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [[2/2] : && /usr/bin/c++  -v -Wl -v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_93199   && :]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=/usr/bin/c++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper]
@@ -1552,13 +1552,13 @@ events:
         ignore line: [gcc version 16.2.1 20260810 (GCC) ]
         ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/16/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_efa11' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_efa11.']
-        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/cczLHEAZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_efa11 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_93199' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_93199.']
+        link line: [ /usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2 -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWe63hu.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_93199 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/cczLHEAZ.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccWe63hu.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-latomic_asneeded] ==> ignore
@@ -1574,7 +1574,7 @@ events:
           arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
           arg [-pie] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_efa11] ==> ignore
+          arg [cmTC_93199] ==> ignore
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o]
@@ -1586,7 +1586,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -1598,9 +1598,9 @@ events:
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o]
           arg [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
         ignore line: [collect2 version 16.2.1 20260810]
-        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/cczLHEAZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_efa11 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker [/usr/bin/ld]
-        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/cczLHEAZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_efa11 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker architecture flags [-m;elf]
-        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/cczLHEAZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_efa11 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_efa11.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
+        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWe63hu.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_93199 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker [/usr/bin/ld]
+        link line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWe63hu.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_93199 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o] ==> linker architecture flags [-m;elf]
+        ignore line: [/usr/bin/ld -plugin /usr/lib/gcc/x86_64-pc-linux-gnu/16/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWe63hu.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_93199 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o -L/usr/lib/gcc/x86_64-pc-linux-gnu/16 -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_93199.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -latomic_asneeded -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtendS.o /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crtn.o]
         linker tool for 'CXX': /usr/bin/ld -m;elf
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/Scrt1.o] ==> [/usr/lib/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o] ==> [/usr/lib/crti.o]
@@ -1639,24 +1639,24 @@ events:
     checks:
       - "Performing Test HAVE_ATOMICS_WITHOUT_LIB"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7tKv0f"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7tKv0f"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-smUiaT"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-smUiaT"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "HAVE_ATOMICS_WITHOUT_LIB"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7tKv0f'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-smUiaT'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_0ff60
-        [1/2] /usr/bin/c++ -DHAVE_ATOMICS_WITHOUT_LIB  -std=c++11 -o CMakeFiles/cmTC_0ff60.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7tKv0f/src.cxx
-        [2/2] : && /usr/bin/c++ -std=c++11  CMakeFiles/cmTC_0ff60.dir/src.cxx.o -o cmTC_0ff60   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_96e36
+        [1/2] /usr/bin/c++ -DHAVE_ATOMICS_WITHOUT_LIB  -std=c++11 -o CMakeFiles/cmTC_96e36.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-smUiaT/src.cxx
+        [2/2] : && /usr/bin/c++ -std=c++11  CMakeFiles/cmTC_96e36.dir/src.cxx.o -o cmTC_96e36   && :
         
       exitCode: 0
   -
@@ -1668,30 +1668,30 @@ events:
     checks:
       - "Looking for __i386"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "TARGET_ARCH_X86_i386"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_3a7ec
-        [1/2] /usr/bin/cc    -o CMakeFiles/cmTC_3a7ec.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj/CheckSymbolExists.c
-        FAILED: [code=1] CMakeFiles/cmTC_3a7ec.dir/CheckSymbolExists.c.o 
-        /usr/bin/cc    -o CMakeFiles/cmTC_3a7ec.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj/CheckSymbolExists.c
-        /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj/CheckSymbolExists.c: In function ‘main’:
-        /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj/CheckSymbolExists.c:7:19: error: ‘__i386’ undeclared (first use in this function)
+        Run Build Command(s): /usr/bin/ninja -v cmTC_164e0
+        [1/2] /usr/bin/cc    -o CMakeFiles/cmTC_164e0.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn/CheckSymbolExists.c
+        FAILED: [code=1] CMakeFiles/cmTC_164e0.dir/CheckSymbolExists.c.o 
+        /usr/bin/cc    -o CMakeFiles/cmTC_164e0.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn/CheckSymbolExists.c
+        /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn/CheckSymbolExists.c: In function ‘main’:
+        /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn/CheckSymbolExists.c:7:19: error: ‘__i386’ undeclared (first use in this function)
             7 |   return ((int*)(&__i386))[argc];
               |                   ^~~~~~
-        /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DrjNcj/CheckSymbolExists.c:7:19: note: each undeclared identifier is reported only once for each function it appears in
+        /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-awHWqn/CheckSymbolExists.c:7:19: note: each undeclared identifier is reported only once for each function it appears in
         ninja: build stopped: subcommand failed.
         
       exitCode: 1
@@ -1705,25 +1705,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Werror_unused_command_line_argument"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WpVzD8"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WpVzD8"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-wm6H03"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-wm6H03"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Werror_unused_command_line_argument"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WpVzD8'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-wm6H03'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_6552a
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Werror_unused_command_line_argument  -Werror=unused-command-line-argument -o CMakeFiles/cmTC_6552a.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WpVzD8/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_6552a.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_Werror_unused_command_line_argument  -Werror=unused-command-line-argument -o CMakeFiles/cmTC_6552a.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WpVzD8/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_2f297
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Werror_unused_command_line_argument  -Werror=unused-command-line-argument -o CMakeFiles/cmTC_2f297.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-wm6H03/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_2f297.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_Werror_unused_command_line_argument  -Werror=unused-command-line-argument -o CMakeFiles/cmTC_2f297.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-wm6H03/src.cxx
         cc1plus: error: '-Werror=unused-command-line-argument': no option '-Wunused-command-line-argument'; did you mean '-Wunused-dummy-argument'?
         ninja: build stopped: subcommand failed.
         
@@ -1739,24 +1739,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fdiagnostics_color_always"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-gTod10"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-gTod10"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-0WhQsL"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-0WhQsL"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fdiagnostics_color_always"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-gTod10'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-0WhQsL'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_aa4b2
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fdiagnostics_color_always  -fdiagnostics-color=always -o CMakeFiles/cmTC_aa4b2.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-gTod10/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_aa4b2.dir/src.cxx.o -o cmTC_aa4b2   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_b55ea
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fdiagnostics_color_always  -fdiagnostics-color=always -o CMakeFiles/cmTC_b55ea.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-0WhQsL/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_b55ea.dir/src.cxx.o -o cmTC_b55ea   && :
         
       exitCode: 0
   -
@@ -1770,25 +1770,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fcolor_diagnostics"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-pJk0sM"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-pJk0sM"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-btj1lF"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-btj1lF"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fcolor_diagnostics"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-pJk0sM'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-btj1lF'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_aa910
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fcolor_diagnostics  -fcolor-diagnostics -o CMakeFiles/cmTC_aa910.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-pJk0sM/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_aa910.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_fcolor_diagnostics  -fcolor-diagnostics -o CMakeFiles/cmTC_aa910.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-pJk0sM/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_bdd90
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fcolor_diagnostics  -fcolor-diagnostics -o CMakeFiles/cmTC_bdd90.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-btj1lF/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_bdd90.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_fcolor_diagnostics  -fcolor-diagnostics -o CMakeFiles/cmTC_bdd90.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-btj1lF/src.cxx
         c++: error: unrecognized command-line option '-fcolor-diagnostics'
         ninja: build stopped: subcommand failed.
         
@@ -1804,26 +1804,26 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fuse_ld_mold"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zhd6qA"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zhd6qA"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-pDlL55"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-pDlL55"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fuse_ld_mold"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zhd6qA'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-pDlL55'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_5dcd1
-        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_fuse_ld_mold   -o CMakeFiles/cmTC_5dcd1.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zhd6qA/src.c
-        [2/2] : && /usr/bin/cc  -fuse-ld=mold CMakeFiles/cmTC_5dcd1.dir/src.c.o -o cmTC_5dcd1   && :
-        FAILED: [code=1] cmTC_5dcd1 
-        : && /usr/bin/cc  -fuse-ld=mold CMakeFiles/cmTC_5dcd1.dir/src.c.o -o cmTC_5dcd1   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_eed94
+        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_fuse_ld_mold   -o CMakeFiles/cmTC_eed94.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-pDlL55/src.c
+        [2/2] : && /usr/bin/cc  -fuse-ld=mold CMakeFiles/cmTC_eed94.dir/src.c.o -o cmTC_eed94   && :
+        FAILED: [code=1] cmTC_eed94 
+        : && /usr/bin/cc  -fuse-ld=mold CMakeFiles/cmTC_eed94.dir/src.c.o -o cmTC_eed94   && :
         collect2: fatal error: cannot find 'ld'
         compilation terminated.
         ninja: build stopped: subcommand failed.
@@ -1840,24 +1840,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fuse_ld_lld"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ABibwG"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ABibwG"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-iqi5io"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-iqi5io"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fuse_ld_lld"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ABibwG'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-iqi5io'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_911ac
-        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_fuse_ld_lld   -o CMakeFiles/cmTC_911ac.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ABibwG/src.c
-        [2/2] : && /usr/bin/cc  -fuse-ld=lld CMakeFiles/cmTC_911ac.dir/src.c.o -o cmTC_911ac   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_96ec6
+        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_fuse_ld_lld   -o CMakeFiles/cmTC_96ec6.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-iqi5io/src.c
+        [2/2] : && /usr/bin/cc  -fuse-ld=lld CMakeFiles/cmTC_96ec6.dir/src.c.o -o cmTC_96ec6   && :
         
       exitCode: 0
   -
@@ -1871,24 +1871,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fstack_protector_strong"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-sr7kWc"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-sr7kWc"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CtPswh"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CtPswh"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fstack_protector_strong"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-sr7kWc'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CtPswh'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_fa86a
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fstack_protector_strong  -fstack-protector-strong -o CMakeFiles/cmTC_fa86a.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-sr7kWc/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_fa86a.dir/src.cxx.o -o cmTC_fa86a   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_9802c
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fstack_protector_strong  -fstack-protector-strong -o CMakeFiles/cmTC_9802c.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CtPswh/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_9802c.dir/src.cxx.o -o cmTC_9802c   && :
         
       exitCode: 0
   -
@@ -1902,24 +1902,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fstack_clash_protection"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-PvOiJm"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-PvOiJm"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CNHTDa"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CNHTDa"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fstack_clash_protection"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-PvOiJm'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CNHTDa'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_f74f9
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fstack_clash_protection  -fstack-clash-protection -o CMakeFiles/cmTC_f74f9.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-PvOiJm/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_f74f9.dir/src.cxx.o -o cmTC_f74f9   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_61b3f
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fstack_clash_protection  -fstack-clash-protection -o CMakeFiles/cmTC_61b3f.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-CNHTDa/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_61b3f.dir/src.cxx.o -o cmTC_61b3f   && :
         
       exitCode: 0
   -
@@ -1933,24 +1933,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fcf_protection_full"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-A04xAo"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-A04xAo"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-D7qbdh"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-D7qbdh"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fcf_protection_full"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-A04xAo'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-D7qbdh'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_5f218
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fcf_protection_full  -fcf-protection=full -o CMakeFiles/cmTC_5f218.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-A04xAo/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_5f218.dir/src.cxx.o -o cmTC_5f218   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_de386
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fcf_protection_full  -fcf-protection=full -o CMakeFiles/cmTC_de386.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-D7qbdh/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_de386.dir/src.cxx.o -o cmTC_de386   && :
         
       exitCode: 0
   -
@@ -1964,25 +1964,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_mbranch_protection_standard"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-58Itxi"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-58Itxi"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DgBRLi"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DgBRLi"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_mbranch_protection_standard"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-58Itxi'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DgBRLi'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_28855
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_mbranch_protection_standard  -mbranch-protection=standard -o CMakeFiles/cmTC_28855.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-58Itxi/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_28855.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_mbranch_protection_standard  -mbranch-protection=standard -o CMakeFiles/cmTC_28855.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-58Itxi/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_30b13
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_mbranch_protection_standard  -mbranch-protection=standard -o CMakeFiles/cmTC_30b13.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DgBRLi/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_30b13.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_mbranch_protection_standard  -mbranch-protection=standard -o CMakeFiles/cmTC_30b13.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DgBRLi/src.cxx
         c++: error: unrecognized command-line option '-mbranch-protection=standard'
         ninja: build stopped: subcommand failed.
         
@@ -1998,24 +1998,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wl__z_relro"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DEeDib"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DEeDib"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-F76dYd"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-F76dYd"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wl__z_relro"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DEeDib'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-F76dYd'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_9a684
-        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wl__z_relro   -o CMakeFiles/cmTC_9a684.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-DEeDib/src.c
-        [2/2] : && /usr/bin/cc  -Wl,-z,relro CMakeFiles/cmTC_9a684.dir/src.c.o -o cmTC_9a684   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_752f8
+        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wl__z_relro   -o CMakeFiles/cmTC_752f8.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-F76dYd/src.c
+        [2/2] : && /usr/bin/cc  -Wl,-z,relro CMakeFiles/cmTC_752f8.dir/src.c.o -o cmTC_752f8   && :
         
       exitCode: 0
   -
@@ -2029,24 +2029,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wl__z_now"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-OBLyL5"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-OBLyL5"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tFzEnX"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tFzEnX"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wl__z_now"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-OBLyL5'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tFzEnX'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_35e82
-        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wl__z_now   -o CMakeFiles/cmTC_35e82.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-OBLyL5/src.c
-        [2/2] : && /usr/bin/cc  -Wl,-z,now CMakeFiles/cmTC_35e82.dir/src.c.o -o cmTC_35e82   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_27e98
+        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wl__z_now   -o CMakeFiles/cmTC_27e98.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tFzEnX/src.c
+        [2/2] : && /usr/bin/cc  -Wl,-z,now CMakeFiles/cmTC_27e98.dir/src.c.o -o cmTC_27e98   && :
         
       exitCode: 0
   -
@@ -2060,24 +2060,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fno_exceptions"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ZPgtXM"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ZPgtXM"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-dLhav7"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-dLhav7"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fno_exceptions"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ZPgtXM'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-dLhav7'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_63a2e
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fno_exceptions  -fno-exceptions -o CMakeFiles/cmTC_63a2e.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ZPgtXM/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_63a2e.dir/src.cxx.o -o cmTC_63a2e   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_accff
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fno_exceptions  -fno-exceptions -o CMakeFiles/cmTC_accff.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-dLhav7/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_accff.dir/src.cxx.o -o cmTC_accff   && :
         
       exitCode: 0
   -
@@ -2091,24 +2091,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fsigned_char"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-JeV7eJ"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-JeV7eJ"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6GmalT"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6GmalT"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fsigned_char"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-JeV7eJ'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6GmalT'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_ad593
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fsigned_char  -fsigned-char -o CMakeFiles/cmTC_ad593.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-JeV7eJ/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_ad593.dir/src.cxx.o -o cmTC_ad593   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_450e9
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fsigned_char  -fsigned-char -o CMakeFiles/cmTC_450e9.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6GmalT/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_450e9.dir/src.cxx.o -o cmTC_450e9   && :
         
       exitCode: 0
   -
@@ -2122,25 +2122,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wa__mbig_obj"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-083Whl"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-083Whl"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6ckuIS"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6ckuIS"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wa__mbig_obj"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-083Whl'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6ckuIS'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_3176f
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wa__mbig_obj  -Wa,-mbig-obj -o CMakeFiles/cmTC_3176f.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-083Whl/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_3176f.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_Wa__mbig_obj  -Wa,-mbig-obj -o CMakeFiles/cmTC_3176f.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-083Whl/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_1a82c
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wa__mbig_obj  -Wa,-mbig-obj -o CMakeFiles/cmTC_1a82c.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6ckuIS/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_1a82c.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_Wa__mbig_obj  -Wa,-mbig-obj -o CMakeFiles/cmTC_1a82c.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6ckuIS/src.cxx
         as: unrecognized option '-mbig-obj'
         ninja: build stopped: subcommand failed.
         
@@ -2154,26 +2154,26 @@ events:
       - "CMakeLists.txt:278 (check_cxx_compiler_flag)"
       - "CMakeLists.txt:399 (add_cxx_compiler_flag_if_supported)"
     checks:
-      - "Performing Test FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClientFromTater__TClient"
+      - "Performing Test FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClient__TClient"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YYSzIX"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YYSzIX"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KtPiCB"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KtPiCB"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
-      variable: "FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClientFromTater__TClient"
+      variable: "FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClient__TClient"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YYSzIX'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KtPiCB'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_92dec
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClientFromTater__TClient  -ffile-prefix-map=/home/cser228/programming/BongureClientFromTater=/TClient -o CMakeFiles/cmTC_92dec.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YYSzIX/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_92dec.dir/src.cxx.o -o cmTC_92dec   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_854b0
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClient__TClient  -ffile-prefix-map=/home/cser228/programming/BongureClient=/TClient -o CMakeFiles/cmTC_854b0.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KtPiCB/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_854b0.dir/src.cxx.o -o cmTC_854b0   && :
         
       exitCode: 0
   -
@@ -2185,26 +2185,26 @@ events:
       - "CMakeLists.txt:278 (check_cxx_compiler_flag)"
       - "CMakeLists.txt:400 (add_cxx_compiler_flag_if_supported)"
     checks:
-      - "Performing Test FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClientFromTater_build__TClient"
+      - "Performing Test FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClient_build__TClient"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6NmuBf"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6NmuBf"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-vEMD5o"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-vEMD5o"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
-      variable: "FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClientFromTater_build__TClient"
+      variable: "FLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClient_build__TClient"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6NmuBf'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-vEMD5o'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_3895c
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClientFromTater_build__TClient  -ffile-prefix-map=/home/cser228/programming/BongureClientFromTater/build=/TClient -o CMakeFiles/cmTC_3895c.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6NmuBf/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_3895c.dir/src.cxx.o -o cmTC_3895c   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_48dad
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_ffile_prefix_map__home_cser228_programming_BongureClient_build__TClient  -ffile-prefix-map=/home/cser228/programming/BongureClient/build=/TClient -o CMakeFiles/cmTC_48dad.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-vEMD5o/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_48dad.dir/src.cxx.o -o cmTC_48dad   && :
         
       exitCode: 0
   -
@@ -2218,24 +2218,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_fno_ident"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wBPbhz"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wBPbhz"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-B1SZSx"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-B1SZSx"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_fno_ident"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wBPbhz'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-B1SZSx'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_7fdba
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fno_ident  -fno-ident -o CMakeFiles/cmTC_7fdba.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wBPbhz/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_7fdba.dir/src.cxx.o -o cmTC_7fdba   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_b3b75
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_fno_ident  -fno-ident -o CMakeFiles/cmTC_b3b75.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-B1SZSx/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_b3b75.dir/src.cxx.o -o cmTC_b3b75   && :
         
       exitCode: 0
   -
@@ -2249,24 +2249,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wall"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-rU0YLB"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-rU0YLB"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-NpBekH"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-NpBekH"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wall"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-rU0YLB'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-NpBekH'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_ad093
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wall  -Wall -o CMakeFiles/cmTC_ad093.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-rU0YLB/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_ad093.dir/src.cxx.o -o cmTC_ad093   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_bc030
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wall  -Wall -o CMakeFiles/cmTC_bc030.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-NpBekH/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_bc030.dir/src.cxx.o -o cmTC_bc030   && :
         
       exitCode: 0
   -
@@ -2280,24 +2280,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wextra"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y8lBIH"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y8lBIH"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-FVTtm3"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-FVTtm3"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wextra"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y8lBIH'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-FVTtm3'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_f88d7
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wextra  -Wextra -o CMakeFiles/cmTC_f88d7.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y8lBIH/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_f88d7.dir/src.cxx.o -o cmTC_f88d7   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_1b137
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wextra  -Wextra -o CMakeFiles/cmTC_1b137.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-FVTtm3/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_1b137.dir/src.cxx.o -o cmTC_1b137   && :
         
       exitCode: 0
   -
@@ -2311,24 +2311,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wno_format"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-vflgs7"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-vflgs7"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-fQqzGU"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-fQqzGU"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wno_format"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-vflgs7'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-fQqzGU'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_8ae5b
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_format  -Wno-format -o CMakeFiles/cmTC_8ae5b.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-vflgs7/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_8ae5b.dir/src.cxx.o -o cmTC_8ae5b   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_24994
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_format  -Wno-format -o CMakeFiles/cmTC_24994.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-fQqzGU/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_24994.dir/src.cxx.o -o cmTC_24994   && :
         
       exitCode: 0
   -
@@ -2342,24 +2342,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wno_implicit_function_declaration"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zSRBgf"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zSRBgf"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DMoG4u"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DMoG4u"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wno_implicit_function_declaration"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zSRBgf'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DMoG4u'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_741da
-        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wno_implicit_function_declaration  -Wno-implicit-function-declaration -o CMakeFiles/cmTC_741da.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zSRBgf/src.c
-        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_741da.dir/src.c.o -o cmTC_741da   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_fb36c
+        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wno_implicit_function_declaration  -Wno-implicit-function-declaration -o CMakeFiles/cmTC_fb36c.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-DMoG4u/src.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_fb36c.dir/src.c.o -o cmTC_fb36c   && :
         
       exitCode: 0
   -
@@ -2373,24 +2373,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wclass_memaccess"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6jEEnR"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6jEEnR"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tS0Dec"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tS0Dec"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wclass_memaccess"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6jEEnR'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tS0Dec'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_9fe92
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wclass_memaccess  -Wclass-memaccess -o CMakeFiles/cmTC_9fe92.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6jEEnR/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_9fe92.dir/src.cxx.o -o cmTC_9fe92   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_c2db8
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wclass_memaccess  -Wclass-memaccess -o CMakeFiles/cmTC_c2db8.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-tS0Dec/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_c2db8.dir/src.cxx.o -o cmTC_c2db8   && :
         
       exitCode: 0
   -
@@ -2404,24 +2404,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wduplicated_branches"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-n2kqSf"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-n2kqSf"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8zgfqW"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8zgfqW"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wduplicated_branches"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-n2kqSf'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8zgfqW'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_739af
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wduplicated_branches  -Wduplicated-branches -o CMakeFiles/cmTC_739af.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-n2kqSf/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_739af.dir/src.cxx.o -o cmTC_739af   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_a13d8
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wduplicated_branches  -Wduplicated-branches -o CMakeFiles/cmTC_a13d8.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8zgfqW/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_a13d8.dir/src.cxx.o -o cmTC_a13d8   && :
         
       exitCode: 0
   -
@@ -2435,24 +2435,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wduplicated_cond"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-obHHim"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-obHHim"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-3Nezpl"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-3Nezpl"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wduplicated_cond"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-obHHim'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-3Nezpl'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_ca8e2
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wduplicated_cond  -Wduplicated-cond -o CMakeFiles/cmTC_ca8e2.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-obHHim/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_ca8e2.dir/src.cxx.o -o cmTC_ca8e2   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_5d599
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wduplicated_cond  -Wduplicated-cond -o CMakeFiles/cmTC_5d599.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-3Nezpl/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_5d599.dir/src.cxx.o -o cmTC_5d599   && :
         
       exitCode: 0
   -
@@ -2466,25 +2466,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wdynamic_class_memaccess"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ieYLU1"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ieYLU1"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-qNOfo6"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-qNOfo6"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wdynamic_class_memaccess"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ieYLU1'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-qNOfo6'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_8accd
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wdynamic_class_memaccess  -Wdynamic-class-memaccess -o CMakeFiles/cmTC_8accd.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ieYLU1/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_8accd.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_Wdynamic_class_memaccess  -Wdynamic-class-memaccess -o CMakeFiles/cmTC_8accd.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-ieYLU1/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_91210
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wdynamic_class_memaccess  -Wdynamic-class-memaccess -o CMakeFiles/cmTC_91210.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-qNOfo6/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_91210.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_Wdynamic_class_memaccess  -Wdynamic-class-memaccess -o CMakeFiles/cmTC_91210.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-qNOfo6/src.cxx
         c++: error: unrecognized command-line option '-Wdynamic-class-memaccess'; did you mean '-Wno-class-memaccess'?
         ninja: build stopped: subcommand failed.
         
@@ -2500,24 +2500,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wlogical_op"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-F8w1h5"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-F8w1h5"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8j4tNP"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8j4tNP"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wlogical_op"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-F8w1h5'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8j4tNP'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_621e6
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wlogical_op  -Wlogical-op -o CMakeFiles/cmTC_621e6.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-F8w1h5/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_621e6.dir/src.cxx.o -o cmTC_621e6   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_a803a
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wlogical_op  -Wlogical-op -o CMakeFiles/cmTC_a803a.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-8j4tNP/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_a803a.dir/src.cxx.o -o cmTC_a803a   && :
         
       exitCode: 0
   -
@@ -2531,24 +2531,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wno_missing_field_initializers"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7WgkFP"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7WgkFP"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-eqK6be"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-eqK6be"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wno_missing_field_initializers"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7WgkFP'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-eqK6be'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_fe640
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_missing_field_initializers  -Wno-missing-field-initializers -o CMakeFiles/cmTC_fe640.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-7WgkFP/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_fe640.dir/src.cxx.o -o cmTC_fe640   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_058e5
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_missing_field_initializers  -Wno-missing-field-initializers -o CMakeFiles/cmTC_058e5.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-eqK6be/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_058e5.dir/src.cxx.o -o cmTC_058e5   && :
         
       exitCode: 0
   -
@@ -2562,24 +2562,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wno_psabi"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-k7RX0N"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-k7RX0N"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-O44dba"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-O44dba"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wno_psabi"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-k7RX0N'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-O44dba'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_66523
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_psabi  -Wno-psabi -o CMakeFiles/cmTC_66523.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-k7RX0N/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_66523.dir/src.cxx.o -o cmTC_66523   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_2108a
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_psabi  -Wno-psabi -o CMakeFiles/cmTC_2108a.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-O44dba/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_2108a.dir/src.cxx.o -o cmTC_2108a   && :
         
       exitCode: 0
   -
@@ -2593,24 +2593,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wno_unused_parameter"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-kEJaJ3"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-kEJaJ3"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-W0drGr"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-W0drGr"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wno_unused_parameter"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-kEJaJ3'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-W0drGr'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_7e2c0
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_unused_parameter  -Wno-unused-parameter -o CMakeFiles/cmTC_7e2c0.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-kEJaJ3/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_7e2c0.dir/src.cxx.o -o cmTC_7e2c0   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_3ac83
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wno_unused_parameter  -Wno-unused-parameter -o CMakeFiles/cmTC_3ac83.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-W0drGr/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_3ac83.dir/src.cxx.o -o cmTC_3ac83   && :
         
       exitCode: 0
   -
@@ -2624,24 +2624,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wrestrict"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WS49qL"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WS49qL"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-1ycenK"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-1ycenK"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wrestrict"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WS49qL'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-1ycenK'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_af4b3
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wrestrict  -Wrestrict -o CMakeFiles/cmTC_af4b3.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-WS49qL/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_af4b3.dir/src.cxx.o -o cmTC_af4b3   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_21339
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wrestrict  -Wrestrict -o CMakeFiles/cmTC_21339.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-1ycenK/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_21339.dir/src.cxx.o -o cmTC_21339   && :
         
       exitCode: 0
   -
@@ -2655,25 +2655,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wshadow_all"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-dzrJrF"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-dzrJrF"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ikQQVe"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ikQQVe"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wshadow_all"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-dzrJrF'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ikQQVe'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_17a92
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wshadow_all  -Wshadow-all -o CMakeFiles/cmTC_17a92.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-dzrJrF/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_17a92.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_Wshadow_all  -Wshadow-all -o CMakeFiles/cmTC_17a92.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-dzrJrF/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_198e1
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wshadow_all  -Wshadow-all -o CMakeFiles/cmTC_198e1.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ikQQVe/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_198e1.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_Wshadow_all  -Wshadow-all -o CMakeFiles/cmTC_198e1.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ikQQVe/src.cxx
         c++: error: unrecognized command-line option '-Wshadow-all'; did you mean '-Wshadow'?
         ninja: build stopped: subcommand failed.
         
@@ -2689,24 +2689,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wshadow_global"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-01eed3"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-01eed3"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6wAEOH"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6wAEOH"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wshadow_global"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-01eed3'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6wAEOH'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_90f89
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wshadow_global  -Wshadow=global -o CMakeFiles/cmTC_90f89.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-01eed3/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_90f89.dir/src.cxx.o -o cmTC_90f89   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_02bc0
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wshadow_global  -Wshadow=global -o CMakeFiles/cmTC_02bc0.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-6wAEOH/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_02bc0.dir/src.cxx.o -o cmTC_02bc0   && :
         
       exitCode: 0
   -
@@ -2720,24 +2720,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wsuggest_override"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-TJpY1J"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-TJpY1J"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-GLQ7wk"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-GLQ7wk"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wsuggest_override"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-TJpY1J'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-GLQ7wk'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_f86cc
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wsuggest_override  -Wsuggest-override -o CMakeFiles/cmTC_f86cc.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-TJpY1J/src.cxx
-        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_f86cc.dir/src.cxx.o -o cmTC_f86cc   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_0324b
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wsuggest_override  -Wsuggest-override -o CMakeFiles/cmTC_0324b.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-GLQ7wk/src.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_0324b.dir/src.cxx.o -o cmTC_0324b   && :
         
       exitCode: 0
   -
@@ -2751,25 +2751,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wthread_safety"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-tnw6E5"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-tnw6E5"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-2pMbCb"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-2pMbCb"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wthread_safety"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-tnw6E5'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-2pMbCb'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_a8f86
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety  -Wthread-safety -o CMakeFiles/cmTC_a8f86.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-tnw6E5/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_a8f86.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety  -Wthread-safety -o CMakeFiles/cmTC_a8f86.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-tnw6E5/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_d9c0a
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety  -Wthread-safety -o CMakeFiles/cmTC_d9c0a.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-2pMbCb/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_d9c0a.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety  -Wthread-safety -o CMakeFiles/cmTC_d9c0a.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-2pMbCb/src.cxx
         c++: error: unrecognized command-line option '-Wthread-safety'
         ninja: build stopped: subcommand failed.
         
@@ -2785,25 +2785,25 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wthread_safety_negative"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y4CKUQ"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y4CKUQ"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-9bS0tj"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-9bS0tj"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wthread_safety_negative"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y4CKUQ'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-9bS0tj'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_d1719
-        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety_negative  -Wthread-safety-negative -o CMakeFiles/cmTC_d1719.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y4CKUQ/src.cxx
-        FAILED: [code=1] CMakeFiles/cmTC_d1719.dir/src.cxx.o 
-        /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety_negative  -Wthread-safety-negative -o CMakeFiles/cmTC_d1719.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-Y4CKUQ/src.cxx
+        Run Build Command(s): /usr/bin/ninja -v cmTC_08f3b
+        [1/2] /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety_negative  -Wthread-safety-negative -o CMakeFiles/cmTC_08f3b.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-9bS0tj/src.cxx
+        FAILED: [code=1] CMakeFiles/cmTC_08f3b.dir/src.cxx.o 
+        /usr/bin/c++ -DFLAG_SUPPORTED_Wthread_safety_negative  -Wthread-safety-negative -o CMakeFiles/cmTC_08f3b.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-9bS0tj/src.cxx
         c++: error: unrecognized command-line option '-Wthread-safety-negative'
         ninja: build stopped: subcommand failed.
         
@@ -2819,24 +2819,24 @@ events:
     checks:
       - "Performing Test FLAG_SUPPORTED_Wno_alloc_size_larger_than"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YFrcxv"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YFrcxv"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-MmukZR"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-MmukZR"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "FLAG_SUPPORTED_Wno_alloc_size_larger_than"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YFrcxv'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-MmukZR'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_e4701
-        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wno_alloc_size_larger_than   -o CMakeFiles/cmTC_e4701.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YFrcxv/src.c
-        [2/2] : && /usr/bin/cc  -Wno-alloc-size-larger-than CMakeFiles/cmTC_e4701.dir/src.c.o -o cmTC_e4701   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_2f3d3
+        [1/2] /usr/bin/cc -DFLAG_SUPPORTED_Wno_alloc_size_larger_than   -o CMakeFiles/cmTC_2f3d3.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-MmukZR/src.c
+        [2/2] : && /usr/bin/cc  -Wno-alloc-size-larger-than CMakeFiles/cmTC_2f3d3.dir/src.c.o -o cmTC_2f3d3   && :
         
       exitCode: 0
   -
@@ -2849,24 +2849,24 @@ events:
     checks:
       - "Performing Test DEFINE_FORTIFY_SOURCE_3"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-hxCSYB"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-hxCSYB"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-AycfFC"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-AycfFC"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "DEFINE_FORTIFY_SOURCE_3"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-hxCSYB'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-AycfFC'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_cb5e7
-        [1/2] /usr/bin/cc -DDEFINE_FORTIFY_SOURCE_3 -D_FORTIFY_SOURCE=3  -O2 -Wp,-Werror -o CMakeFiles/cmTC_cb5e7.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-hxCSYB/src.c
-        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_cb5e7.dir/src.c.o -o cmTC_cb5e7   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_91762
+        [1/2] /usr/bin/cc -DDEFINE_FORTIFY_SOURCE_3 -D_FORTIFY_SOURCE=3  -O2 -Wp,-Werror -o CMakeFiles/cmTC_91762.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-AycfFC/src.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_91762.dir/src.c.o -o cmTC_91762   && :
         
       exitCode: 0
   -
@@ -2879,24 +2879,24 @@ events:
     checks:
       - "Performing Test DEFINE_FORTIFY_SOURCE"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-bKarkT"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-bKarkT"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-aMzXWn"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-aMzXWn"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "DEFINE_FORTIFY_SOURCE"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-bKarkT'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-aMzXWn'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_247da
-        [1/2] /usr/bin/cc -DDEFINE_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2  -O2 -Wp,-Werror -o CMakeFiles/cmTC_247da.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-bKarkT/src.c
-        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_247da.dir/src.c.o -o cmTC_247da   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_19fa9
+        [1/2] /usr/bin/cc -DDEFINE_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2  -O2 -Wp,-Werror -o CMakeFiles/cmTC_19fa9.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-aMzXWn/src.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_19fa9.dir/src.c.o -o cmTC_19fa9   && :
         
       exitCode: 0
   -
@@ -2907,24 +2907,24 @@ events:
       - "/usr/share/cmake/Modules/CheckPIESupported.cmake:177 (cmake_check_linker_flag)"
       - "CMakeLists.txt:454 (check_pie_supported)"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-oDPeSq"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-oDPeSq"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-HwgM67"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-HwgM67"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "CMAKE_C_LINK_PIE_SUPPORTED"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-oDPeSq'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-HwgM67'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_c9d1a
-        [1/2] /usr/bin/cc -DCMAKE_C_LINK_PIE_SUPPORTED  -fPIE -o CMakeFiles/cmTC_c9d1a.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-oDPeSq/src.c
-        [2/2] : && /usr/bin/cc -fPIE -fPIE -pie CMakeFiles/cmTC_c9d1a.dir/src.c.o -o cmTC_c9d1a   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_802fa
+        [1/2] /usr/bin/cc -DCMAKE_C_LINK_PIE_SUPPORTED  -fPIE -o CMakeFiles/cmTC_802fa.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-HwgM67/src.c
+        [2/2] : && /usr/bin/cc -fPIE -fPIE -pie CMakeFiles/cmTC_802fa.dir/src.c.o -o cmTC_802fa   && :
         
       exitCode: 0
   -
@@ -2935,25 +2935,25 @@ events:
       - "/usr/share/cmake/Modules/CheckPIESupported.cmake:188 (cmake_check_linker_flag)"
       - "CMakeLists.txt:454 (check_pie_supported)"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YlMyrP"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YlMyrP"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ldwZng"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ldwZng"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
       CMAKE_C_LINK_PIE_SUPPORTED: "1"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "CMAKE_C_LINK_NO_PIE_SUPPORTED"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YlMyrP'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ldwZng'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_864c7
-        [1/2] /usr/bin/cc -DCMAKE_C_LINK_NO_PIE_SUPPORTED   -o CMakeFiles/cmTC_864c7.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-YlMyrP/src.c
-        [2/2] : && /usr/bin/cc  -no-pie CMakeFiles/cmTC_864c7.dir/src.c.o -o cmTC_864c7   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_f20a9
+        [1/2] /usr/bin/cc -DCMAKE_C_LINK_NO_PIE_SUPPORTED   -o CMakeFiles/cmTC_f20a9.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-ldwZng/src.c
+        [2/2] : && /usr/bin/cc  -no-pie CMakeFiles/cmTC_f20a9.dir/src.c.o -o cmTC_f20a9   && :
         
       exitCode: 0
   -
@@ -2964,8 +2964,8 @@ events:
       - "/usr/share/cmake/Modules/CheckPIESupported.cmake:177 (cmake_check_linker_flag)"
       - "CMakeLists.txt:454 (check_pie_supported)"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6pNX5e"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6pNX5e"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-lj4nth"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-lj4nth"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -2973,17 +2973,17 @@ events:
       CMAKE_C_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_C_LINK_PIE_SUPPORTED: "1"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "CMAKE_CXX_LINK_PIE_SUPPORTED"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6pNX5e'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-lj4nth'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_ae2b7
-        [1/2] /usr/bin/c++ -DCMAKE_CXX_LINK_PIE_SUPPORTED  -fPIE -o CMakeFiles/cmTC_ae2b7.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-6pNX5e/src.cxx
-        [2/2] : && /usr/bin/c++ -fPIE -fPIE -pie CMakeFiles/cmTC_ae2b7.dir/src.cxx.o -o cmTC_ae2b7   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_afdd6
+        [1/2] /usr/bin/c++ -DCMAKE_CXX_LINK_PIE_SUPPORTED  -fPIE -o CMakeFiles/cmTC_afdd6.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-lj4nth/src.cxx
+        [2/2] : && /usr/bin/c++ -fPIE -fPIE -pie CMakeFiles/cmTC_afdd6.dir/src.cxx.o -o cmTC_afdd6   && :
         
       exitCode: 0
   -
@@ -2994,8 +2994,8 @@ events:
       - "/usr/share/cmake/Modules/CheckPIESupported.cmake:188 (cmake_check_linker_flag)"
       - "CMakeLists.txt:454 (check_pie_supported)"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-GevdYL"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-GevdYL"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KLFN37"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KLFN37"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -3004,17 +3004,17 @@ events:
       CMAKE_C_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_C_LINK_PIE_SUPPORTED: "1"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "CMAKE_CXX_LINK_NO_PIE_SUPPORTED"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-GevdYL'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KLFN37'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_b144a
-        [1/2] /usr/bin/c++ -DCMAKE_CXX_LINK_NO_PIE_SUPPORTED   -o CMakeFiles/cmTC_b144a.dir/src.cxx.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-GevdYL/src.cxx
-        [2/2] : && /usr/bin/c++  -no-pie CMakeFiles/cmTC_b144a.dir/src.cxx.o -o cmTC_b144a   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_2663a
+        [1/2] /usr/bin/c++ -DCMAKE_CXX_LINK_NO_PIE_SUPPORTED   -o CMakeFiles/cmTC_2663a.dir/src.cxx.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-KLFN37/src.cxx
+        [2/2] : && /usr/bin/c++  -no-pie CMakeFiles/cmTC_2663a.dir/src.cxx.o -o cmTC_2663a   && :
         
       exitCode: 0
   -
@@ -4608,7 +4608,7 @@ events:
       - "/opt/lib/"
       - "/opt/"
       - "/usr/lib/X11/"
-      - "/home/cser228/programming/BongureClientFromTater/ddnet-libs/curl/linux/lib64/"
+      - "/home/cser228/programming/BongureClient/ddnet-libs/curl/linux/lib64/"
     found: "/usr/lib/libcurl.so"
     search_context:
       ENV{PATH}:
@@ -5993,7 +5993,7 @@ events:
       - "/opt/lib/"
       - "/opt/"
       - "/usr/lib/X11/"
-      - "/home/cser228/programming/BongureClientFromTater/ddnet-libs/freetype/linux/lib64/"
+      - "/home/cser228/programming/BongureClient/ddnet-libs/freetype/linux/lib64/"
     searched_directories:
       - "/usr/lib/"
       - "/home/cser228/.cser228_utils/"
@@ -6019,7 +6019,7 @@ events:
       - "/opt/lib/"
       - "/opt/"
       - "/usr/lib/X11/"
-      - "/home/cser228/programming/BongureClientFromTater/ddnet-libs/freetype/linux/lib64/"
+      - "/home/cser228/programming/BongureClient/ddnet-libs/freetype/linux/lib64/"
     found: "/usr/lib/libfreetype.so"
     search_context:
       ENV{PATH}:
@@ -6190,27 +6190,27 @@ events:
         CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
     candidates:
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/GLEWConfig.cmake"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/GLEWConfig.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/glew-config.cmake"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/glew-config.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/lib/cps/GLEW.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/lib/cps/GLEW.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/lib/cps/glew.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/lib/cps/glew.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/share/cps/GLEW.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/share/cps/GLEW.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/share/cps/glew.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/share/cps/glew.cps"
         mode: "cps"
         reason: "no_exist"
       -
@@ -8151,8 +8151,8 @@ events:
       - "/usr/share/cmake/Modules/FindGTest.cmake:345 (find_package)"
       - "CMakeLists.txt:639 (find_package)"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zRKOJQ"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zRKOJQ"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-xp1Mmn"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-xp1Mmn"
     cmakeVariables:
       CMAKE_CXX_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_CXX_LINK_PIE_SUPPORTED: "1"
@@ -8162,17 +8162,17 @@ events:
       CMAKE_C_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_C_LINK_PIE_SUPPORTED: "1"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "CMAKE_HAVE_LIBC_PTHREAD"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zRKOJQ'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-xp1Mmn'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_506ea
-        [1/2] /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_506ea.dir/src.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-zRKOJQ/src.c
-        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_506ea.dir/src.c.o -o cmTC_506ea   && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_4359d
+        [1/2] /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_4359d.dir/src.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-xp1Mmn/src.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_4359d.dir/src.c.o -o cmTC_4359d   && :
         
       exitCode: 0
   -
@@ -8218,27 +8218,27 @@ events:
         CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
     candidates:
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/GTestConfig.cmake"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/GTestConfig.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/gtest-config.cmake"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/gtest-config.cmake"
         mode: "config"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/lib/cps/GTest.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/lib/cps/GTest.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/lib/cps/gtest.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/lib/cps/gtest.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/share/cps/GTest.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/share/cps/GTest.cps"
         mode: "cps"
         reason: "no_exist"
       -
-        path: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/pkgRedirects/share/cps/gtest.cps"
+        path: "/home/cser228/programming/BongureClient/build/CMakeFiles/pkgRedirects/share/cps/gtest.cps"
         mode: "cps"
         reason: "no_exist"
       -
@@ -8433,7 +8433,7 @@ events:
       - "/opt/lib/"
       - "/opt/"
       - "/usr/lib/X11/"
-      - "/home/cser228/programming/BongureClientFromTater/ddnet-libs/opus/linux/lib64/"
+      - "/home/cser228/programming/BongureClient/ddnet-libs/opus/linux/lib64/"
     found: "/usr/lib/libogg.so"
     search_context:
       ENV{PATH}:
@@ -8648,7 +8648,7 @@ events:
       - "/opt/lib/"
       - "/opt/"
       - "/usr/lib/X11/"
-      - "/home/cser228/programming/BongureClientFromTater/ddnet-libs/opus/linux/lib64/"
+      - "/home/cser228/programming/BongureClient/ddnet-libs/opus/linux/lib64/"
     found: "/usr/lib/libopus.so"
     search_context:
       ENV{PATH}:
@@ -8863,7 +8863,7 @@ events:
       - "/opt/lib/"
       - "/opt/"
       - "/usr/lib/X11/"
-      - "/home/cser228/programming/BongureClientFromTater/ddnet-libs/opus/linux/lib64/"
+      - "/home/cser228/programming/BongureClient/ddnet-libs/opus/linux/lib64/"
     found: "/usr/lib/libopusfile.so"
     search_context:
       ENV{PATH}:
@@ -11766,7 +11766,7 @@ events:
       - "/opt/lib/"
       - "/opt/"
       - "/usr/lib/X11/"
-      - "/home/cser228/programming/BongureClientFromTater/ddnet-libs/sdl/linux/lib64/"
+      - "/home/cser228/programming/BongureClient/ddnet-libs/sdl/linux/lib64/"
     found: "/usr/lib/libSDL2.so"
     search_context:
       ENV{PATH}:
@@ -14180,12 +14180,12 @@ events:
     backtrace:
       - "/usr/share/cmake/Modules/CheckSymbolExists.cmake:171 (try_compile)"
       - "/usr/share/cmake/Modules/CheckSymbolExists.cmake:99 (__CHECK_SYMBOL_EXISTS_IMPL)"
-      - "CMakeLists.txt:3271 (check_symbol_exists)"
+      - "CMakeLists.txt:3273 (check_symbol_exists)"
     checks:
       - "Looking for WavpackOpenFileInputEx"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wYTHZ1"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wYTHZ1"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-yqCXlx"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-yqCXlx"
     cmakeVariables:
       CMAKE_CXX_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_CXX_LINK_PIE_SUPPORTED: "1"
@@ -14195,17 +14195,17 @@ events:
       CMAKE_C_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_C_LINK_PIE_SUPPORTED: "1"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "WAVPACK_OPEN_FILE_INPUT_EX"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wYTHZ1'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-yqCXlx'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_28ad1
-        [1/2] /usr/bin/cc  -I/usr/include/wavpack  -o CMakeFiles/cmTC_28ad1.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-wYTHZ1/CheckSymbolExists.c
-        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_28ad1.dir/CheckSymbolExists.c.o -o cmTC_28ad1  /usr/lib/libwavpack.so && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_5d5d3
+        [1/2] /usr/bin/cc  -I/usr/include/wavpack  -o CMakeFiles/cmTC_5d5d3.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-yqCXlx/CheckSymbolExists.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_5d5d3.dir/CheckSymbolExists.c.o -o cmTC_5d5d3  /usr/lib/libwavpack.so && :
         
       exitCode: 0
   -
@@ -14213,12 +14213,12 @@ events:
     backtrace:
       - "/usr/share/cmake/Modules/CheckSymbolExists.cmake:171 (try_compile)"
       - "/usr/share/cmake/Modules/CheckSymbolExists.cmake:99 (__CHECK_SYMBOL_EXISTS_IMPL)"
-      - "CMakeLists.txt:3272 (check_symbol_exists)"
+      - "CMakeLists.txt:3274 (check_symbol_exists)"
     checks:
       - "Looking for WavpackCloseFile"
     directories:
-      source: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-KChz25"
-      binary: "/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-KChz25"
+      source: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-jamjnC"
+      binary: "/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-jamjnC"
     cmakeVariables:
       CMAKE_CXX_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_CXX_LINK_PIE_SUPPORTED: "1"
@@ -14228,17 +14228,17 @@ events:
       CMAKE_C_LINK_NO_PIE_SUPPORTED: "1"
       CMAKE_C_LINK_PIE_SUPPORTED: "1"
       CMAKE_EXE_LINKER_FLAGS: ""
-      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClientFromTater/cmake"
+      CMAKE_MODULE_PATH: "/home/cser228/programming/BongureClient/cmake"
       CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     buildResult:
       variable: "WAVPACK_CLOSE_FILE"
       cached: true
       stdout: |
-        Change Dir: '/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-KChz25'
+        Change Dir: '/home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-jamjnC'
         
-        Run Build Command(s): /usr/bin/ninja -v cmTC_72e57
-        [1/2] /usr/bin/cc  -I/usr/include/wavpack  -o CMakeFiles/cmTC_72e57.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClientFromTater/build/CMakeFiles/CMakeScratch/TryCompile-KChz25/CheckSymbolExists.c
-        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_72e57.dir/CheckSymbolExists.c.o -o cmTC_72e57  /usr/lib/libwavpack.so && :
+        Run Build Command(s): /usr/bin/ninja -v cmTC_96b14
+        [1/2] /usr/bin/cc  -I/usr/include/wavpack  -o CMakeFiles/cmTC_96b14.dir/CheckSymbolExists.c.o -c /home/cser228/programming/BongureClient/build/CMakeFiles/CMakeScratch/TryCompile-jamjnC/CheckSymbolExists.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_96b14.dir/CheckSymbolExists.c.o -o cmTC_96b14  /usr/lib/libwavpack.so && :
         
       exitCode: 0
 ...

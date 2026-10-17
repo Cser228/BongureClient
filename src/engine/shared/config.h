@@ -62,8 +62,7 @@ extern CConfig g_Config;
 
 // Bongure Client {
 enum {
-	BC_INPUTS_OFF = 0,
-	BC_INPUTS_FAST,
+	BC_INPUTS_FAST = 1,
 	BC_INPUTS_BEST,
 	BC_INPUTS_SAIKO,
 	BC_INPUTS_DELTA,

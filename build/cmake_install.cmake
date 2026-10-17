@@ -1,4 +1,4 @@
-# Install script for directory: /home/cser228/programming/BongureClientFromTater
+# Install script for directory: /home/cser228/programming/BongureClient
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -43,7 +43,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "data" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet" TYPE DIRECTORY FILES "/home/cser228/programming/BongureClientFromTater/data")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet" TYPE DIRECTORY FILES "/home/cser228/programming/BongureClient/data")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -53,12 +53,12 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet"
          RPATH [[$ORIGIN]])
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/DDNet")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/DDNet")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet"
-         OLD_RPATH [[$ORIGIN:/home/cser228/programming/BongureClientFromTater/libs/vosk:/home/cser228/programming/BongureClientFromTater/build:]]
+         OLD_RPATH [[$ORIGIN:/home/cser228/programming/BongureClient/libs/vosk:/home/cser228/programming/BongureClient/build:]]
          NEW_RPATH [[$ORIGIN]])
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet")
@@ -67,7 +67,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/game-client.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/game-client.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -77,7 +77,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/libsteam_api.so"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE SHARED_LIBRARY FILES "/home/cser228/programming/BongureClientFromTater/build/libsteam_api.so")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE SHARED_LIBRARY FILES "/home/cser228/programming/BongureClient/build/libsteam_api.so")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/libsteam_api.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/libsteam_api.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -90,7 +90,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/steam_api.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/steam_api.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -100,7 +100,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet-Server"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/DDNet-Server")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/DDNet-Server")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet-Server" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/DDNet-Server")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -110,7 +110,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/game-server.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/game-server.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -120,7 +120,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/config_retrieve"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/config_retrieve")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/config_retrieve")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/config_retrieve" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/config_retrieve")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -130,7 +130,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/config_retrieve.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/config_retrieve.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -140,7 +140,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/config_store"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/config_store")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/config_store")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/config_store" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/config_store")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -150,7 +150,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/config_store.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/config_store.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -160,7 +160,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/crapnet"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/crapnet")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/crapnet")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/crapnet" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/crapnet")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -170,7 +170,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/crapnet.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/crapnet.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -180,7 +180,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/demo_extract_chat"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/demo_extract_chat")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/demo_extract_chat")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/demo_extract_chat" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/demo_extract_chat")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -190,7 +190,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/demo_extract_chat.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/demo_extract_chat.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -200,7 +200,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/dilate"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/dilate")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/dilate")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/dilate" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/dilate")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -210,7 +210,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/dilate.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/dilate.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -220,7 +220,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/dummy_map"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/dummy_map")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/dummy_map")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/dummy_map" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/dummy_map")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -230,7 +230,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/dummy_map.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/dummy_map.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -240,7 +240,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_convert_07"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_convert_07")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_convert_07")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_convert_07" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_convert_07")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -250,7 +250,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_convert_07.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_convert_07.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -260,7 +260,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_diff"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_diff")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_diff")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_diff" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_diff")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -270,7 +270,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_diff.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_diff.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -280,7 +280,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_extract"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_extract")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_extract")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_extract" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_extract")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -290,7 +290,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_extract.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_extract.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -300,7 +300,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_find_env"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_find_env")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_find_env")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_find_env" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_find_env")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -310,7 +310,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_find_env.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_find_env.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -320,7 +320,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_optimize"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_optimize")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_optimize")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_optimize" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_optimize")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -330,7 +330,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_optimize.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_optimize.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -340,7 +340,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_replace_area"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_replace_area")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_replace_area")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_replace_area" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_replace_area")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -350,7 +350,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_replace_area.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_replace_area.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -360,7 +360,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_replace_image"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_replace_image")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_replace_image")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_replace_image" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_replace_image")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -370,7 +370,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_replace_image.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_replace_image.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -380,7 +380,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_resave"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_resave")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_resave")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_resave" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_resave")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -390,7 +390,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_resave.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_resave.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -400,7 +400,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_test"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_test")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_test")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_test" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/map_test")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -410,7 +410,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_test.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_test.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -420,7 +420,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/packetgen"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/packetgen")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/packetgen")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/packetgen" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/packetgen")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -430,7 +430,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/packetgen.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/packetgen.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -440,7 +440,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/stun"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/stun")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/stun")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/stun" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/stun")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -450,7 +450,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/stun.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/stun.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -460,7 +460,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/twping"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/twping")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/twping")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/twping" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/twping")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -470,7 +470,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/twping.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/twping.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -480,7 +480,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/unicode_confusables"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/unicode_confusables")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/unicode_confusables")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/unicode_confusables" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/unicode_confusables")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -490,7 +490,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/unicode_confusables.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/unicode_confusables.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -500,7 +500,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/uuid"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/uuid")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ddnet" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/uuid")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/uuid" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ddnet/uuid")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -510,195 +510,195 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "tools" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/uuid.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/uuid.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/other/ddnet.desktop")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications" TYPE FILE FILES "/home/cser228/programming/BongureClient/other/ddnet.desktop")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/16x16/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet_16x16x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/16x16/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet_16x16x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/16x16/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet-Server_16x16x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/16x16/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet-Server_16x16x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet_32x32x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet_32x32x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet-Server_32x32x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet-Server_32x32x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet_48x48x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet_48x48x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet-Server_48x48x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet-Server_48x48x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet_256x256x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps" TYPE FILE RENAME "ddnet.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet_256x256x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "server" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClientFromTater/other/icons/DDNet-Server_256x256x32.png")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps" TYPE FILE RENAME "ddnet-server.png" FILES "/home/cser228/programming/BongureClient/other/icons/DDNet-Server_256x256x32.png")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/text.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/text.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/text.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/text.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_rotationless.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_rotationless.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_rotationless.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_rotationless.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex_rotationless.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex_rotationless.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex_rotationless.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex_rotationless.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti_push.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti_push.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti_push.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti_push.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "client" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ddnet/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -708,12 +708,12 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet"
          RPATH [[$ORIGIN]])
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/DDNet")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/DDNet")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet"
-         OLD_RPATH [[$ORIGIN:/home/cser228/programming/BongureClientFromTater/libs/vosk:/home/cser228/programming/BongureClientFromTater/build:]]
+         OLD_RPATH [[$ORIGIN:/home/cser228/programming/BongureClient/libs/vosk:/home/cser228/programming/BongureClient/build:]]
          NEW_RPATH [[$ORIGIN]])
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet")
@@ -722,7 +722,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/game-client.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/game-client.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -732,7 +732,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet-Server"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/DDNet-Server")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/DDNet-Server")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet-Server" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/DDNet-Server")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -742,7 +742,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/game-server.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/game-server.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -752,7 +752,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/config_retrieve"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/config_retrieve")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/config_retrieve")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/config_retrieve" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/config_retrieve")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -762,7 +762,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/config_retrieve.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/config_retrieve.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -772,7 +772,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/config_store"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/config_store")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/config_store")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/config_store" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/config_store")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -782,7 +782,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/config_store.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/config_store.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -792,7 +792,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/demo_extract_chat"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/demo_extract_chat")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/demo_extract_chat")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/demo_extract_chat" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/demo_extract_chat")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -802,7 +802,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/demo_extract_chat.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/demo_extract_chat.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -812,7 +812,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/dilate"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/dilate")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/dilate")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/dilate" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/dilate")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -822,7 +822,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/dilate.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/dilate.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -832,7 +832,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_convert_07"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_convert_07")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_convert_07")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_convert_07" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_convert_07")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -842,7 +842,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_convert_07.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_convert_07.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -852,7 +852,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_diff"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_diff")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_diff")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_diff" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_diff")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -862,7 +862,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_diff.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_diff.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -872,7 +872,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_extract"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClientFromTater/build/map_extract")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE EXECUTABLE FILES "/home/cser228/programming/BongureClient/build/map_extract")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_extract" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/map_extract")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -882,7 +882,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/map_extract.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/map_extract.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
@@ -892,7 +892,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/libsteam_api.so"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE SHARED_LIBRARY FILES "/home/cser228/programming/BongureClientFromTater/build/libsteam_api.so")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE SHARED_LIBRARY FILES "/home/cser228/programming/BongureClient/build/libsteam_api.so")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/libsteam_api.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/libsteam_api.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -905,178 +905,178 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  include("/home/cser228/programming/BongureClientFromTater/build/CMakeFiles/steam_api.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
+  include("/home/cser228/programming/BongureClient/build/CMakeFiles/steam_api.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE DIRECTORY FILES "/home/cser228/programming/BongureClientFromTater/data")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE DIRECTORY FILES "/home/cser228/programming/BongureClient/data")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64" TYPE FILE FILES
-    "/home/cser228/programming/BongureClientFromTater/license.txt"
-    "/home/cser228/programming/BongureClientFromTater/steam_appid.txt"
-    "/home/cser228/programming/BongureClientFromTater/storage.cfg"
-    "/home/cser228/programming/BongureClientFromTater/other/config_directory.sh"
+    "/home/cser228/programming/BongureClient/license.txt"
+    "/home/cser228/programming/BongureClient/steam_appid.txt"
+    "/home/cser228/programming/BongureClient/storage.cfg"
+    "/home/cser228/programming/BongureClient/other/config_directory.sh"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/prim3d_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/prim3d_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/text.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/text.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/text.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/text.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_rotationless.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_rotationless.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_rotationless.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_rotationless.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex_rotationless.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex_rotationless.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/primex_tex_rotationless.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/primex_tex_rotationless.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti_push.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti_push.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/spritemulti_push.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/spritemulti_push.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/tile_border_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/tile_border_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_textured.vert.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped_textured.frag.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped_textured.frag.spv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "portable")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClientFromTater/build/data/shader/vulkan/quad_grouped_textured.vert.spv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/TClient-10.9-linux_x86_64/data/shader/vulkan" TYPE FILE FILES "/home/cser228/programming/BongureClient/build/data/shader/vulkan/quad_grouped_textured.vert.spv")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/home/cser228/programming/BongureClientFromTater/build/install_local_manifest.txt"
+  file(WRITE "/home/cser228/programming/BongureClient/build/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
 if(CMAKE_INSTALL_COMPONENT)
@@ -1092,6 +1092,6 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/home/cser228/programming/BongureClientFromTater/build/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "/home/cser228/programming/BongureClient/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

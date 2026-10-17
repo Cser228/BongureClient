@@ -2891,11 +2891,41 @@ Optimization
 Disable textures
 == Отключить текстуры
 
-Fast input (this is a hide button)
-== Быстрый ввод (это кнопка которая прячет гуи)
-
-Enable fast input
-== Включить быстрый ввод
-
-Fast input
+Fast Input
 == Быстрый ввод
+
+Type of Fast Input:
+== Тип быстрого ввода:
+
+Edge Info (hide)
+== Эдж помощник (скрыто)
+
+Show upper panel of Edge Info
+== Показывать верхнюю панель эдж помощника
+
+Show lower panel of Edge Info
+== Показывать нижнюю панель эдж помощника
+
+Edge Info X Position
+== Горизонтальная позиция эдж помощника
+
+Edge Info Y Position
+== Вертикальная позиция эдж помощника
+
+Prediction amount in 0.01 ticks
+== Кол-во предсказаний в 0.01 тике
+
+Smoothing amount (0-100%)
+== Сглаживание (0-100%)
+
+Latency compensation (0-50%)
+== Компенсация задержки (0-50%)
+
+Interpolation mode
+== Режим интерполяции
+
+Apply to other tees
+== Применить к другим игрокам
+
+Units amount in 0.001 tick
+== Кол-во юнитов в 0.001 тике

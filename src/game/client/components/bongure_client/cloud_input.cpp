@@ -9,7 +9,7 @@
 
 bool CCloudInput::IsActive() const
 {
-	return g_Config.m_BcFastInputs == BC_INPUTS_CLOUD && Amount() > 0.0f;
+	return g_Config.m_BcFastInput == BC_INPUTS_CLOUD && Amount() > 0.0f;
 }
 
 float CCloudInput::Amount() const

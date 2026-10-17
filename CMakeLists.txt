@@ -2779,6 +2779,8 @@ if(CLIENT)
 	# Bongure Client {
 	components/bongure_client/cloud_input.cpp
 	components/bongure_client/cloud_input.h
+	components/bongure_client/edgeinfo.cpp
+	components/bongure_client/edgeinfo.h
 	components/bongure_client/inputs.cpp
 	components/bongure_client/inputs.h
 	components/bongure_client/voice_assistant.cpp
