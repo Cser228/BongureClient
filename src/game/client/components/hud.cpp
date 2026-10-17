@@ -30,8 +30,8 @@
 #include <cfloat>
 // Bongure Client }
 
-CHud::CHud()
-{
+// This function changed by Bongure Client
+CHud::CHud() {
 	m_FPSTextContainerIndex.Reset();
 	m_DDRaceEffectsTextContainerIndex.Reset();
 	m_PlayerAngleTextContainerIndex.Reset();
@@ -43,6 +43,10 @@ CHud::CHud()
 		m_aPlayerPrevSpeed[i] = -INFINITY;
 		m_aPlayerPositionContainers[i].Reset();
 		m_aPlayerPrevPosition[i] = -INFINITY;
+		// Bongure Client {
+		m_aDummyPositionContainers[i].Reset();
+		m_aDummyPrevPosition[i] = -INFINITY;
+		// Bongure Client }
 	}
 }
 
@@ -130,6 +134,7 @@ void CHud::RenderDummyIndicator() {
 }
 // Bongure Client }
 
+// This function changed by Bongure Client
 void CHud::ResetHudContainers()
 {
 	for(auto &ScoreInfo : m_aScoreInfo)
@@ -146,12 +151,16 @@ void CHud::ResetHudContainers()
 	TextRender()->DeleteTextContainer(m_DDRaceEffectsTextContainerIndex);
 	TextRender()->DeleteTextContainer(m_PlayerAngleTextContainerIndex);
 	m_PlayerPrevAngle = -INFINITY;
-	for(int i = 0; i < 2; i++)
-	{
+	for(int i = 0; i < 2; ++i) {
 		TextRender()->DeleteTextContainer(m_aPlayerSpeedTextContainers[i]);
 		m_aPlayerPrevSpeed[i] = -INFINITY;
 		TextRender()->DeleteTextContainer(m_aPlayerPositionContainers[i]);
 		m_aPlayerPrevPosition[i] = -INFINITY;
+
+		// Bongure Client {
+		TextRender()->DeleteTextContainer(m_aDummyPositionContainers[i]);
+		m_aDummyPrevPosition[i] = -INFINITY;
+		// Bongure Client }
 	}
 }
 
@@ -1562,40 +1571,29 @@ void CHud::RenderNinjaBarPos(const float x, float y, const float Width, const fl
 	Graphics()->WrapNormal();
 }
 
-void CHud::RenderSpectatorCount()
-{
-	if(!g_Config.m_ClShowhudSpectatorCount)
-	{
-		return;
-	}
+// This function changed by Bongure Client
+void CHud::RenderSpectatorCount() {
+	if(!g_Config.m_ClShowhudSpectatorCount) return;
 
 	int Count = 0;
-	if(Client()->IsSixup())
-	{
-		for(int i = 0; i < MAX_CLIENTS; i++)
-		{
-			if(i == GameClient()->m_aLocalIds[0] || (GameClient()->Client()->DummyConnected() && i == GameClient()->m_aLocalIds[1]))
-				continue;
+	if(Client()->IsSixup()) {
+		for(int i = 0; i < MAX_CLIENTS; i++) {
+			if(i == GameClient()->m_aLocalIds[0] || (GameClient()->Client()->DummyConnected() && i == GameClient()->m_aLocalIds[1])) continue;
 
-			if(Client()->m_TranslationContext.m_aClients[i].m_PlayerFlags7 & protocol7::PLAYERFLAG_WATCHING)
-			{
-				Count++;
-			}
+			if(Client()->m_TranslationContext.m_aClients[i].m_PlayerFlags7 &
+				protocol7::PLAYERFLAG_WATCHING) Count++;
 		}
 	}
-	else
-	{
+	else {
 		const CNetObj_SpectatorCount *pSpectatorCount = GameClient()->m_Snap.m_pSpectatorCount;
-		if(!pSpectatorCount)
-		{
+		if(!pSpectatorCount) {
 			m_LastSpectatorCountTick = Client()->GameTick(g_Config.m_ClDummy);
 			return;
 		}
 		Count = pSpectatorCount->m_NumSpectators;
 	}
 
-	if(Count == 0)
-	{
+	if(Count == 0) {
 		m_LastSpectatorCountTick = Client()->GameTick(g_Config.m_ClDummy);
 		return;
 	}
@@ -1613,10 +1611,11 @@ void CHud::RenderSpectatorCount()
 
 	float StartX = m_Width - BoxWidth;
 	float StartY = 285.0f - BoxHeight - 4; // 4 units distance to the next display;
-	if(g_Config.m_ClShowhudPlayerPosition || g_Config.m_ClShowhudPlayerSpeed || g_Config.m_ClShowhudPlayerAngle)
-	{
-		StartY -= 4;
-	}
+	// Bongure Client {
+	if(g_Config.m_ClShowhudPlayerPosition || g_Config.m_ClShowhudPlayerSpeed ||
+		g_Config.m_ClShowhudPlayerAngle || g_Config.m_BcShowhudDummyPosition) StartY -= 4;
+	// Bongure Client }
+
 	StartY -= GetMovementInformationBoxHeight();
 
 	if(g_Config.m_ClShowhudScore)
@@ -1702,16 +1701,26 @@ inline int CHud::GetDigitsIndex(int Value, int Max)
 	return DigitsIndex;
 }
 
-inline float CHud::GetMovementInformationBoxHeight()
-{
-	if(GameClient()->m_Snap.m_SpecInfo.m_Active && (GameClient()->m_Snap.m_SpecInfo.m_SpectatorId == SPEC_FREEVIEW || GameClient()->m_aClients[GameClient()->m_Snap.m_SpecInfo.m_SpectatorId].m_SpecCharPresent))
-		return g_Config.m_ClShowhudPlayerPosition ? 3.0f * MOVEMENT_INFORMATION_LINE_HEIGHT + 2.0f : 0.0f;
-	float BoxHeight = 3.0f * MOVEMENT_INFORMATION_LINE_HEIGHT * (g_Config.m_ClShowhudPlayerPosition + g_Config.m_ClShowhudPlayerSpeed) + 2.0f * MOVEMENT_INFORMATION_LINE_HEIGHT * g_Config.m_ClShowhudPlayerAngle;
-	if(g_Config.m_ClShowhudPlayerPosition || g_Config.m_ClShowhudPlayerSpeed || g_Config.m_ClShowhudPlayerAngle)
-	{
-		BoxHeight += 2.0f;
-	}
+// This function changed by Bongure Client
+inline float CHud::GetMovementInformationBoxHeight() {
+	// Bongure Client {
+	float DummyPosLines = g_Config.m_BcShowhudDummyPosition && Client()->DummyConnected() ?
+		3.0f * MOVEMENT_INFORMATION_LINE_HEIGHT : 0.0f;
+	float AngleHudLines = 2.0f * MOVEMENT_INFORMATION_LINE_HEIGHT * g_Config.m_ClShowhudPlayerAngle;
+
+	if (GameClient()->m_Snap.m_SpecInfo.m_Active &&
+		(GameClient()->m_Snap.m_SpecInfo.m_SpectatorId == SPEC_FREEVIEW ||
+		GameClient()->m_aClients[GameClient()->m_Snap.m_SpecInfo.m_SpectatorId].m_SpecCharPresent))
+		return (g_Config.m_ClShowhudPlayerPosition ? 3.0f * MOVEMENT_INFORMATION_LINE_HEIGHT + 2.0f :
+			0.0f) + DummyPosLines;
+
+	float BoxHeight = 3.0f * MOVEMENT_INFORMATION_LINE_HEIGHT *
+		(g_Config.m_ClShowhudPlayerPosition + g_Config.m_ClShowhudPlayerSpeed) + AngleHudLines +
+		DummyPosLines;
+
+	if(g_Config.m_ClShowhudPlayerPosition || g_Config.m_ClShowhudPlayerSpeed || g_Config.m_ClShowhudPlayerAngle || g_Config.m_BcShowhudDummyPosition) BoxHeight += 2.0f;
 	return BoxHeight;
+	// Bongure Client }
 }
 
 void CHud::UpdateMovementInformationTextContainer(STextContainerIndex &TextContainer, float FontSize, float Value, float &PrevValue)
@@ -1788,16 +1797,20 @@ CHud::CMovementInformation CHud::GetMovementInformation(int ClientId, int Conn) 
 	return Out;
 }
 
-void CHud::RenderMovementInformation()
-{
-	const int ClientId = GameClient()->m_Snap.m_SpecInfo.m_Active ? GameClient()->m_Snap.m_SpecInfo.m_SpectatorId : GameClient()->m_Snap.m_LocalClientId;
-	const bool PosOnly = ClientId == SPEC_FREEVIEW || (GameClient()->m_aClients[ClientId].m_SpecCharPresent);
+//This function changed by Bongure Client
+void CHud::RenderMovementInformation() {
+	const int ClientId = GameClient()->m_Snap.m_SpecInfo.m_Active ?
+		GameClient()->m_Snap.m_SpecInfo.m_SpectatorId : GameClient()->m_Snap.m_LocalClientId;
+	const bool PosOnly = ClientId == SPEC_FREEVIEW ||
+		(GameClient()->m_aClients[ClientId].m_SpecCharPresent);
 	// Draw the information depending on settings: Position, speed and target angle
 	// This display is only to present the available information from the last snapshot, not to interpolate or predict
-	if(!g_Config.m_ClShowhudPlayerPosition && (PosOnly || (!g_Config.m_ClShowhudPlayerSpeed && !g_Config.m_ClShowhudPlayerAngle)))
-	{
-		return;
-	}
+	// Bongure Client {
+	if(!g_Config.m_ClShowhudPlayerPosition && (PosOnly || (!g_Config.m_ClShowhudPlayerSpeed &&
+		!g_Config.m_ClShowhudPlayerAngle)) && !(g_Config.m_BcShowhudDummyPosition &&
+		Client()->DummyConnected())) return;
+	// Bongure Client }
+
 	const float LineSpacer = 1.0f; // above and below each entry
 	const float Fontsize = 6.0f;
 
@@ -1865,12 +1878,17 @@ void CHud::RenderMovementInformation()
 
 	const CMovementInformation Info = GetMovementInformation(ClientId, g_Config.m_ClDummy);
 
+	// Bongure Client {
+	if (g_Config.m_BcShowhudDummyPosition && Client()->DummyConnected())
+		Dummyinfo =	GetMovementInformation(GameClient()->m_aLocalIds[!g_Config.m_ClDummy],
+			g_Config.m_ClDummy);
+	// Bongure Client }
+
 	float y = StartY + LineSpacer * 2.0f;
 	const float LeftX = StartX + 2.0f;
 	const float RightX = m_Width - 2.0f;
 
-	if(g_Config.m_ClShowhudPlayerPosition)
-	{
+	if(g_Config.m_ClShowhudPlayerPosition) {
 		TextRender()->Text(LeftX, y, Fontsize, Localize("Position:"), -1.0f);
 		y += MOVEMENT_INFORMATION_LINE_HEIGHT;
 
@@ -1880,6 +1898,11 @@ void CHud::RenderMovementInformation()
 		ColorRGBA TextColor = TextRender()->DefaultTextColor();
 		if(ShowDummyPos && fabsf(Info.m_Pos.x - DummyInfo.m_Pos.x) < 0.01f)
 			TextColor = ColorRGBA(0.2f, 1.0f, 0.2f, 1.0f);
+
+		// Bongure Client {
+		if (g_Config.m_BcChangePlayerColorWhenXDummyEqualXPlayer == 1 &&
+			Dummyinfo.m_Pos.x == Info.m_Pos.x) TextColor = ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f);
+		// Bongure Client }
 
 		RenderMovementInformationTextContainer(m_aPlayerPositionContainers[0], TextColor, RightX, y);
 		y += MOVEMENT_INFORMATION_LINE_HEIGHT;
@@ -1911,6 +1934,55 @@ void CHud::RenderMovementInformation()
 			y += MOVEMENT_INFORMATION_LINE_HEIGHT;
 		}
 	}
+
+	// Bongure Client {
+	if (g_Config.m_BcShowhudDummyPosition && Client()->DummyConnected()) {
+		int m_DummyInfo = 0;
+		if(Dummyinfo.m_Pos == vec2(0.0f, 0.0f) && Dummyinfo.m_Speed == vec2(0.0f, 0.0f) &&
+			Dummyinfo.m_Angle == 0.0f) {
+
+			m_DummyInfo = 0;
+			if(g_Config.m_BcShowLastPosHudDummy) Dummyinfo.m_Pos = m_LastposDummy;
+		}
+		else {
+			m_DummyInfo = 1;
+			if(g_Config.m_BcShowLastPosHudDummy) m_LastposDummy = Dummyinfo.m_Pos;
+		}
+
+		TextRender()->Text(LeftX, y, Fontsize, Localize("Dummy Position:"), -1.0f);
+		y += MOVEMENT_INFORMATION_LINE_HEIGHT;
+
+		TextRender()->Text(LeftX, y, Fontsize, "X:", -1.0f);
+
+		if(m_DummyInfo == 0 && (m_LastposDummy == vec2(0.0f, 0.0f) ||
+			!g_Config.m_BcShowLastPosHudDummy)) TextRender()->Text(RightX -
+				TextRender()->TextWidth(Fontsize, "No Info", -1, -1.0f), y, Fontsize, "No Info",
+				-1.0f);
+		else {
+			UpdateMovementInformationTextContainer(m_aDummyPositionContainers[0], Fontsize,
+				Dummyinfo.m_Pos.x, m_aDummyPrevPosition[0]);
+			RenderMovementInformationTextContainer(m_aDummyPositionContainers[0],
+				(g_Config.m_BcChangeDummyColorWhenXDummyEqualXPlayer &&
+				Dummyinfo.m_Pos.x == Info.m_Pos.x ? ColorRGBA(0.0f, 1.0f, 0.0f, 1.0f) :
+				TextRender()->DefaultTextColor()), RightX, y);
+		}
+		y += MOVEMENT_INFORMATION_LINE_HEIGHT;
+
+		TextRender()->Text(LeftX, y, Fontsize, "Y:", -1.0f);
+		if(m_DummyInfo == 0 && (m_LastposDummy == vec2(0.0f, 0.0f) ||
+			!g_Config.m_BcShowLastPosHudDummy)) TextRender()->Text(RightX -
+				TextRender()->TextWidth(Fontsize, "No Info", -1, -1.0f), y, Fontsize, "No Info",
+				-1.0f);
+		else {
+			UpdateMovementInformationTextContainer(m_aDummyPositionContainers[1], Fontsize,
+				Dummyinfo.m_Pos.y, m_aDummyPrevPosition[1]);
+			RenderMovementInformationTextContainer(m_aDummyPositionContainers[1],
+				TextRender()->DefaultTextColor(), RightX, y);
+		}
+		y += MOVEMENT_INFORMATION_LINE_HEIGHT;
+
+	}
+	// Bongure Client }
 
 	if(PosOnly)
 		return;

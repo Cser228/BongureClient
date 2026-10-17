@@ -90,3 +90,10 @@ MACRO_CONFIG_INT(BcEdgeInfoJump, bc_edge_info_jump, 1, 0, 1, CFGFLAG_CLIENT | CF
 MACRO_CONFIG_INT(BcEdgeInfoPosX, bc_edge_info_pos_x, 50, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change edge info pos x")
 MACRO_CONFIG_INT(BcEdgeInfoPosY, bc_edge_info_pos_y, 56, 0, 100, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change edge info pos y")
 // Edge Info
+
+// Dummy Tracker
+MACRO_CONFIG_INT(BcShowhudDummyPosition, bc_showhud_dummy_position, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show ingame HUD (Dummy Position)")
+MACRO_CONFIG_INT(BcShowLastPosHudDummy, bc_show_last_pos_hud_dummy, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show last pos in hud dummy")
+MACRO_CONFIG_INT(BcChangeDummyColorWhenXDummyEqualXPlayer, bc_change_dummy_color_when_x_equal_dummy, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change color pos x hud dummy to green when x dummy = x player")
+MACRO_CONFIG_INT(BcChangePlayerColorWhenXDummyEqualXPlayer, bc_change_player_color_when_x_equal_dummy, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change color pos x hud player to green when x dummy = x player")
+// Dummy Tracker

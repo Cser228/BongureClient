@@ -66,6 +66,11 @@ class CHud : public CComponent
 	STextContainerIndex m_aPlayerPositionContainers[2];
 	float m_aPlayerPrevPosition[2];
 
+	// Bongure Client {
+	STextContainerIndex m_aDummyPositionContainers[2];
+	float m_aDummyPrevPosition[2];
+	// Bongure Client }
+
 	void RenderCursor();
 
 	void RenderTextInfo();
@@ -94,6 +99,11 @@ class CHud : public CComponent
 		float m_Angle = 0.0f;
 	};
 	class CMovementInformation GetMovementInformation(int ClientId, int Conn) const;
+
+	// Bongure Client {
+	vec2 m_LastposDummy;
+	CMovementInformation Dummyinfo;
+	// Bongure Client }
 
 	void RenderGameTimer();
 	void RenderPauseNotification();

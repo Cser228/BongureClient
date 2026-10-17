@@ -29,7 +29,6 @@ CPackConfig.cmake
 CPackSourceConfig.cmake
 CTestTestfile.cmake
 Debug
-Makefile
 Release
 SAN.*
 _CPack_Packages/

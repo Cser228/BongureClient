@@ -2765,8 +2765,8 @@ Emoji system
 Bonga debug
 == Дебаг бонги
 
-Custom aspect ratio
-== Пользовательское соотношение сторон
+Custom aspect ratio (Best Client)
+== Пользовательское соотношение сторон (Best Client)
 
 Off (default)
 == Выключено (станд.)
@@ -2879,8 +2879,8 @@ version = write bongure client version in terminal
 Unknown command: 
 == Неизвестная команда: 
 
-Eye comfort
-== Защита для глаз
+Eye comfort (Best Client)
+== Защита для глаз (Best Client)
 
 Comfort level
 == Уровень комфорта
@@ -2891,14 +2891,14 @@ Optimization
 Disable textures
 == Отключить текстуры
 
-Fast Input
-== Быстрый ввод
+Fast Input (Best Client)
+== Быстрый ввод (Best Client)
 
 Type of Fast Input:
 == Тип быстрого ввода:
 
-Edge Info (hide)
-== Эдж помощник (скрыто)
+Edge Info (hide) (RClient)
+== Эдж помощник (скрыто) (RClient)
 
 Show upper panel of Edge Info
 == Показывать верхнюю панель эдж помощника
@@ -2929,3 +2929,18 @@ Apply to other tees
 
 Units amount in 0.001 tick
 == Кол-во юнитов в 0.001 тике
+
+Dummy Tracker (RClient)
+== Дамми трекер (RClient)
+
+Show ingame HUD (Dummy Position)
+== Показывать внутре игровой интерфейс (Позиция дамми)
+
+Show last pos in hud dummy
+== Показывать последнию позицию в интерфейсе дамми
+
+Change color pos x hud dummy to green when x dummy = x player
+== Менять цвет позиции x дамми на зелёный, когда x дамми = x игрока
+
+Change color pos x hud player to green when x dummy = x player
+== Менять цвет позиции x игрока на зелёный, когда x дамми = x игрока

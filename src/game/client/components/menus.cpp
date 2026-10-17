@@ -709,8 +709,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 
 	static bool s_AspectRatioEnabled = false;
 	TextRender()->TextColor(TextColor);
-	if(DoButton_CheckBox(&s_AspectRatioEnabled, Localize("Custom aspect ratio"), s_AspectRatioEnabled,
-		&Row)) s_AspectRatioEnabled ^= 1;
+	if(DoButton_CheckBox(&s_AspectRatioEnabled, Localize("Custom aspect ratio (Best Client)"),
+		s_AspectRatioEnabled, &Row)) s_AspectRatioEnabled ^= 1;
 
 	if(s_AspectRatioEnabled) {
 	//PRESET
@@ -979,10 +979,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	// Eye comfort
 	Main.HSplitTop(20.0f, &Row, &Main);
 	TextRender()->TextColor(TextColor);
-	if (DoButton_CheckBox(&g_Config.m_BcEyeComfort, Localize("Eye comfort"), g_Config.m_BcEyeComfort,
-		&Row)) {
-		g_Config.m_BcEyeComfort ^= 1;
-	}
+	if (DoButton_CheckBox(&g_Config.m_BcEyeComfort, Localize("Eye comfort (Best Client)"),
+		g_Config.m_BcEyeComfort, &Row)) g_Config.m_BcEyeComfort ^= 1;
 
 	if (g_Config.m_BcEyeComfort == 1) {
         Main.HSplitTop(5.0f, nullptr, &Main);
@@ -1053,7 +1051,7 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	static bool s_HideFastInputs = true;
 
 	TextRender()->TextColor(TextColor);
-	if (DoButton_CheckBox(&g_Config.m_BcFastInputEnabled, Localize("Fast Input"),
+	if (DoButton_CheckBox(&g_Config.m_BcFastInputEnabled, Localize("Fast Input (Best Client)"),
 		g_Config.m_BcFastInputEnabled, &FastInputsLeft)) g_Config.m_BcFastInputEnabled ^= 1;
 
 	TextRender()->TextColor(TextColor);
@@ -1474,8 +1472,8 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	static bool s_ShowEdgeInfo = false;
 	TextRender()->TextColor(TextColor);
 
-	if (DoButton_CheckBox(&s_ShowEdgeInfo, Localize("Edge Info (hide)"), s_ShowEdgeInfo, &Row))
-		s_ShowEdgeInfo ^= 1;
+	if (DoButton_CheckBox(&s_ShowEdgeInfo, Localize("Edge Info (RClient)"),
+		s_ShowEdgeInfo, &Row)) s_ShowEdgeInfo ^= 1;
 
 	if (s_ShowEdgeInfo) {
 		// Margin
@@ -1553,7 +1551,69 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 			if (P >= 0 && P <= 100) g_Config.m_BcEdgeInfoPosY = P;
 		}
 	}
+	Main.HSplitTop(5.0f, nullptr, &Main);
 
+	// Dummy Tracker
+	Main.HSplitTop(20.0f, &Row, &Main);
+
+	static bool s_ShowDummyTracker = false;
+	TextRender()->TextColor(TextColor);
+	if (DoButton_CheckBox(&s_ShowDummyTracker, Localize("Dummy Tracker (RClient)"),
+		s_ShowDummyTracker, &Row)) s_ShowDummyTracker ^= 1;
+
+	if (s_ShowDummyTracker) {
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// CheckBox
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcShowhudDummyPosition,
+			Localize("Show ingame HUD (Dummy Position)"), g_Config.m_BcShowhudDummyPosition, &Row))
+				g_Config.m_BcShowhudDummyPosition ^= 1;
+		// CheckBox
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// CheckBox
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcShowLastPosHudDummy,
+			Localize("Show last pos in hud dummy"), g_Config.m_BcShowLastPosHudDummy, &Row))
+				g_Config.m_BcShowLastPosHudDummy ^= 1;
+		// CheckBox
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// CheckBox
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcChangeDummyColorWhenXDummyEqualXPlayer,
+			Localize("Change color pos x hud dummy to green when x dummy = x player"), g_Config.m_BcChangeDummyColorWhenXDummyEqualXPlayer, &Row))
+				g_Config.m_BcChangeDummyColorWhenXDummyEqualXPlayer ^= 1;
+		// CheckBox
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// CheckBox
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcChangePlayerColorWhenXDummyEqualXPlayer,
+			Localize("Change color pos x hud player to green when x dummy = x player"), g_Config.m_BcChangePlayerColorWhenXDummyEqualXPlayer, &Row))
+				g_Config.m_BcChangePlayerColorWhenXDummyEqualXPlayer ^= 1;
+		// CheckBox
+	}
 	Main.HSplitTop(5.0f, nullptr, &Main);
 
 	// Scroll
