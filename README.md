@@ -13,7 +13,7 @@ If you on linux, you need to delete folder "build" (if it exists) first. Next, i
 ## Features
 
 * **Tater Client**: full
-* **Bongure Client**: chat command /unfinishsay, voice assistent `Bonga`, auto mute function, auto translate function, chat command /translate, dummy pointer, smile system, custom aspect ratio (Best Client), eye comfort (Best Client), optimization things (disable textures and etc.), fast inputs (Best Client), edge info (RClient), dummy tracker (RClient).
+* **Bongure Client**: chat command /unfinishsay, voice assistent `Bonga`, auto mute function, auto translate function, chat command /translate, dummy pointer, smile system, custom aspect ratio (Best Client), eye comfort (Best Client), optimization things (disable textures and etc.), fast inputs (Best Client), edge info (RClient), dummy tracker (RClient), advanced dummy actions (RClient).
 
 ## Community & Links
 

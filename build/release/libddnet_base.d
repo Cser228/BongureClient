@@ -1,1 +1,0 @@
-/home/cser228/programming/BongureClient/build/release/libddnet_base.rlib: /home/cser228/programming/BongureClient/src/base/color.rs /home/cser228/programming/BongureClient/src/base/dbg.rs /home/cser228/programming/BongureClient/src/base/lib.rs /home/cser228/programming/BongureClient/src/base/rust.rs
