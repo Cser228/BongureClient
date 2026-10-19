@@ -125,6 +125,9 @@ public:
 	IGraphics::CTextureHandle m_DummyArrowTexture;
 	vec2 m_LastDummyPos;
 	bool m_HasLastDummyPos;
+
+	IGraphics::CTextureHandle m_DummyResetOnSwitchTexture;
+	IGraphics::CTextureHandle m_DummyControlTexture;
 	// Bongure Client }
 
 	CHud();
@@ -189,6 +192,10 @@ private:
 	int m_LiveFrozenOffset;
 	int m_DummyHammerOffset;
 	int m_DummyCopyOffset;
+	// Bongure Client {
+	int m_DummyResetOnSwitchOffset;
+	int m_DummyControlOffset;
+	// Bongure Client }
 	int m_PracticeModeOffset;
 	int m_Team0ModeOffset;
 	int m_LockModeOffset;

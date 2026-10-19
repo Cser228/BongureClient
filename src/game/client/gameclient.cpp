@@ -465,7 +465,6 @@ void CGameClient::OnInit()
 			g_pData->m_aImages[i].m_Id = Graphics()->LoadTexture(g_pData->m_aImages[i].m_pFilename, IStorage::TYPE_ALL);
 		m_Menus.RenderLoading(pLoadingDDNetCaption, pLoadingMessageAssets, 1);
 	}
-
 	m_GameWorld.Init(Collision(), m_aTuningList, &m_MapBugs);
 	OnReset();
 

@@ -1,2 +1,2 @@
 #include <game/version.h>
-const char *GIT_SHORTREV_HASH = "8e877e45a68aa106df76546e0ecab191";
+const char *GIT_SHORTREV_HASH = "e2a114c423cb68002e51e9b5e393fbd9";

@@ -192,7 +192,13 @@ void CHud::OnInit() {
 	// Bongure Client {
 	m_DummyArrowTexture = Graphics()->LoadTexture(
     	"bongure_images/dummy_arrow.png", IStorage::TYPE_ALL);
-	
+
+	m_DummyResetOnSwitchTexture = Graphics()->LoadTexture(
+		"bongure_images/dummy_reset_on_switch.png", IStorage::TYPE_ALL);
+
+	m_DummyControlTexture = Graphics()->LoadTexture(
+		"bongure_images/dummy_control.png", IStorage::TYPE_ALL);
+
 	m_HasLastDummyPos = false;
 	m_LastDummyPos = vec2(0, 0);
 	// Bongure Client }
@@ -1623,9 +1629,12 @@ void CHud::RenderSpectatorCount() {
 		StartY -= 56;
 	}
 
-	if(g_Config.m_ClShowhudDummyActions && !(GameClient()->m_Snap.m_pGameInfoObj->m_GameStateFlags & GAMESTATEFLAG_GAMEOVER) && Client()->DummyConnected())
-	{
-		StartY = StartY - 29.0f - 4; // dummy actions height and padding
+	if(g_Config.m_ClShowhudDummyActions && !(GameClient()->m_Snap.m_pGameInfoObj->m_GameStateFlags &
+		 GAMESTATEFLAG_GAMEOVER) && Client()->DummyConnected()) {
+
+		// Bongure Client {
+		StartY = StartY - 29.0f - (g_Config.m_BcAdvancedShowhudDummyActions ? 40.0f : 4.0f);
+		// Bongure Client }
 	}
 
 	Graphics()->DrawRect(StartX, StartY, BoxWidth, BoxHeight, ColorRGBA(0.0f, 0.0f, 0.0f, 0.4f), IGraphics::CORNER_L, 5.0f);
@@ -1639,14 +1648,15 @@ void CHud::RenderSpectatorCount() {
 	TextRender()->Text(x + Fontsize + 3.f, y, Fontsize, aBuf, -1.0f);
 }
 
-void CHud::RenderDummyActions()
-{
-	if(!g_Config.m_ClShowhudDummyActions || (GameClient()->m_Snap.m_pGameInfoObj->m_GameStateFlags & GAMESTATEFLAG_GAMEOVER) || !Client()->DummyConnected())
-	{
-		return;
-	}
+// This function changed by Bongure Client
+void CHud::RenderDummyActions() {
+	if(!g_Config.m_ClShowhudDummyActions || (GameClient()->m_Snap.m_pGameInfoObj->m_GameStateFlags &
+		GAMESTATEFLAG_GAMEOVER) || !Client()->DummyConnected()) return;
+
 	// render small dummy actions hud
-	const float BoxHeight = 29.0f;
+	// Bongure Client {
+	const float BoxHeight = 29.0f + (g_Config.m_BcAdvancedShowhudDummyActions ? 13.0f * 2 : 0.0f);
+	// Bongure Client }
 	const float BoxWidth = 16.0f;
 
 	float StartX = m_Width - BoxWidth;
@@ -1681,6 +1691,23 @@ void CHud::RenderDummyActions()
 	}
 	Graphics()->TextureSet(GameClient()->m_HudSkin.m_SpriteHudDummyCopy);
 	Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_DummyCopyOffset, x, y);
+
+	// Bongure Client {
+	if(g_Config.m_BcAdvancedShowhudDummyActions) {
+		y += 13;
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 0.4f);
+		if(!g_Config.m_ClDummyResetOnSwitch) Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		Graphics()->TextureSet(m_DummyResetOnSwitchTexture);
+		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_DummyResetOnSwitchOffset,
+			x - 5, y - 5, 1.2f, 1.2f);
+		y += 13;
+		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 0.4f);
+		if(g_Config.m_ClDummyControl) Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+		Graphics()->TextureSet(m_DummyControlTexture);
+		Graphics()->RenderQuadContainerAsSprite(m_HudQuadContainerIndex, m_DummyControlOffset,
+			x - 5, y - 5, 1.2f, 1.2f);
+	}
+	// Bongure Client }
 }
 
 inline int CHud::GetDigitsIndex(int Value, int Max)

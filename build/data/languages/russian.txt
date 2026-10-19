@@ -2897,8 +2897,8 @@ Fast Input (Best Client)
 Type of Fast Input:
 == Тип быстрого ввода:
 
-Edge Info (hide) (RClient)
-== Эдж помощник (скрыто) (RClient)
+Edge Info (RClient)
+== Эдж помощник (RClient)
 
 Show upper panel of Edge Info
 == Показывать верхнюю панель эдж помощника
@@ -2944,3 +2944,6 @@ Change color pos x hud dummy to green when x dummy = x player
 
 Change color pos x hud player to green when x dummy = x player
 == Менять цвет позиции x игрока на зелёный, когда x дамми = x игрока
+
+Show advanced ingame HUD (Advanced Dummy Actions)
+== Показывать продвинутый внутре игровой интерфейс (Продвинутые действия дамми)

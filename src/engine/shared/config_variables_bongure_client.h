@@ -97,3 +97,7 @@ MACRO_CONFIG_INT(BcShowLastPosHudDummy, bc_show_last_pos_hud_dummy, 0, 0, 1, CFG
 MACRO_CONFIG_INT(BcChangeDummyColorWhenXDummyEqualXPlayer, bc_change_dummy_color_when_x_equal_dummy, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change color pos x hud dummy to green when x dummy = x player")
 MACRO_CONFIG_INT(BcChangePlayerColorWhenXDummyEqualXPlayer, bc_change_player_color_when_x_equal_dummy, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Change color pos x hud player to green when x dummy = x player")
 // Dummy Tracker
+
+// Show advanced dummy hud
+MACRO_CONFIG_INT(BcAdvancedShowhudDummyActions, bc_advanced_showhud_dummy_actions, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show advanced ingame HUD (Advanced Dummy Actions)")
+// Show advanced dummy hud

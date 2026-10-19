@@ -1616,6 +1616,16 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	}
 	Main.HSplitTop(5.0f, nullptr, &Main);
 
+	// Show advanced dummy hud
+	Main.HSplitTop(20.0f, &Row, &Main);
+	TextRender()->TextColor(TextColor);
+	if (DoButton_CheckBox(&g_Config.m_BcAdvancedShowhudDummyActions,
+		Localize("Show advanced ingame HUD (Advanced Dummy Actions)"),
+		g_Config.m_BcAdvancedShowhudDummyActions, &Row))
+			g_Config.m_BcAdvancedShowhudDummyActions ^= 1;
+	Main.HSplitTop(5.0f, nullptr, &Main);
+	
+
 	// Scroll
 	CUIRect ScrollRegion;
 	ScrollRegion.x = Main.x;

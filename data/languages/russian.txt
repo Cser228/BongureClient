@@ -2944,3 +2944,6 @@ Change color pos x hud dummy to green when x dummy = x player
 
 Change color pos x hud player to green when x dummy = x player
 == Менять цвет позиции x игрока на зелёный, когда x дамми = x игрока
+
+Show advanced ingame HUD (Advanced Dummy Actions)
+== Показывать продвинутый внутре игровой интерфейс (Продвинутые действия дамми)
