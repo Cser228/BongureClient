@@ -101,3 +101,12 @@ MACRO_CONFIG_INT(BcChangePlayerColorWhenXDummyEqualXPlayer, bc_change_player_col
 // Show advanced dummy hud
 MACRO_CONFIG_INT(BcAdvancedShowhudDummyActions, bc_advanced_showhud_dummy_actions, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show advanced ingame HUD (Advanced Dummy Actions)")
 // Show advanced dummy hud
+
+//Nameplates actions
+MACRO_CONFIG_INT(BcShowFire, bc_show_fire, 0, 0, 3, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Fire in nameplates (0=off, 1 = only dummy, 2 = both, 3 = only your own)")
+MACRO_CONFIG_INT(BcFireDetectionSize, bc_fire_detection_size, 30, -50, 100, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Size of fire detection icons")
+MACRO_CONFIG_INT(BcShowHook, bc_show_hook, 0, 0, 3, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Hook in nameplates (0=off, 1 = other players', 2 = everyone, 3 = only your own)")
+MACRO_CONFIG_INT(BcHookDetectionSize, bc_hook_detection_size, 30, -50, 100, CFGFLAG_SAVE | CFGFLAG_CLIENT, "Size of hook detection icons")
+MACRO_CONFIG_INT(BcShowFireDynamic, bc_show_fire_dynamic, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Fire in nameplates will dynamically change pos")
+MACRO_CONFIG_INT(BcShowHookDynamic, bc_show_hook_dynamic, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Hook in nameplates will dynamically change pos")
+//Nameplates actions

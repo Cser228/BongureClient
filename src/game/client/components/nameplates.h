@@ -8,6 +8,7 @@
 
 struct CNetObj_PlayerInfo;
 
+// This class changed by Bongure Client
 class CNamePlates : public CComponent
 {
 private:
@@ -21,6 +22,9 @@ public:
 	int Sizeof() const override { return sizeof(*this); }
 	void OnWindowResize() override;
 	void OnRender() override;
+	// Bongure Client {
+	void OnInit() override;
+	// Bongure Client }
 	CNamePlates();
 	~CNamePlates() override;
 };

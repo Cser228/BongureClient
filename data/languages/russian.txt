@@ -2945,5 +2945,26 @@ Change color pos x hud dummy to green when x dummy = x player
 Change color pos x hud player to green when x dummy = x player
 == Менять цвет позиции x игрока на зелёный, когда x дамми = x игрока
 
-Show advanced ingame HUD (Advanced Dummy Actions)
-== Показывать продвинутый внутре игровой интерфейс (Продвинутые действия дамми)
+Show advanced ingame HUD (Advanced Dummy Actions) (RClient)
+== Показывать продвинутый внутре игровой интерфейс (Продвинутые действия дамми) (RClient)
+
+Advanced nameplates actions (RClient)
+== Продвинутые показатели над игроком (Nameplates) (RClient)
+
+Show fire
+== Показывать огонь
+
+Size of fire detection icons
+== Размер иконок огня
+
+Show hook
+== Показывать цепь
+
+Size of hook detection icons
+== Размер иконок цепи
+
+Show fire in nameplates will dynamically change pos
+== Показывать огонь в показателе над игроком (Nameplate) будет динамически менять позицию
+
+Show hook in nameplates will dynamically change pos
+== Показывать цепь в показателе над игроком (Nameplate) будет динамически менять позицию

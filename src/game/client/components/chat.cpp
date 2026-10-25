@@ -1630,6 +1630,50 @@ void CChat::OnRender() {
 			TextRender()->RenderTextContainer(Line.m_TextContainerIndex, TextColor, TextOutlineColor, 0, (y + RealMsgPaddingY / 2.0f) - Line.m_TextYOffset);
 		}
 	}
+
+	// Bongure Client {
+	if (smile_window_open) {
+		int colon_pos = CursorOffset - 1;
+		while (colon_pos >= 0 && pInput[colon_pos] != ':') colon_pos--;
+		if (colon_pos >= 0) smile_string = std::string(pInput + colon_pos, CursorOffset - colon_pos);
+		else smile_string = ":";
+
+		float x0, y0, x1, y1;
+		Graphics()->GetScreen(&x0, &y0, &x1, &y1);
+		float ScreenH = y1 - y0;
+
+		float FrameW = 100.0f, FrameH = 80.0f, FrameX = 140.0f;
+		float FrameY = (ScreenH - 25.0f) - FrameH - 2.0f;
+
+		Graphics()->BlendNormal(); Graphics()->TextureClear(); Graphics()->QuadsBegin();
+		Graphics()->SetColor(0.2f, 0.2f, 0.2f, 0.8f);
+		IGraphics::CQuadItem QuadItem(FrameX, FrameY, FrameW, FrameH);
+		Graphics()->QuadsDrawTL(&QuadItem, 1);
+		Graphics()->QuadsEnd();
+
+		float sFontSize = 7.0f;
+		smile_texts_y = FrameY + 5.0f;
+		unsigned short howmanynow = 0, i = 0;
+
+		for (const auto& [key, value] : smile_db) {
+			if (key.starts_with(smile_string)) {
+				if (smile_show == "" || !smile_show.starts_with(smile_string)) smile_show = key;
+				if (i < smile_window_offset) { i++; continue; }
+				if (howmanynow < 7) {
+					if (smile_show == key) TextRender()->TextColor(0.0f, 1.0f, 0.0f, 1.0f);
+					else TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+					TextRender()->Text(FrameX + 5.0f, smile_texts_y, sFontSize, key.c_str(), -1.0f);
+					TextRender()->Text(FrameX + FrameW - 10.0f, smile_texts_y, sFontSize,
+						value.c_str(), -1.0f);
+					
+					smile_texts_y += 10.0f; howmanynow++;
+				}
+			}
+		}
+		TextRender()->TextColor(TextRender()->DefaultTextColor());
+	}
+	// Bongure Client }
 }
 
 void CChat::EnsureCoherentFontSize() const

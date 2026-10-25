@@ -1102,6 +1102,9 @@ public:
 	float m_aCloudSmoothIntraTick[2] = {};
 
 	bool IsAspectRatioBlockedByFng() const;
+
+	IGraphics::CTextureHandle m_NameplateHammerTexture;
+	IGraphics::CTextureHandle m_NameplateHookTexture;
 	// Bongure Client }
 
 	// TClient

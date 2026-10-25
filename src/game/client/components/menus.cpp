@@ -1620,9 +1620,212 @@ void CMenus::RenderBongureSettings(CUIRect Screen) {
 	Main.HSplitTop(20.0f, &Row, &Main);
 	TextRender()->TextColor(TextColor);
 	if (DoButton_CheckBox(&g_Config.m_BcAdvancedShowhudDummyActions,
-		Localize("Show advanced ingame HUD (Advanced Dummy Actions)"),
+		Localize("Show advanced ingame HUD (Advanced Dummy Actions) (RClient)"),
 		g_Config.m_BcAdvancedShowhudDummyActions, &Row))
 			g_Config.m_BcAdvancedShowhudDummyActions ^= 1;
+	Main.HSplitTop(5.0f, nullptr, &Main);
+	
+	// Advanced nameplates actions
+	Main.HSplitTop(20.0f, &Row, &Main);
+	static bool s_ShowAdvancedNameplatesActions = false;
+	TextRender()->TextColor(TextColor);
+	if (DoButton_CheckBox(&s_ShowAdvancedNameplatesActions,
+		Localize("Advanced nameplates actions (RClient)"), s_ShowAdvancedNameplatesActions, &Row))
+			s_ShowAdvancedNameplatesActions ^= 1;
+
+	if (s_ShowAdvancedNameplatesActions) {
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		// Margin
+
+		// Drop Down
+		CUIRect ShowFireLabelRect = Row;
+			ShowFireLabelRect.x += 20.0f;
+
+		CUIRect ShowFireDropDownRect = Row;
+			ShowFireDropDownRect.x += 350.0f;
+			ShowFireDropDownRect.w = 250.0f;
+
+		static CUi::SDropDownState s_ShowFireDropDownState;
+		static CScrollRegion s_ShowFireScrollRegion;
+		s_ShowFireDropDownState.m_SelectionPopupContext.m_pScrollRegion =
+			&s_ShowFireScrollRegion;
+
+		const char *apShowFireDropDownModes[] = {
+			"Off",
+			"Only Dummy",
+			"Both",
+			"Only your own"
+		};
+		static const int s_apShowFireDropDownModes_len =
+			std::size(apShowFireDropDownModes);
+		static const std::array<int, s_apShowFireDropDownModes_len> s_aAspectShowFireValues =
+			{0, 1, 2, 3};
+
+		int CurrentShowFire = 0;
+		for (size_t i = 0; i < s_apShowFireDropDownModes_len; ++i) {
+			if (s_aAspectShowFireValues[i] ==
+				g_Config.m_BcShowFire) CurrentShowFire = i;
+		}
+
+		TextRender()->TextColor(TextColor);
+		Ui()->DoLabel(&ShowFireLabelRect,
+			Localize("Show fire"), 14.0f, TEXTALIGN_ML);
+		TextRender()->TextColor(TextRender()->DefaultTextColor());
+
+		const int NewShowFire =
+			Ui()->DoDropDown(&ShowFireDropDownRect,
+			CurrentShowFire, apShowFireDropDownModes,
+			s_apShowFireDropDownModes_len,
+			s_ShowFireDropDownState);
+
+		if (CurrentShowFire != NewShowFire) {
+			g_Config.m_BcShowFire =
+				s_aAspectShowFireValues[NewShowFire];
+		}
+		// Drop Down
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// Int input
+		static CLineInputBuffered<8> s_FireDetectionSizeInput;
+		CUIRect SliderArea, EditArea;
+		Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+		bool FireDetectionSizeEditActive = Ui()->HotItem() == &s_FireDetectionSizeInput ||
+			Ui()->ActiveItem() == &s_FireDetectionSizeInput;
+		if (!FireDetectionSizeEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcFireDetectionSize);
+			s_FireDetectionSizeInput.Set(aTmp);
+		}
+		
+		TextRender()->TextColor(TextColor);
+		Ui()->DoScrollbarOption(&g_Config.m_BcFireDetectionSize,
+			&g_Config.m_BcFireDetectionSize, &SliderArea,
+			Localize("Size of fire detection icons"), -50, 100,
+			&CUi::ms_LinearScrollbarScale, 0u);
+		TextRender()->TextColor(TextColor);
+		if (Ui()->DoEditBox(&s_FireDetectionSizeInput, &EditArea, 14.0f)) {
+			const int P = str_toint(s_FireDetectionSizeInput.GetString());
+			if (P >= -50 && P <= 100) g_Config.m_BcFireDetectionSize = P;
+		}
+		// Int input
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		// Margin
+
+		// Drop Down
+		CUIRect ShowHookLabelRect = Row;
+			ShowHookLabelRect.x += 20.0f;
+
+		CUIRect ShowHookDropDownRect = Row;
+			ShowHookDropDownRect.x += 350.0f;
+			ShowHookDropDownRect.w = 250.0f;
+
+		static CUi::SDropDownState s_ShowHookDropDownState;
+		static CScrollRegion s_ShowHookScrollRegion;
+		s_ShowHookDropDownState.m_SelectionPopupContext.m_pScrollRegion =
+			&s_ShowHookScrollRegion;
+
+		const char *apShowHookDropDownModes[] = {
+			"Off",
+			"Other players",
+			"Everyone",
+			"Only your own"
+		};
+		static const int s_apShowHookDropDownModes_len =
+			std::size(apShowHookDropDownModes);
+		static const std::array<int, s_apShowHookDropDownModes_len> s_aAspectShowHookValues =
+			{0, 1, 2, 3};
+
+		int CurrentShowHook = 0;
+		for (size_t i = 0; i < s_apShowHookDropDownModes_len; ++i) {
+			if (s_aAspectShowHookValues[i] ==
+				g_Config.m_BcShowHook) CurrentShowHook = i;
+		}
+
+		TextRender()->TextColor(TextColor);
+		Ui()->DoLabel(&ShowHookLabelRect,
+			Localize("Show hook"), 14.0f, TEXTALIGN_ML);
+		TextRender()->TextColor(TextRender()->DefaultTextColor());
+
+		const int NewShowHook =
+			Ui()->DoDropDown(&ShowHookDropDownRect,
+			CurrentShowHook, apShowHookDropDownModes,
+			s_apShowHookDropDownModes_len,
+			s_ShowHookDropDownState);
+
+		if (CurrentShowHook != NewShowHook) {
+			g_Config.m_BcShowHook =
+				s_aAspectShowHookValues[NewShowHook];
+		}
+		// Drop Down
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// Int input
+		static CLineInputBuffered<8> s_HookDetectionSizeInput;
+		Row.VSplitRight(50.0f, &SliderArea, &EditArea);
+
+		bool HookDetectionSizeEditActive = Ui()->HotItem() == &s_HookDetectionSizeInput ||
+			Ui()->ActiveItem() == &s_HookDetectionSizeInput;
+		if (!HookDetectionSizeEditActive) {
+			char aTmp[8];
+			str_format(aTmp, 8, "%d", g_Config.m_BcHookDetectionSize);
+			s_HookDetectionSizeInput.Set(aTmp);
+		}
+		
+		TextRender()->TextColor(TextColor);
+		Ui()->DoScrollbarOption(&g_Config.m_BcHookDetectionSize,
+			&g_Config.m_BcHookDetectionSize, &SliderArea,
+			Localize("Size of hook detection icons"), -50, 100,
+			&CUi::ms_LinearScrollbarScale, 0u);
+		TextRender()->TextColor(TextColor);
+		if (Ui()->DoEditBox(&s_HookDetectionSizeInput, &EditArea, 14.0f)) {
+			const int P = str_toint(s_HookDetectionSizeInput.GetString());
+			if (P >= -50 && P <= 100) g_Config.m_BcHookDetectionSize = P;
+		}
+		// Int input
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// CheckBox
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcShowFireDynamic,
+			Localize("Show fire in nameplates will dynamically change pos"),
+			g_Config.m_BcShowFireDynamic, &Row)) g_Config.m_BcShowFireDynamic ^= 1;
+		// CheckBox
+
+		// Margin
+		Main.HSplitTop(5.0f, nullptr, &Main);
+		Main.HSplitTop(20.0f, &Row, &Main);
+		Row.x += 20.0f;
+		// Margin
+
+		// CheckBox
+		TextRender()->TextColor(TextColor);
+		if (DoButton_CheckBox(&g_Config.m_BcShowHookDynamic,
+			Localize("Show hook in nameplates will dynamically change pos"),
+			g_Config.m_BcShowHookDynamic, &Row)) g_Config.m_BcShowHookDynamic ^= 1;
+		// CheckBox
+	}
+
 	Main.HSplitTop(5.0f, nullptr, &Main);
 	
 
