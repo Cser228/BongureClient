@@ -47,6 +47,10 @@ class CHud : public CComponent
 {
 	float m_Width, m_Height;
 
+	// Bongure Client {
+	float m_LastWidth = -1.0f;
+	// Bongure Client }
+
 	int m_HudQuadContainerIndex;
 	SScoreInfo m_aScoreInfo[2];
 	STextContainerIndex m_FPSTextContainerIndex;

@@ -285,8 +285,11 @@ public:
 	vec2 ScreenSize() const { return vec2(m_ScreenWidth, m_ScreenHeight); }
 	// Bongure Client {
 	float ScreenAspect() const {
-		return m_ScreenAspectOverrideEnabled && m_ScreenAspectOverride > 0.0f ? m_ScreenAspectOverride :
-			(float)ScreenWidth() / (float)ScreenHeight();
+		return m_ScreenAspectOverrideEnabled && m_ScreenAspectOverride > 0.0f ?
+			m_ScreenAspectOverride : (float)ScreenWidth() / (float)ScreenHeight();
+	}
+	float ScreenAspectReal() const {
+		return (float)ScreenWidth() / (float)ScreenHeight();
 	}
 	// Bongure Client }
 	float ScreenHiDPIScale() const { return m_ScreenHiDPIScale; }

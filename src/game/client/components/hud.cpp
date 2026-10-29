@@ -2223,6 +2223,12 @@ void CHud::OnRender() {
 
 	m_Width = 300.0f * Graphics()->ScreenAspect();
 	m_Height = 300.0f;
+	// Bongure Client {
+	if (m_LastWidth != m_Width) {
+		m_LastWidth = m_Width;
+		ResetHudContainers();
+	}
+	// Bongure Client }
 	Graphics()->MapScreenToSize(m_Width, m_Height);
 
 #if defined(CONF_VIDEORECORDER)

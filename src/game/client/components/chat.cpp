@@ -1475,7 +1475,10 @@ void CChat::OnRender() {
 	}
 
 	const float Height = 300.0f;
-	const float Width = Height * Graphics()->ScreenAspect();
+	float Width = Height * Graphics()->ScreenAspect();
+	if (g_Config.m_BcCustomAspectRatioApplyMode == 2) {
+		Width = Height * Graphics()->ScreenAspectReal();
+	}
 	Graphics()->MapScreenToSize(Width, Height);
 
 	float x = 5.0f;
